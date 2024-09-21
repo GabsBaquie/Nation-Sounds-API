@@ -3,6 +3,7 @@ import { Router } from "express";
 import AdminController from "../controllers/AdminController";
 import { adminMiddleware } from "../middleware/adminMiddleware";
 import { authMiddleware } from "../middleware/authMiddleware";
+import { roleMiddleware } from "../middleware/roleMiddleware";
 
 const router = Router();
 
@@ -11,17 +12,25 @@ router.post(
   "/users",
   authMiddleware,
   adminMiddleware,
+  roleMiddleware(["admin"]),
   AdminController.createUser
 );
 
 // Route protégée pour obtenir tous les utilisateurs (accessible uniquement aux admins)
-router.get("/users", authMiddleware, adminMiddleware, AdminController.getUsers);
+router.get(
+  "/users",
+  authMiddleware,
+  adminMiddleware,
+  roleMiddleware(["admin"]),
+  AdminController.getUsers
+);
 
 // Route pour récupérer un utilisateur spécifique par ID
 router.get(
   "/users/:id",
   authMiddleware,
   adminMiddleware,
+  roleMiddleware(["admin"]),
   AdminController.getUserById
 );
 

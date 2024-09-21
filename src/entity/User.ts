@@ -28,7 +28,12 @@ export class User {
 
   @Column({ length: 20, default: "user" })
   @Length(3, 20)
-  role!: string;
+  @Column({
+    type: "enum",
+    enum: ["admin", "user"],
+    default: "user",
+  })
+  role!: "admin" | "user";
 
   @CreateDateColumn()
   created_at!: Date;

@@ -1,7 +1,7 @@
 // src/controllers/AdminController.ts
 import * as bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { AppDataSource } from "../data-source"; // Assurez-vous que ce chemin est correct
+import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 
 class AdminController {
@@ -69,6 +69,42 @@ class AdminController {
       return res.status(200).json(user);
     } catch (error) {
       console.error("Erreur lors de la récupération de l'utilisateur:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
+
+  static async updateUser(req: Request, res: Response) {
+    // Convertir l'ID de string à number
+    const userId = parseInt(req.params.id);
+
+    // Vérifier si l'ID est valide
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "ID utilisateur invalide" });
+    }
+
+    const { username, email, role } = req.body;
+
+    try {
+      const userRepository = AppDataSource.getRepository(User);
+      // Trouver l'utilisateur en fonction de l'ID
+      const user = await userRepository.findOne({ where: { id: userId } });
+
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+
+      // Mettre à jour les champs de l'utilisateur
+      user.username = username || user.username;
+      user.email = email || user.email;
+      user.role = role || user.role;
+
+      await userRepository.save(user);
+
+      return res
+        .status(200)
+        .json({ message: "Utilisateur mis à jour avec succès", user });
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
       return res.status(500).json({ message: "Erreur serveur" });
     }
   }
