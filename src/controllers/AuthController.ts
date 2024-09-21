@@ -56,6 +56,11 @@ class AuthController {
       return res.status(200).json({
         message: "Connexion réussie",
         token: token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
       });
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
