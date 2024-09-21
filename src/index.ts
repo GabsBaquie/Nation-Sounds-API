@@ -20,7 +20,8 @@ AppDataSource.initialize()
     // Configuration de CORS pour permettre l'envoi de cookies
     app.use(
       cors({
-        origin: "https://admin-frontend-omega.vercel.app/",
+        origin:
+          "https://admin-frontend-omega.vercel.app/ , http://localhost:3000",
         credentials: true, // Autoriser l'envoi de cookies
       })
     );
