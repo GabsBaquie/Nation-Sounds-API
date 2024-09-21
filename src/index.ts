@@ -14,18 +14,32 @@ AppDataSource.initialize()
   .then(() => {
     const app = express();
 
-    // Middlewares de sécurité
-    app.use(helmet());
+    // Liste des origines autorisées
+    const allowedOrigins = [
+      "https://admin-frontend-omega.vercel.app",
+      "http://localhost:3000",
+    ];
 
-    // Configuration de CORS pour permettre l'envoi de cookies
+    // Middleware CORS configuré dynamiquement
     app.use(
       cors({
-        origin:
-          "https://admin-frontend-omega.vercel.app/ , http://localhost:3000",
+        origin: function (origin, callback) {
+          // Permettre les requêtes sans origin (ex: mobile apps, curl)
+          if (!origin) return callback(null, true);
+          if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+          } else {
+            const msg =
+              "La politique CORS pour ce site ne permet pas l'accès depuis cette origine.";
+            return callback(new Error(msg), false);
+          }
+        },
         credentials: true, // Autoriser l'envoi de cookies
       })
     );
 
+    // Middlewares de sécurité et parsage
+    app.use(helmet());
     app.use(express.json());
     app.use(cookieParser());
 
