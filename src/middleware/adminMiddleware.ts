@@ -26,10 +26,10 @@ export const adminMiddleware = async (
     } else {
       res.status(403).json({ message: "Accès interdit - Admin seulement" });
     }
-  } catch (err) {
+  } catch (error) {
     console.error(
       "Erreur lors de la vérification du rôle de l'utilisateur:",
-      err
+      error
     );
     res.status(500).json({ message: "Erreur serveur" });
   }

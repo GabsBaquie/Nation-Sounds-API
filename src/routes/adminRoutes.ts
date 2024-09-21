@@ -17,4 +17,12 @@ router.post(
 // Route protégée pour obtenir tous les utilisateurs (accessible uniquement aux admins)
 router.get("/users", authMiddleware, adminMiddleware, AdminController.getUsers);
 
+// Route pour récupérer un utilisateur spécifique par ID
+router.get(
+  "/users/:id",
+  authMiddleware,
+  adminMiddleware,
+  AdminController.getUserById
+);
+
 export default router;

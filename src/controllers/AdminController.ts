@@ -53,6 +53,25 @@ class AdminController {
         .json({ message: "Erreur lors de la récupération des utilisateurs" });
     }
   }
+
+  static async getUserById(req: Request, res: Response) {
+    const userId = req.params.id;
+
+    try {
+      const user = await AppDataSource.getRepository(User).findOne({
+        where: { id: parseInt(userId) },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'utilisateur:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
 }
 
 export default AdminController;
