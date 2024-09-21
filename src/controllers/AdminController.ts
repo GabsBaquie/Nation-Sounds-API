@@ -74,29 +74,29 @@ class AdminController {
   }
 
   static async updateUser(req: Request, res: Response) {
-    const userRepository = AppDataSource.getRepository(User);
     const { id } = req.params;
     const { username, email, role } = req.body;
 
+    const userRepository = AppDataSource.getRepository(User);
+
     try {
-      // Trouver l'utilisateur par son ID
-      const user = await userRepository.findOne({ where: { id: Number(id) } });
+      const user = await userRepository.findOneBy({ id: parseInt(id) });
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
-      // Mettre à jour les champs uniquement s'ils sont fournis
-      if (username) user.username = username;
-      if (email) user.email = email;
-      if (role) user.role = role;
+      // Mise à jour des champs si présents
+      user.username = username || user.username;
+      user.email = email || user.email;
+      user.role = role || user.role;
 
-      // Sauvegarder les modifications
-      const updatedUser = await userRepository.save(user);
-      return res.status(200).json(updatedUser);
+      await userRepository.save(user);
+
+      return res.status(200).json(user);
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
-      return res.status(500).json({ message: "Erreur lors de la mise à jour" });
+      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 }
