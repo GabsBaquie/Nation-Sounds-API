@@ -14,6 +14,7 @@ router.post(
   AdminController.createUser
 );
 
-// Ajoutez d'autres routes admin ici si nécessaire
+// Route protégée pour obtenir tous les utilisateurs (accessible uniquement aux admins)
+router.get("/users", authMiddleware, adminMiddleware, AdminController.getUsers);
 
 export default router;

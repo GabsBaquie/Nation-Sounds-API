@@ -1,8 +1,8 @@
 // src/controllers/AdminController.ts
+import * as bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source"; // Assurez-vous que ce chemin est correct
 import { User } from "../entity/User";
-import * as bcrypt from "bcrypt";
 
 class AdminController {
   static async createUser(req: Request, res: Response) {
@@ -42,7 +42,17 @@ class AdminController {
     res.status(201).json({ message: "Utilisateur créé avec succès" });
   }
 
-  // Ajoutez d'autres méthodes admin si nécessaire
+  static async getUsers(req: Request, res: Response) {
+    try {
+      const userRepository = AppDataSource.getRepository(User);
+      const users = await userRepository.find();
+      return res.status(200).json(users);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Erreur lors de la récupération des utilisateurs" });
+    }
+  }
 }
 
 export default AdminController;
