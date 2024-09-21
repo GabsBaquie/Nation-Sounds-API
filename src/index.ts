@@ -1,4 +1,5 @@
 // src/index.ts
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import express from "express";
@@ -13,16 +14,25 @@ AppDataSource.initialize()
   .then(() => {
     const app = express();
 
-    // Middlewares
-    app.use(cors());
+    // Middlewares de sécurité
     app.use(helmet());
+
+    // Configuration de CORS pour permettre l'envoi de cookies
+    app.use(
+      cors({
+        origin: "https://admin-frontend-omega.vercel.app/",
+        credentials: true, // Autoriser l'envoi de cookies
+      })
+    );
+
     app.use(express.json());
+    app.use(cookieParser());
 
     // Routes
     app.use("/api", routes);
 
     // Démarrer le serveur
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
       console.log(`Serveur démarré sur le port ${PORT}`);
     });

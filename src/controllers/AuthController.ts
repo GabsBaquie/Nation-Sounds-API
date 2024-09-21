@@ -47,14 +47,18 @@ class AuthController {
     const userRepository = AppDataSource.getRepository(User);
     const { email, password } = req.body;
 
+    console.log("Login attempt with:", { email, password });
+
     // Validation des données
     if (!(email && password)) {
+      console.log("Missing email or password");
       return res.status(400).json({ message: "Email et mot de passe requis" });
     }
 
     // Vérifier si l'utilisateur existe
     const user = await userRepository.findOne({ where: { email } });
     if (!user) {
+      console.log("User not found");
       return res
         .status(401)
         .json({ message: "Email ou mot de passe incorrect" });
@@ -63,6 +67,7 @@ class AuthController {
     // Vérifier le mot de passe
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
+      console.log("Invalid password");
       return res
         .status(401)
         .json({ message: "Email ou mot de passe incorrect" });
@@ -77,7 +82,17 @@ class AuthController {
       }
     );
 
-    res.json({ token });
+    console.log("Login successful, token generated:", token);
+
+    // Définir le token dans un cookie HTTP-Only
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Assurez-vous d'utiliser HTTPS en production
+      sameSite: "strict",
+      maxAge: 3600000, // 1 heure en millisecondes
+    });
+
+    res.json({ message: "Connexion réussie" });
   }
 }
 
