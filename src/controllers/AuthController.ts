@@ -53,7 +53,10 @@ class AuthController {
         maxAge: 24 * 60 * 60 * 1000, // 1 jour
       });
 
-      return res.status(200).json({ message: "Connexion réussie" });
+      return res.status(200).json({
+        message: "Connexion réussie",
+        token: token,
+      });
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
       return res.status(500).json({ message: "Erreur serveur" });
