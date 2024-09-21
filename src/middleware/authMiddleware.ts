@@ -1,4 +1,3 @@
-// src/middleware/authMiddleware.ts
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 
@@ -14,7 +13,9 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.token;
+  // Récupérer le token depuis l'en-tête Authorization
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
 
   if (!token) {
     return res.status(401).json({ message: "Non autorisé - Token manquant" });
@@ -25,13 +26,15 @@ export const authMiddleware = (
       token,
       process.env.JWT_SECRET as string
     ) as DecodedToken;
+
+    // Ajouter les informations décodées du token à la requête
     req.user = {
       id: decoded.userId,
       role: decoded.role,
       username: decoded.username,
       email: decoded.email,
     };
-    next();
+    next(); // Continuer avec la requête
   } catch (err) {
     return res.status(401).json({ message: "Token invalide" });
   }
