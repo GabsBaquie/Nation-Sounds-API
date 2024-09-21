@@ -34,4 +34,13 @@ router.get(
   AdminController.getUserById
 );
 
+// Route pour mettre à jour un utilisateur spécifique par ID (accessible uniquement aux admins)
+router.put(
+  "/users/:id",
+  authMiddleware,
+  adminMiddleware,
+  roleMiddleware(["admin"]),
+  AdminController.updateUser
+);
+
 export default router;

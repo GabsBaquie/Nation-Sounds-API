@@ -86,20 +86,17 @@ class AdminController {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
-      // Mettre à jour les champs uniquement s'ils sont fournis dans la requête
+      // Mettre à jour les champs uniquement s'ils sont fournis
       if (username) user.username = username;
       if (email) user.email = email;
       if (role) user.role = role;
 
       // Sauvegarder les modifications
       const updatedUser = await userRepository.save(user);
-
       return res.status(200).json(updatedUser);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
-      return res
-        .status(500)
-        .json({ message: "Erreur lors de la mise à jour de l'utilisateur" });
+      console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
+      return res.status(500).json({ message: "Erreur lors de la mise à jour" });
     }
   }
 }
