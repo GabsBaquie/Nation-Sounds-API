@@ -26,6 +26,10 @@ export class User {
   @Length(6, 255)
   password!: string;
 
+  @Column({ length: 20, default: "user" })
+  @Length(3, 20)
+  role!: string;
+
   @CreateDateColumn()
   created_at!: Date;
 }
