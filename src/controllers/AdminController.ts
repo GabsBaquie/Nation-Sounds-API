@@ -79,23 +79,24 @@ class AdminController {
     const { username, email, role } = req.body;
 
     try {
-      // Récupérer l'utilisateur existant
+      // Trouver l'utilisateur par son ID
       const user = await userRepository.findOne({ where: { id: Number(id) } });
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
-      // Mettre à jour les champs avec les nouvelles données
-      user.username = username;
-      user.email = email;
-      user.role = role;
+      // Mettre à jour les champs uniquement s'ils sont fournis dans la requête
+      if (username) user.username = username;
+      if (email) user.email = email;
+      if (role) user.role = role;
 
       // Sauvegarder les modifications
-      await userRepository.save(user);
+      const updatedUser = await userRepository.save(user);
 
-      return res.status(200).json(user);
+      return res.status(200).json(updatedUser);
     } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
       return res
         .status(500)
         .json({ message: "Erreur lors de la mise à jour de l'utilisateur" });
