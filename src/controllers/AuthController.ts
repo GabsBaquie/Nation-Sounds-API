@@ -68,42 +68,6 @@ class AuthController {
     }
   }
 
-  static async register(req: Request, res: Response) {
-    const userRepository = AppDataSource.getRepository(User);
-    const { username, email, password, role } = req.body;
-
-    // Validation des données
-    if (!username || !email || !password || !role) {
-      return res.status(400).json({ message: "Tous les champs sont requis" });
-    }
-
-    // Vérifier si l'utilisateur existe déjà
-    const userExists = await userRepository.findOne({ where: { email } });
-    if (userExists) {
-      return res.status(409).json({ message: "Email déjà utilisé" });
-    }
-
-    // Hachage du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Création de l'utilisateur
-    const newUser = userRepository.create({
-      username,
-      email,
-      password: hashedPassword,
-      role,
-    });
-
-    try {
-      await userRepository.save(newUser);
-      return res.status(201).json({ message: "Utilisateur créé avec succès" });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Erreur lors de la création de l'utilisateur" });
-    }
-  }
-
   static async getProfile(req: Request, res: Response) {
     const userRepository = AppDataSource.getRepository(User);
 
