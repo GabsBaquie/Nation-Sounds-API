@@ -25,10 +25,10 @@ export class User {
   @Length(6, 255)
   password!: string;
 
-  @Column({ default: null, nullable: true })
+  @Column({ type: "varchar", length: 255, nullable: true })
   resetToken?: string | null;
 
-  @Column({ type: "timestamp", default: null, nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   resetTokenExpiration?: Date | null;
 
   @Column({ length: 20, default: "user" })
