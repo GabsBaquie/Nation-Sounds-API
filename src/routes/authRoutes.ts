@@ -31,4 +31,9 @@ router.get("/me", authMiddleware, AuthController.getProfile);
  */
 router.post("/reset-password-request", AuthController.requestPasswordReset);
 
+/**
+ * Route pour changer le mot de passe (authentification requise)
+ */
+router.put("/change-password", authMiddleware, AuthController.changePassword);
+
 export default router;

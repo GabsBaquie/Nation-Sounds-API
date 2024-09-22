@@ -96,6 +96,42 @@ class AuthController {
     }
   }
 
+  static async changePassword(req: Request, res: Response) {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user.id; // Assurez-vous que l'utilisateur est authentifié et que son ID est disponible
+
+    try {
+      const user = await AppDataSource.getRepository(User).findOne({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+
+      // Vérifier l'ancien mot de passe
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ message: "Ancien mot de passe incorrect" });
+      }
+
+      // Hash du nouveau mot de passe
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+
+      await AppDataSource.getRepository(User).save(user);
+
+      return res
+        .status(200)
+        .json({ message: "Mot de passe changé avec succès" });
+    } catch (error) {
+      console.error("Erreur lors du changement de mot de passe :", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
+
   static async requestPasswordReset(req: Request, res: Response) {
     const { email } = req.body;
 
