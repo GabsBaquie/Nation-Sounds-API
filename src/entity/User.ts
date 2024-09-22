@@ -8,20 +8,20 @@ import {
 } from "typeorm";
 
 @Entity()
-@Unique(["email"])
+@Unique(["email", "username"])
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: false }) // username est obligatoire
   @Length(4, 50)
   username!: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false }) // email est obligatoire
   @IsEmail()
   email!: string;
 
-  @Column()
+  @Column({ nullable: false }) // password est obligatoire
   @Length(6, 255)
   password!: string;
 

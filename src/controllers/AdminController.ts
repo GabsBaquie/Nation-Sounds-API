@@ -21,10 +21,19 @@ class AdminController {
         .json({ message: "Seules les adresses Gmail sont autorisées." });
     }
 
-    // Vérifier si l'utilisateur existe déjà
-    const userExists = await userRepository.findOne({ where: { email } });
+    // Vérifier si l'email ou le username existe déjà
+    const userExists = await userRepository.findOne({
+      where: [{ email }, { username }],
+    });
     if (userExists) {
-      return res.status(409).json({ message: "Email déjà utilisé" });
+      if (userExists.email === email) {
+        return res.status(409).json({ message: "Email déjà utilisé" });
+      }
+      if (userExists.username === username) {
+        return res
+          .status(409)
+          .json({ message: "Nom d'utilisateur déjà utilisé" });
+      }
     }
 
     // Hachage du mot de passe
