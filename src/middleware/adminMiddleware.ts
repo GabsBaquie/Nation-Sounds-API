@@ -1,14 +1,15 @@
+// src/middleware/adminMiddleware.ts
 import { NextFunction, Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 
-const adminMiddleware = async (
+export const adminMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const userId = req.user?.id; // TypeScript reconnaît maintenant la propriété user
+    const userId = req.user?.id;
 
     if (!userId) {
       return res
@@ -33,5 +34,3 @@ const adminMiddleware = async (
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
-
-export default adminMiddleware;
