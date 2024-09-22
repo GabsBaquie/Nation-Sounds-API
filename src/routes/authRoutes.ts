@@ -32,6 +32,14 @@ router.get("/me", authMiddleware, AuthController.getProfile);
 router.post("/reset-password-request", AuthController.requestPasswordReset);
 
 /**
+ * @swagger
+ * /api/auth/reset-password:
+ *   put:
+ *     summary: Réinitialiser le mot de passe
+ */
+router.put("/reset-password", AuthController.resetPassword);
+
+/**
  * Route pour changer le mot de passe (authentification requise)
  */
 router.put("/change-password", authMiddleware, AuthController.changePassword);

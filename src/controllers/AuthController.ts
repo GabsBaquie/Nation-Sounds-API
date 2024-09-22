@@ -9,6 +9,7 @@ import { sendResetEmail } from "../utils/emailService";
 import { MoreThan } from "typeorm";
 
 class AuthController {
+  // Connexion de l'utilisateur
   static async login(req: Request, res: Response) {
     const { email, password } = req.body;
 
@@ -71,6 +72,7 @@ class AuthController {
     }
   }
 
+  // Récupérer les informations du profil de l'utilisateur connecté
   static async getProfile(req: Request, res: Response) {
     const userRepository = AppDataSource.getRepository(User);
 
@@ -96,6 +98,7 @@ class AuthController {
     }
   }
 
+  // Changer le mot de passe de l'utilisateur connecté
   static async changePassword(req: Request, res: Response) {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user.id; // Assurez-vous que l'utilisateur est authentifié et que son ID est disponible
@@ -132,6 +135,7 @@ class AuthController {
     }
   }
 
+  // Demande de réinitialisation du mot de passe
   static async requestPasswordReset(req: Request, res: Response) {
     const { email } = req.body;
 
@@ -139,6 +143,7 @@ class AuthController {
       const user = await AppDataSource.getRepository(User).findOne({
         where: { email },
       });
+
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
@@ -147,6 +152,7 @@ class AuthController {
       const resetToken = uuidv4();
       user.resetToken = resetToken;
       user.resetTokenExpiration = new Date(Date.now() + 3600000); // Expire dans 1 heure
+
       await AppDataSource.getRepository(User).save(user);
 
       // Envoyer un email avec le lien de réinitialisation
@@ -157,10 +163,12 @@ class AuthController {
         .status(200)
         .json({ message: "Email de réinitialisation envoyé" });
     } catch (error) {
+      console.error("Erreur lors de la demande de réinitialisation:", error);
       return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 
+  // Réinitialisation du mot de passe
   static async resetPassword(req: Request, res: Response) {
     const { token, newPassword } = req.body;
 
@@ -188,6 +196,10 @@ class AuthController {
         .status(200)
         .json({ message: "Mot de passe réinitialisé avec succès" });
     } catch (error) {
+      console.error(
+        "Erreur lors de la réinitialisation du mot de passe:",
+        error
+      );
       return res.status(500).json({ message: "Erreur serveur" });
     }
   }
