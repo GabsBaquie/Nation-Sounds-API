@@ -5,16 +5,16 @@ import { adminMiddleware, authMiddleware, roleMiddleware } from "../middleware";
 
 const router = Router();
 
-// Route protégée pour créer un utilisateur (accessible uniquement aux admins)
+// Route protégée pour créer un utilisateur
 router.post(
-  "/users",
+  "/users/create",
   authMiddleware,
   adminMiddleware,
   roleMiddleware(["admin"]),
   AdminController.createUser
 );
 
-// Route protégée pour obtenir tous les utilisateurs (accessible uniquement aux admins)
+// route pour récupérer tous les utilisateurs
 router.get(
   "/users",
   authMiddleware,
@@ -32,7 +32,7 @@ router.get(
   AdminController.getUserById
 );
 
-// Route pour mettre à jour un utilisateur spécifique par ID (accessible uniquement aux admins)
+// Route pour mettre à jour un utilisateur spécifique par ID
 router.put(
   "/users/:id",
   authMiddleware,
