@@ -77,6 +77,9 @@ class AdminController {
     const { id } = req.params;
     const { username, email, role } = req.body;
 
+    // Vérification de l'ID avant conversion
+    console.log("ID reçu :", id);
+
     const userRepository = AppDataSource.getRepository(User);
 
     try {
@@ -86,12 +89,22 @@ class AdminController {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
+      // Log des données avant modification
+      console.log("Utilisateur avant modification :", user);
+      console.log("Données reçues :", { username, email, role });
+
       // Mise à jour des champs si présents
       user.username = username || user.username;
       user.email = email || user.email;
       user.role = role || user.role;
 
+      // Log après modification mais avant enregistrement
+      console.log("Utilisateur après modification :", user);
+
       await userRepository.save(user);
+
+      // Log après enregistrement
+      console.log("Utilisateur sauvegardé :", user);
 
       return res.status(200).json(user);
     } catch (error) {
