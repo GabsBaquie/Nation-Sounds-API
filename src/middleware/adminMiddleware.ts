@@ -1,24 +1,23 @@
-// src/middleware/adminMiddleware.ts
 import { NextFunction, Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 
-export const adminMiddleware = async (
+const adminMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const user = req.user;
-
-  if (!user) {
-    return res
-      .status(401)
-      .json({ message: "Non autorisé - Utilisateur non identifié" });
-  }
-
   try {
+    const userId = req.user?.id; // TypeScript reconnaît maintenant la propriété user
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Non autorisé - Utilisateur non identifié" });
+    }
+
     const foundUser = await AppDataSource.getRepository(User).findOne({
-      where: { id: user.id },
+      where: { id: userId },
     });
 
     if (foundUser && foundUser.role === "admin") {
@@ -34,3 +33,5 @@ export const adminMiddleware = async (
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+export default adminMiddleware;

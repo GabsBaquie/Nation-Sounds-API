@@ -1,7 +1,7 @@
 // src/routes/adminRoutes.ts
 import { Router } from "express";
 import AdminController from "../controllers/AdminController";
-import { adminMiddleware } from "../middleware/adminMiddleware";
+import adminMiddleware from "../middleware/adminMiddleware";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { roleMiddleware } from "../middleware/roleMiddleware";
 
