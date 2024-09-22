@@ -43,4 +43,13 @@ router.put(
   AdminController.updateUser
 );
 
+// Route pour supprimer un utilisateur par ID
+router.delete(
+  "/users/:id",
+  authMiddleware,
+  adminMiddleware,
+  roleMiddleware(["admin"]),
+  AdminController.deleteUser
+);
+
 export default router;
