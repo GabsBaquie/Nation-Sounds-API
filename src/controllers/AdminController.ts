@@ -14,6 +14,13 @@ class AdminController {
       return res.status(400).json({ message: "Tous les champs sont requis" });
     }
 
+    // Vérifier que l'email est une adresse Gmail
+    if (!email.endsWith("@gmail.com")) {
+      return res
+        .status(400)
+        .json({ message: "Seules les adresses Gmail sont autorisées." });
+    }
+
     // Vérifier si l'utilisateur existe déjà
     const userExists = await userRepository.findOne({ where: { email } });
     if (userExists) {
@@ -33,44 +40,12 @@ class AdminController {
 
     try {
       await userRepository.save(newUser);
+      return res.status(201).json({ message: "Utilisateur créé avec succès" });
     } catch (e) {
+      console.error("Erreur lors de la création de l'utilisateur :", e);
       return res
         .status(500)
         .json({ message: "Erreur lors de la création de l’utilisateur" });
-    }
-
-    res.status(201).json({ message: "Utilisateur créé avec succès" });
-  }
-
-  static async getUsers(req: Request, res: Response) {
-    try {
-      const userRepository = AppDataSource.getRepository(User);
-      const users = await userRepository.find();
-      return res.status(200).json(users);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des utilisateurs:", error);
-      return res
-        .status(500)
-        .json({ message: "Erreur lors de la récupération des utilisateurs" });
-    }
-  }
-
-  static async getUserById(req: Request, res: Response) {
-    const userId = req.params.id;
-
-    try {
-      const user = await AppDataSource.getRepository(User).findOne({
-        where: { id: parseInt(userId) },
-      });
-
-      if (!user) {
-        return res.status(404).json({ message: "Utilisateur non trouvé" });
-      }
-
-      return res.status(200).json(user);
-    } catch (error) {
-      console.error("Erreur lors de la récupération de l'utilisateur:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 
@@ -93,6 +68,13 @@ class AdminController {
       // Log des données avant modification
       console.log("Utilisateur avant modification :", user);
       console.log("Données reçues :", { username, email, role });
+
+      // Validation pour s'assurer que l'email est un Gmail (si l'email est fourni pour la mise à jour)
+      if (email && !email.endsWith("@gmail.com")) {
+        return res
+          .status(400)
+          .json({ message: "Seules les adresses Gmail sont autorisées." });
+      }
 
       // Mise à jour des champs si présents
       user.username = username || user.username;
@@ -132,6 +114,38 @@ class AdminController {
         .json({ message: "Utilisateur supprimé avec succès" });
     } catch (error) {
       console.error("Erreur lors de la suppression de l'utilisateur :", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
+
+  static async getUsers(req: Request, res: Response) {
+    try {
+      const userRepository = AppDataSource.getRepository(User);
+      const users = await userRepository.find();
+      return res.status(200).json(users);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des utilisateurs:", error);
+      return res
+        .status(500)
+        .json({ message: "Erreur lors de la récupération des utilisateurs" });
+    }
+  }
+
+  static async getUserById(req: Request, res: Response) {
+    const userId = req.params.id;
+
+    try {
+      const user = await AppDataSource.getRepository(User).findOne({
+        where: { id: parseInt(userId) },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'utilisateur:", error);
       return res.status(500).json({ message: "Erreur serveur" });
     }
   }
