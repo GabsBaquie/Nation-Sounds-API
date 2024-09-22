@@ -48,6 +48,7 @@ class AdminController {
       const users = await userRepository.find();
       return res.status(200).json(users);
     } catch (error) {
+      console.error("Erreur lors de la récupération des utilisateurs:", error);
       return res
         .status(500)
         .json({ message: "Erreur lors de la récupération des utilisateurs" });
