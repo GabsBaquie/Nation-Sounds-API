@@ -1,16 +1,9 @@
 // src/routes/authRoutes.ts
 import { Router } from "express";
 import AuthController from "../controllers/AuthController";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();
-
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Enregistrer un nouvel utilisateur
- */
-router.post("/register", AuthController.register);
 
 /**
  * @swagger
@@ -19,5 +12,15 @@ router.post("/register", AuthController.register);
  *     summary: Connecter un utilisateur
  */
 router.post("/login", AuthController.login);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Récupérer les informations du profil de l'utilisateur connecté
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/me", authMiddleware, AuthController.getProfile);
 
 export default router;

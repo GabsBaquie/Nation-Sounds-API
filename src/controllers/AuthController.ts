@@ -103,6 +103,31 @@ class AuthController {
         .json({ message: "Erreur lors de la création de l'utilisateur" });
     }
   }
+
+  static async getProfile(req: Request, res: Response) {
+    const userRepository = AppDataSource.getRepository(User);
+
+    try {
+      // Trouver l'utilisateur connecté à partir de l'ID stocké dans `req.user`
+      const user = await userRepository.findOne({
+        where: { id: req.user?.id },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+
+      // Retourner les informations de l'utilisateur
+      return res.status(200).json({
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      });
+    } catch (error) {
+      console.error("Erreur lors de la récupération du profil :", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
 }
 
 export default AuthController;
