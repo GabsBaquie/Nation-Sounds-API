@@ -7,7 +7,7 @@ const router = Router();
 
 // Route protégée pour créer un utilisateur
 router.post(
-  "/users/create",
+  "/users",
   authMiddleware,
   adminMiddleware,
   roleMiddleware(["admin"]),
