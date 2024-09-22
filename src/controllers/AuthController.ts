@@ -100,28 +100,33 @@ class AuthController {
     const { email } = req.body;
 
     try {
-      const user = await AppDataSource.getRepository(User).findOne({
-        where: { email },
-      });
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({ where: { email } });
+
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
-      // Générer un jeton unique pour la réinitialisation
+      // Générer un token de réinitialisation unique
       const resetToken = uuidv4();
       user.resetToken = resetToken;
-      user.resetTokenExpiration = new Date(Date.now() + 3600000); // Expire dans 1 heure
-      await AppDataSource.getRepository(User).save(user);
+      user.resetTokenExpiration = new Date(Date.now() + 3600000); // 1 heure de validité
 
-      // Envoyer un email avec le lien de réinitialisation
-      const resetLink = `https://admin-frontend-omega.vercel.app/reset-password?token=${resetToken}`;
+      await userRepository.save(user);
+
+      const resetLink = `http://localhost:300/reset-password?token=${resetToken}`;
+
+      // Envoyer l'email de réinitialisation
       await sendResetEmail(user.email, resetLink);
 
       return res
         .status(200)
         .json({ message: "Email de réinitialisation envoyé" });
     } catch (error) {
-      return res.status(500).json({ message: "Erreur serveur" });
+      console.error("Erreur lors de la demande de réinitialisation :", error);
+      return res
+        .status(500)
+        .json({ message: "Erreur serveur. Réessayez plus tard." });
     }
   }
 
