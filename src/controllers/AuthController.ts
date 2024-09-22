@@ -156,7 +156,7 @@ class AuthController {
       await AppDataSource.getRepository(User).save(user);
 
       // Envoyer un email avec le lien de réinitialisation
-      const resetLink = `https://admin-frontend-omega.vercel.app/reset-password?token=${resetToken}`;
+      const resetLink = `https://admin-frontend-omega.vercel.app/reset-password/${resetToken}`;
       await sendResetEmail(user.email, resetLink);
 
       return res
