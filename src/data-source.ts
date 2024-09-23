@@ -7,6 +7,7 @@ import { POI } from "./entity/POI";
 import { Program } from "./entity/Program";
 import { SecurityInfo } from "./entity/SecurityInfo";
 import { User } from "./entity/User";
+import { Content } from "./entity/Content";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true, // Passez à false en production
   logging: false,
-  entities: [User, Program, Notification, POI, SecurityInfo],
+  entities: [User, Program, Notification, POI, SecurityInfo, Content],
   migrations: [],
   subscribers: [],
 });
