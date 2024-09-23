@@ -33,7 +33,6 @@ export class Concert {
   @Column()
   image!: string;
 
-  @Column()
   @ManyToOne(() => Day, (day) => day.concerts, { onDelete: "CASCADE" })
   day!: Day;
 

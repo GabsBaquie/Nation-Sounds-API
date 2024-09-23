@@ -5,6 +5,7 @@ import express from "express";
 import helmet from "helmet";
 import { AppDataSource } from "./data-source";
 import routes from "./routes";
+import "reflect-metadata";
 
 const app = express();
 
