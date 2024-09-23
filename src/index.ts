@@ -16,6 +16,8 @@ app.use(
       "http://localhost:3000", // Pour le développement local
     ],
     credentials: true, // Permet l'envoi de cookies
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Méthodes autorisées
+    allowedHeaders: ["Content-Type", "Authorization"], // En-têtes autorisés
   })
 );
 
