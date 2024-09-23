@@ -16,7 +16,7 @@ export class Concert {
   id!: number;
 
   @Column()
-  title!: string;
+  name!: string;
 
   @Column("text")
   description!: string;
@@ -25,11 +25,15 @@ export class Concert {
   performer!: string;
 
   @Column()
-  startTime!: string;
+  time!: string;
 
   @Column()
-  endTime!: string;
+  location!: string;
 
+  @Column()
+  image!: string;
+
+  @Column()
   @ManyToOne(() => Day, (day) => day.concerts, { onDelete: "CASCADE" })
   day!: Day;
 

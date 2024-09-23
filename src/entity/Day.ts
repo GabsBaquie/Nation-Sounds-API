@@ -18,6 +18,9 @@ export class Day {
   id!: number;
 
   @Column()
+  name!: string;
+
+  @Column()
   date!: Date;
 
   @ManyToOne(() => Program, (program) => program.days, { onDelete: "CASCADE" })

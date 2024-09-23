@@ -21,6 +21,9 @@ export class Program {
   @Column("text")
   description!: string;
 
+  @Column()
+  image!: string;
+
   @OneToMany(() => Day, (day) => day.program, { cascade: true })
   days!: Day[];
 
