@@ -1,28 +1,37 @@
-// src/entity/Program.ts
+// src/entity/Concert.ts
 
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
+  ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Day } from "./Day";
 
 @Entity()
-export class Program {
+export class Concert {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
-  name!: string;
+  title!: string;
 
   @Column("text")
   description!: string;
 
-  @OneToMany(() => Day, (day) => day.program, { cascade: true })
-  days!: Day[];
+  @Column()
+  performer!: string;
+
+  @Column()
+  startTime!: string;
+
+  @Column()
+  endTime!: string;
+
+  @ManyToOne(() => Day, (day) => day.concerts, { onDelete: "CASCADE" })
+  day!: Day;
 
   @CreateDateColumn()
   createdAt!: Date;
