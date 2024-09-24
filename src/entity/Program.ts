@@ -20,7 +20,7 @@ export class Program {
   @Column()
   description!: string;
 
-  @OneToOne(() => Day, (day) => day.program)
+  @OneToOne(() => Day, (day) => day.program, { onDelete: "CASCADE" })
   @JoinColumn()
   day!: Day;
 }
