@@ -1,9 +1,12 @@
+// src/entity/Day.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
+  ManyToMany,
   OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Concert } from "./Concert";
 import { Program } from "./Program";
@@ -19,9 +22,15 @@ export class Day {
   @Column()
   date!: Date;
 
-  @OneToMany(() => Concert, (concert) => concert.days)
+  @ManyToMany(() => Concert, (concert) => concert.days)
   concerts!: Concert[];
 
   @OneToOne(() => Program, (program) => program.day)
   program!: Program;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

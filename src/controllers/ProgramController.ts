@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Program } from "../entity/Program";
 import { validate } from "class-validator";
+import { Day } from "../entity/Day";
 
 class ProgramController {
   // GET /api/programs
@@ -46,7 +47,13 @@ class ProgramController {
   static async create(req: Request, res: Response) {
     try {
       const programRepository = AppDataSource.getRepository(Program);
-      const { name, description, day } = req.body;
+      const { name, description, dayId } = req.body;
+
+      const dayRepository = AppDataSource.getRepository(Day);
+      const day = await dayRepository.findOne({ where: { id: dayId } });
+      if (!day) {
+        return res.status(404).json({ message: "Jour non trouvé" });
+      }
 
       const program = programRepository.create({ name, description, day });
 
@@ -78,7 +85,15 @@ class ProgramController {
         return res.status(404).json({ message: "Programme non trouvé" });
       }
 
-      programRepository.merge(program, req.body);
+      const dayRepository = AppDataSource.getRepository(Day);
+      const { name, description, dayId } = req.body;
+      const day = await dayRepository.findOne({ where: { id: dayId } });
+      if (!day) {
+        return res.status(404).json({ message: "Jour non trouvé" });
+      }
+
+      programRepository.merge(program, { name, description, day });
+
       const errors = await validate(program);
       if (errors.length > 0) {
         return res.status(400).json(errors);
