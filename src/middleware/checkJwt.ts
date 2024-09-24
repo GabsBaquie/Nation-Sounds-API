@@ -19,16 +19,20 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   }
 
   // Optionnel : Rafraîchir le token si nécessaire
-  // const { userId } = jwtPayload;
-  // const newToken = jwt.sign({ userId }, process.env.JWT_SECRET as string, {
-  //   expiresIn: "1h",
-  // });
-  // res.cookie('token', newToken, {
-  //   httpOnly: true,
-  //   secure: process.env.NODE_ENV === 'production',
-  //   sameSite: 'strict',
-  //   maxAge: 3600000,
-  // });
+  const { userId, role, username, email } = jwtPayload;
+  const newToken = jwt.sign(
+    { userId, role, username, email },
+    process.env.JWT_SECRET as string,
+    {
+      expiresIn: "24h",
+    }
+  );
+  res.cookie("token", newToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    maxAge: 3600000, // 1 heure
+  });
 
   next();
 };
