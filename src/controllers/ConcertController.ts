@@ -10,7 +10,7 @@ class ConcertController {
   static async getAll(req: Request, res: Response) {
     try {
       const concertRepository = AppDataSource.getRepository(Concert);
-      const concerts = await concertRepository.find({ relations: ["day"] });
+      const concerts = await concertRepository.find({ relations: ["days"] });
       return res.status(200).json(concerts);
     } catch (error) {
       console.error("Erreur lors de la récupération des concerts:", error);
@@ -26,7 +26,7 @@ class ConcertController {
       const concertRepository = AppDataSource.getRepository(Concert);
       const concert = await concertRepository.findOne({
         where: { id: concertId },
-        relations: ["day"],
+        relations: ["days"],
       });
 
       if (!concert) {
@@ -44,7 +44,8 @@ class ConcertController {
   static async create(req: Request, res: Response) {
     try {
       const concertRepository = AppDataSource.getRepository(Concert);
-      const { name, description, performer, time, location, day } = req.body;
+      const { name, description, performer, time, location, image, days } =
+        req.body;
 
       const concert = concertRepository.create({
         name,
@@ -52,7 +53,8 @@ class ConcertController {
         performer,
         time,
         location,
-        day,
+        image,
+        days,
       });
 
       const errors = await validate(concert);
@@ -76,7 +78,7 @@ class ConcertController {
       const concertRepository = AppDataSource.getRepository(Concert);
       let concert = await concertRepository.findOne({
         where: { id: concertId },
-        relations: ["day"],
+        relations: ["days"],
       });
 
       if (!concert) {

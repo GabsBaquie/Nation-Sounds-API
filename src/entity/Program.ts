@@ -4,7 +4,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
+  OneToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -18,14 +19,12 @@ export class Program {
   @Column()
   name!: string;
 
-  @Column("text")
+  @Column()
   description!: string;
 
-  @Column()
-  image!: string;
-
-  @OneToMany(() => Day, (day) => day.program, { cascade: true })
-  days!: Day[];
+  @OneToOne(() => Day, (day) => day.program, { cascade: true })
+  @JoinColumn()
+  day!: Day;
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -4,7 +4,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  ManyToMany,
+  JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -33,8 +34,9 @@ export class Concert {
   @Column()
   image!: string;
 
-  @ManyToOne(() => Day, (day) => day.concerts, { onDelete: "CASCADE" })
-  day!: Day;
+  @ManyToMany(() => Day, (day) => day.concerts)
+  @JoinTable()
+  days!: Day[];
 
   @CreateDateColumn()
   createdAt!: Date;

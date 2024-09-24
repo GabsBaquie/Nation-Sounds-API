@@ -11,7 +11,7 @@ class ProgramController {
     try {
       const programRepository = AppDataSource.getRepository(Program);
       const programs = await programRepository.find({
-        relations: ["days", "days.concerts"],
+        relations: ["day", "day.concerts"],
       });
       return res.status(200).json(programs);
     } catch (error) {
@@ -28,7 +28,7 @@ class ProgramController {
       const programRepository = AppDataSource.getRepository(Program);
       const program = await programRepository.findOne({
         where: { id: programId },
-        relations: ["days", "days.concerts"],
+        relations: ["day", "day.concerts"],
       });
 
       if (!program) {
@@ -46,9 +46,9 @@ class ProgramController {
   static async create(req: Request, res: Response) {
     try {
       const programRepository = AppDataSource.getRepository(Program);
-      const { name, description, days } = req.body;
+      const { name, description, day } = req.body;
 
-      const program = programRepository.create({ name, description, days });
+      const program = programRepository.create({ name, description, day });
 
       const errors = await validate(program);
       if (errors.length > 0) {
@@ -71,7 +71,7 @@ class ProgramController {
       const programRepository = AppDataSource.getRepository(Program);
       let program = await programRepository.findOne({
         where: { id: programId },
-        relations: ["days", "days.concerts"],
+        relations: ["day", "day.concerts"],
       });
 
       if (!program) {

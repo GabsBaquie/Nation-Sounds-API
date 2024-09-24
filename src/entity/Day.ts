@@ -4,8 +4,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   OneToMany,
+  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -23,10 +23,10 @@ export class Day {
   @Column()
   date!: Date;
 
-  @ManyToOne(() => Program, (program) => program.days, { onDelete: "CASCADE" })
+  @OneToOne(() => Program, (program) => program.day)
   program!: Program;
 
-  @OneToMany(() => Concert, (concert) => concert.day, { cascade: true })
+  @OneToMany(() => Concert, (concert) => concert.days, { cascade: true })
   concerts!: Concert[];
 
   @CreateDateColumn()
