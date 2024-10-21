@@ -23,6 +23,9 @@ export class SecurityInfo {
   @Column({ type: 'boolean' })
   actif!: boolean;
 
+  @Column({ type: 'boolean' })
+  banane!: boolean;
+
   @CreateDateColumn()
   createdAt!: Date;
 
