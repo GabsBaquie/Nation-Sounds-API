@@ -1,32 +1,28 @@
+import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { SecurityInfo } from '../entity/SecurityInfo';
 
 class SecurityInfoController {
+  // GET /api/securityInfos
   static async getAll(req: Request, res: Response) {
-    const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 25;
+    try {
+      const securityInfoRepository = AppDataSource.getRepository(SecurityInfo);
+      const infos = await securityInfoRepository.find({
+        order: { createdAt: 'DESC' },
+      });
 
-    const securityInfoRepository = AppDataSource.getRepository(SecurityInfo);
-    const [infos, total] = await securityInfoRepository.findAndCount({
-      order: { createdAt: 'DESC' },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    });
-
-    res.json({
-      data: infos,
-      meta: {
-        pagination: {
-          page,
-          pageSize,
-          pageCount: Math.ceil(total / pageSize),
-          total,
-        },
-      },
-    });
+      return res.status(200).json(infos);
+    } catch (error) {
+      console.error(
+        'Erreur lors de la récupération des informations de sécurité:',
+        error,
+      );
+      return res.status(500).json({ message: 'Erreur serveur' });
+    }
   }
 
+  // POST /api/securityInfos
   static async create(req: Request, res: Response) {
     const securityInfoRepository = AppDataSource.getRepository(SecurityInfo);
     const { title, description, urgence, actif } = req.body;
@@ -37,15 +33,22 @@ class SecurityInfoController {
     info.urgence = urgence;
     info.actif = actif;
 
+    const errors = await validate(info);
+    if (errors.length > 0) {
+      return res.status(400).json(errors);
+    }
+
     try {
       await securityInfoRepository.save(info);
-      res
+      return res
         .status(201)
         .json({ message: 'Information de sécurité créée avec succès' });
     } catch (error) {
-      res.status(500).json({
-        message: 'Erreur lors de la création de l’information de sécurité',
-      });
+      console.error(
+        'Erreur lors de la création de l’information de sécurité:',
+        error,
+      );
+      return res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 }
