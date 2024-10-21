@@ -1,13 +1,5 @@
 // src/routes/index.ts
 import { Router } from 'express';
-import adminRoutes from './adminRoutes';
-import authRoutes from './authRoutes';
-import notificationRoutes from './notificationRoutes';
-import poiRoutes from './poiRoutes';
-import programRoutes from './programRoutes';
-import contentRoutes from './contentRoutes';
-import dayRoutes from './dayRoutes';
-import concertRoutes from './concertRoutes';
 import { AppDataSource } from '../data-source';
 import { Concert } from '../entity/Concert';
 import { Content } from '../entity/Content';
@@ -16,6 +8,15 @@ import { Notification } from '../entity/Notification';
 import { POI } from '../entity/POI';
 import { Program } from '../entity/Program';
 import { SecurityInfo } from '../entity/SecurityInfo';
+import adminRoutes from './adminRoutes';
+import authRoutes from './authRoutes';
+import concertRoutes from './concertRoutes';
+import contentRoutes from './contentRoutes';
+import dayRoutes from './dayRoutes';
+import notificationRoutes from './notificationRoutes';
+import poiRoutes from './poiRoutes';
+import programRoutes from './programRoutes';
+import securityInfoRoutes from './securityInfoRoutes';
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.use('/days', dayRoutes);
 router.use('/concerts', concertRoutes);
 router.use('/admin', adminRoutes);
 router.use('/contents', contentRoutes);
+router.use('/security-infos', securityInfoRoutes);
 
 // Route pour récupérer toutes les données
 router.get('/', async (req, res) => {
