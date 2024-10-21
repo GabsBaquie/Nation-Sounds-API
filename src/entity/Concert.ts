@@ -1,5 +1,4 @@
 // src/entity/Concert.ts
-
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -34,7 +33,10 @@ export class Concert {
   @Column()
   image!: string;
 
-  @ManyToMany(() => Day, (day) => day.concerts)
+  @ManyToMany(() => Day, (day) => day.concerts, {
+    cascade: false, // Désactive le cascade pour éviter les suppressions circulaires
+    eager: false, // Charge les Days associés uniquement lorsque spécifié
+  })
   @JoinTable()
   days!: Day[];
 

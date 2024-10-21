@@ -22,11 +22,18 @@ export class Day {
   @Column()
   date!: Date;
 
-  @ManyToMany(() => Concert, (concert) => concert.days)
+  @ManyToMany(() => Concert, (concert) => concert.days, {
+    cascade: false, // Désactive le cascade pour éviter les suppressions circulaires
+    eager: true, // Charge automatiquement les concerts associés lors de la récupération de Day
+  })
   concerts!: Concert[];
 
-  @OneToOne(() => Program, (program) => program.day)
-  program!: Program;
+  @OneToOne(() => Program, (program) => program.day, {
+    nullable: true, // Rendre la relation optionnelle
+    onDelete: "SET NULL", // Mettre dayId à NULL lors de la suppression d'un Day
+    eager: true, // Charger automatiquement le Program associé
+  })
+  program?: Program;
 
   @CreateDateColumn()
   createdAt!: Date;
