@@ -1,10 +1,10 @@
-// src/entity/SecurityInfo.ts
 import {
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class SecurityInfo {
@@ -15,8 +15,17 @@ export class SecurityInfo {
   title!: string;
 
   @Column()
-  message!: string;
+  description!: string;
+
+  @Column()
+  urgence!: boolean;
+
+  @Column()
+  actif!: boolean;
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
