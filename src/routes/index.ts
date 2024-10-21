@@ -28,7 +28,7 @@ router.use('/days', dayRoutes);
 router.use('/concerts', concertRoutes);
 router.use('/admin', adminRoutes);
 router.use('/contents', contentRoutes);
-router.use('/security-infos', securityInfoRoutes);
+router.use('/securityInfos', securityInfoRoutes);
 
 // Route pour récupérer toutes les données
 router.get('/', async (req, res) => {
