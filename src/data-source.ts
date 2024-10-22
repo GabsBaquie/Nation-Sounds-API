@@ -2,14 +2,14 @@
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import { Concert } from './entity/Concert';
+import { Content } from './entity/Content';
+import { Day } from './entity/Day';
 import { Notification } from './entity/Notification';
 import { POI } from './entity/POI';
 import { Program } from './entity/Program';
 import { SecurityInfo } from './entity/SecurityInfo';
 import { User } from './entity/User';
-import { Content } from './entity/Content';
-import { Day } from './entity/Day';
-import { Concert } from './entity/Concert';
 
 dotenv.config();
 
@@ -32,6 +32,6 @@ export const AppDataSource = new DataSource({
     SecurityInfo,
     Content,
   ],
-  migrations: ['src/migration/*.ts'],
+  migrations: [],
   subscribers: [],
 });
