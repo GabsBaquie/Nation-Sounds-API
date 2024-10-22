@@ -23,8 +23,8 @@ export class SecurityInfo {
   @Column('boolean', { default: true })
   actif: boolean = false;
 
-  @Column('boolean', { default: true })
-  true!: boolean;
+  @Column()
+  true: boolean = false;
 
   @CreateDateColumn()
   createdAt!: Date;
