@@ -18,13 +18,10 @@ export class SecurityInfo {
   description!: string;
 
   @Column('boolean', { default: false })
-  urgence: boolean = false;
+  urgence!: boolean;
 
   @Column('boolean', { default: true })
-  actif: boolean = false;
-
-  @Column()
-  true: boolean = false;
+  actif!: boolean;
 
   @CreateDateColumn()
   createdAt!: Date;
