@@ -1,10 +1,10 @@
 // src/controllers/ProgramController.ts
 
-import { Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { Program } from "../entity/Program";
-import { validate } from "class-validator";
-import { Day } from "../entity/Day";
+import { validate } from 'class-validator';
+import { Request, Response } from 'express';
+import { AppDataSource } from '../data-source';
+import { Day } from '../entity/Day';
+import { Program } from '../entity/Program';
 
 class ProgramController {
   // GET /api/programs
@@ -12,12 +12,12 @@ class ProgramController {
     try {
       const programRepository = AppDataSource.getRepository(Program);
       const programs = await programRepository.find({
-        relations: ["day", "day.concerts"],
+        relations: ['day', 'day.concerts'],
       });
       return res.status(200).json(programs);
     } catch (error) {
-      console.error("Erreur lors de la récupération des programmes:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      console.error('Erreur lors de la récupération des programmes:', error);
+      return res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 
@@ -29,17 +29,17 @@ class ProgramController {
       const programRepository = AppDataSource.getRepository(Program);
       const program = await programRepository.findOne({
         where: { id: programId },
-        relations: ["day", "day.concerts"],
+        relations: ['day', 'day.concerts'],
       });
 
       if (!program) {
-        return res.status(404).json({ message: "Programme non trouvé" });
+        return res.status(404).json({ message: 'Programme non trouvé' });
       }
 
       return res.status(200).json(program);
     } catch (error) {
-      console.error("Erreur lors de la récupération du programme:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      console.error('Erreur lors de la récupération du programme:', error);
+      return res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 
@@ -47,15 +47,15 @@ class ProgramController {
   static async create(req: Request, res: Response) {
     try {
       const programRepository = AppDataSource.getRepository(Program);
-      const { name, description, dayId } = req.body;
+      const { title, description, dayId } = req.body;
 
       const dayRepository = AppDataSource.getRepository(Day);
       const day = await dayRepository.findOne({ where: { id: dayId } });
       if (!day) {
-        return res.status(404).json({ message: "Jour non trouvé" });
+        return res.status(404).json({ message: 'Jour non trouvé' });
       }
 
-      const program = programRepository.create({ name, description, day });
+      const program = programRepository.create({ title, description, day });
 
       const errors = await validate(program);
       if (errors.length > 0) {
@@ -65,8 +65,8 @@ class ProgramController {
       await programRepository.save(program);
       return res.status(201).json(program);
     } catch (error) {
-      console.error("Erreur lors de la création du programme:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      console.error('Erreur lors de la création du programme:', error);
+      return res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 
@@ -78,21 +78,21 @@ class ProgramController {
       const programRepository = AppDataSource.getRepository(Program);
       let program = await programRepository.findOne({
         where: { id: programId },
-        relations: ["day", "day.concerts"],
+        relations: ['day', 'day.concerts'],
       });
 
       if (!program) {
-        return res.status(404).json({ message: "Programme non trouvé" });
+        return res.status(404).json({ message: 'Programme non trouvé' });
       }
 
       const dayRepository = AppDataSource.getRepository(Day);
-      const { name, description, dayId } = req.body;
+      const { title, description, dayId } = req.body;
       const day = await dayRepository.findOne({ where: { id: dayId } });
       if (!day) {
-        return res.status(404).json({ message: "Jour non trouvé" });
+        return res.status(404).json({ message: 'Jour non trouvé' });
       }
 
-      programRepository.merge(program, { name, description, day });
+      programRepository.merge(program, { title, description, day });
 
       const errors = await validate(program);
       if (errors.length > 0) {
@@ -102,8 +102,8 @@ class ProgramController {
       const results = await programRepository.save(program);
       return res.status(200).json(results);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du programme:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      console.error('Erreur lors de la mise à jour du programme:', error);
+      return res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 
@@ -118,13 +118,13 @@ class ProgramController {
       if (result.affected === 1) {
         return res
           .status(200)
-          .json({ message: "Programme supprimé avec succès" });
+          .json({ message: 'Programme supprimé avec succès' });
       } else {
-        return res.status(404).json({ message: "Programme non trouvé" });
+        return res.status(404).json({ message: 'Programme non trouvé' });
       }
     } catch (error) {
-      console.error("Erreur lors de la suppression du programme:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      console.error('Erreur lors de la suppression du programme:', error);
+      return res.status(500).json({ message: 'Erreur serveur' });
     }
   }
 }
