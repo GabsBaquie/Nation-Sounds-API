@@ -17,7 +17,7 @@ export class Day {
   id!: number;
 
   @Column()
-  name!: string;
+  title!: string;
 
   @Column()
   date!: Date;

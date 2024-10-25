@@ -1,5 +1,5 @@
 // src/entity/POI.ts
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class POI {
@@ -7,15 +7,15 @@ export class POI {
   id!: number;
 
   @Column()
-  name!: string;
+  title!: string;
 
   @Column()
   type!: string; // e.g., 'stage', 'shop', 'restroom'
 
-  @Column("double")
+  @Column('double')
   latitude!: number;
 
-  @Column("double")
+  @Column('double')
   longitude!: number;
 
   @Column({ nullable: true })

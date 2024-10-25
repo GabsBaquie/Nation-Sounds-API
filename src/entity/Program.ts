@@ -5,8 +5,8 @@ import {
   Column,
   OneToOne,
   JoinColumn,
-} from "typeorm";
-import { Day } from "./Day";
+} from 'typeorm';
+import { Day } from './Day';
 
 @Entity()
 export class Program {
@@ -14,13 +14,13 @@ export class Program {
   id!: number;
 
   @Column()
-  name!: string;
+  title!: string;
 
   @Column()
   description!: string;
 
-  @OneToOne(() => Day, (day) => day.program, {
-    onDelete: "SET NULL", // Mettre dayId à NULL lors de la suppression d'un Day
+  @OneToOne(() => Day, day => day.program, {
+    onDelete: 'SET NULL', // Mettre dayId à NULL lors de la suppression d'un Day
     nullable: true, // Rendre la relation optionnelle
     eager: false, // Désactiver le eager loading pour éviter les relations circulaires
   })
