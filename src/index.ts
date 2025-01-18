@@ -14,7 +14,8 @@ app.use(
   cors({
     origin: [
       "https://admin-frontend-omega.vercel.app", // Remplacez par votre URL frontend
-      "http://localhost:3000", // Pour le développement local
+      "nation-sounds-api-e56de4388c86.herokuapp.com", // test heroku
+      "http://localhost:4000", // Pour le développement local
     ],
     credentials: true, // Permet l'envoi de cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Méthodes autorisées
