@@ -33,7 +33,7 @@ export class Concert {
   @Column()
   image!: string;
 
-  @ManyToMany(() => Day, (day) => day.concerts, {
+  @ManyToMany(() => Day, (day: Day): Concert[] => day.concerts, {
     cascade: false, // Désactive le cascade pour éviter les suppressions circulaires
     eager: false, // Charge les Days associés uniquement lorsque spécifié
   })
