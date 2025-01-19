@@ -22,7 +22,7 @@ export const AppDataSource = new DataSource({
   synchronize: process.env.NODE_ENV !== "production",
   logging: process.env.NODE_ENV === "development",
   ssl: {
-    rejectUnauthorized: false, // Ignore la vérification du certificat
+    rejectUnauthorized: false
   },
   entities: [
     User,
