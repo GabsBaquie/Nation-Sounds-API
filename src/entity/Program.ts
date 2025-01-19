@@ -19,7 +19,7 @@ export class Program {
   @Column()
   description!: string;
 
-  @OneToOne(() => Day, day => day.program, {
+  @OneToOne(() => Day, (day: Day) => day.program, {
     onDelete: 'SET NULL', // Mettre dayId à NULL lors de la suppression d'un Day
     nullable: true, // Rendre la relation optionnelle
     eager: false, // Désactiver le eager loading pour éviter les relations circulaires
