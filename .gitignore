@@ -1,3 +1,5 @@
 node_modules/
 .env
-dist/
+
+# Ne plus ignorer le dossier dist
+# !dist/
