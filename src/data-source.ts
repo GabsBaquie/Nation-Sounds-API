@@ -14,14 +14,10 @@ import { User } from './entity/User';
 dotenv.config();
 
 export const AppDataSource = new DataSource({
-  type: 'mysql',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  synchronize: true, // Passez à false en production
-  logging: false,
+  type: 'postgres',
+  url: process.env.DATABASE_URL, // Utilisation de l'URL de connexion fournie par Heroku
+  synchronize: process.env.NODE_ENV !== 'production',
+  logging: process.env.NODE_ENV === 'development',
   entities: [
     User,
     Program,
@@ -34,4 +30,5 @@ export const AppDataSource = new DataSource({
   ],
   migrations: [],
   subscribers: [],
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false, // Configuration SSL pour Heroku
 });
