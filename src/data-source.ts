@@ -18,6 +18,7 @@ export const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL, // Utilisation de l'URL de connexion fournie par Heroku
   synchronize: process.env.NODE_ENV !== 'production',
   logging: process.env.NODE_ENV === 'development',
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false, // SSL requis pour Heroku
   entities: [
     User,
     Program,
@@ -30,5 +31,4 @@ export const AppDataSource = new DataSource({
   ],
   migrations: [],
   subscribers: [],
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false, // Configuration SSL pour Heroku
 });
