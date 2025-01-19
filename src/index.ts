@@ -13,9 +13,10 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://admin-frontend-omega.vercel.app", // Remplacez par votre URL frontend
-      "nation-sounds-api-e56de4388c86.herokuapp.com", // test heroku
-      "http://localhost:4000", // Pour le développement local
+      "*"
+      // "https://admin-frontend-omega.vercel.app", // Remplacez par votre URL frontend
+      // "nation-sounds-api-e56de4388c86.herokuapp.com", // test heroku
+      // "http://localhost:4000", // Pour le développement local
     ],
     credentials: true, // Permet l'envoi de cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Méthodes autorisées
@@ -34,9 +35,12 @@ app.use("/api", routes);
 // Connexion à la base de données et démarrage du serveur
 AppDataSource.initialize()
   .then(() => {
+    console.log("Connexion à la base de données réussie !");
     const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
-      console.log(`Serveur démarré sur le port http://localhost:${PORT}`);
+      console.log(`Serveur démarré sur http://localhost:${PORT}`);
     });
   })
-  .catch((error) => console.log(error));
+  .catch((error) => {
+    console.error("Erreur lors de la connexion à la base de données :", error);
+  });
