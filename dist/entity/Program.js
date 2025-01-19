@@ -28,7 +28,7 @@ __decorate([
     __metadata("design:type", String)
 ], Program.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => Day_1.Day, day => day.program, {
+    (0, typeorm_1.OneToOne)(() => Day_1.Day, (day) => day.program, {
         onDelete: 'SET NULL',
         nullable: true,
         eager: false, // Désactiver le eager loading pour éviter les relations circulaires
