@@ -8,6 +8,11 @@ const router = Router();
 /**
  * @swagger
  * /api/auth/login:
+ * 
+ * parameters:
+ *  email: ""
+ *  password: ""
+ * 
  *   post:
  *     summary: Connecter un utilisateur
  */
