@@ -16,8 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "typeorm": "^0.3.20",
-    "typescript": "^4.9.5",
     "@types/node": "^22.5.5",
     "bcrypt": "^5.1.1",
     "class-validator": "^0.14.1",
@@ -32,16 +30,18 @@
     "nodemailer": "^6.9.15",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20",
+    "typescript": "^4.9.5",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "@types/cookie-parser": "^1.4.7",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.5.5",
-    "@types/nodemailer": "^6.4.16",
+    "@types/nodemailer": "^6.4.17",
     "@types/uuid": "^10.0.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0"
