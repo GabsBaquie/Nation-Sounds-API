@@ -2,30 +2,15 @@ import request from 'supertest';
 import { AppDataSource } from '../../data-source';
 import app from '../../index';
 import { SecurityInfo } from '../../entity/SecurityInfo';
+import { initializeTestDB, closeTestDB } from '../../utils/testSetup';
 
-beforeAll(async () => {
-  await AppDataSource.initialize();
-
-  if (process.env.NODE_ENV === 'test') {
-    await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 0;'); // Désactiver les clés étrangères
-    const entities = AppDataSource.entityMetadatas;
-
-    // Supprimer les données des tables
-    for (const entity of entities) {
-      const repository = AppDataSource.getRepository(entity.name);
-      await repository.query(`DROP TABLE IF EXISTS ${entity.tableName};`);
-    }
-
-    await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 1;'); // Réactiver les clés étrangères
-    await AppDataSource.synchronize(); // Recréer les tables
-  }
-});
-
-afterAll(async () => {
-  if (AppDataSource.isInitialized) {
-    await AppDataSource.destroy(); // Fermer la connexion après les tests
-  }
-});
+    beforeAll(async () => {
+      await initializeTestDB();
+    });
+  
+    afterAll(async () => {
+      await closeTestDB();
+    });
 
 describe('SecurityInfo API', () => {
   it('créer une nouvelle information de sécurité', async () => {
@@ -46,6 +31,14 @@ describe('SecurityInfo API', () => {
     const res = await request(app).get('/api/securityInfos');
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
+  });
+
+    it('devrait retourner 404 pour une information de sécurité inexistante', async () => {
+    const res = await request(app)
+      .get('/api/securityInfos/9999') // ID inexistant
+
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Information de sécurité non trouvée');
   });
 
   it('récupérer une information de sécurité par ID', async () => {
@@ -81,6 +74,21 @@ describe('SecurityInfo API', () => {
     expect(res.body.title).toBe('Info Mise à Jour');
   });
 
+
+  it('ne devrait pas mettre à jour une information de sécurité inexistante', async () => {
+    const res = await request(app)
+      .put('/api/securityInfos/9999')
+      .send({
+        title: 'Non Existant',
+        description: 'Description',
+        urgence: true,
+        actif: true,
+      });
+
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Information de sécurité non trouvée');
+  });
+
   it('supprimer une information de sécurité', async () => {
     const securityInfo = await AppDataSource.getRepository(SecurityInfo).save({
       title: 'Info à Supprimer',
@@ -94,5 +102,13 @@ describe('SecurityInfo API', () => {
     expect(res.body.message).toBe(
       'Information de sécurité supprimée avec succès'
     );
+  });
+
+  it('devrait retourner 404 pour une information de sécurité inexistante', async () => {
+    const res = await request(app)
+      .get('/api/securityInfos/9999') // ID inexistant
+
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Information de sécurité non trouvée');
   });
 });
