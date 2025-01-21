@@ -17,7 +17,7 @@ const isTest = process.env.NODE_ENV === 'test';
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  url: isTest ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL,
+  url: isTest ? process.env.TEST_JAWSDB_MARIA_URL : process.env.JAWSDB_MARIA_URL,
   dropSchema: isTest,
   synchronize: process.env.NODE_ENV !== "production",
   logging: process.env.NODE_ENV === "development",
