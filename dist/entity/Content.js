@@ -14,6 +14,7 @@ exports.Content = void 0;
 const typeorm_1 = require("typeorm");
 let Content = class Content {
 };
+exports.Content = Content;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -38,7 +39,6 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Content.prototype, "updatedAt", void 0);
-Content = __decorate([
+exports.Content = Content = __decorate([
     (0, typeorm_1.Entity)()
 ], Content);
-exports.Content = Content;

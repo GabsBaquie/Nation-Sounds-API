@@ -13,9 +13,12 @@ import { User } from './entity/User';
 
 dotenv.config();
 
+const isTest = process.env.NODE_ENV === 'test';
+
 export const AppDataSource = new DataSource({
-  type: "postgres",
-  url: process.env.DATABASE_URL,
+  type: "mysql",
+  url: isTest ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL,
+  dropSchema: isTest,
   synchronize: process.env.NODE_ENV !== "production",
   logging: process.env.NODE_ENV === "development",
   ssl: {

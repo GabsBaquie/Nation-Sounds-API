@@ -15,6 +15,7 @@ const typeorm_1 = require("typeorm");
 const Day_1 = require("./Day");
 let Program = class Program {
 };
+exports.Program = Program;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -29,14 +30,13 @@ __decorate([
 ], Program.prototype, "description", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => Day_1.Day, (day) => day.program, {
-        onDelete: 'SET NULL',
-        nullable: true,
+        onDelete: 'SET NULL', // Mettre dayId à NULL lors de la suppression d'un Day
+        nullable: true, // Rendre la relation optionnelle
         eager: false, // Désactiver le eager loading pour éviter les relations circulaires
     }),
     (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", Day_1.Day)
 ], Program.prototype, "day", void 0);
-Program = __decorate([
+exports.Program = Program = __decorate([
     (0, typeorm_1.Entity)()
 ], Program);
-exports.Program = Program;

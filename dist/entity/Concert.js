@@ -15,6 +15,7 @@ const typeorm_1 = require("typeorm");
 const Day_1 = require("./Day");
 let Concert = class Concert {
 };
+exports.Concert = Concert;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -45,7 +46,7 @@ __decorate([
 ], Concert.prototype, "image", void 0);
 __decorate([
     (0, typeorm_1.ManyToMany)(() => Day_1.Day, (day) => day.concerts, {
-        cascade: false,
+        cascade: false, // Désactive le cascade pour éviter les suppressions circulaires
         eager: false, // Charge les Days associés uniquement lorsque spécifié
     }),
     (0, typeorm_1.JoinTable)(),
@@ -59,7 +60,6 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Concert.prototype, "updatedAt", void 0);
-Concert = __decorate([
+exports.Concert = Concert = __decorate([
     (0, typeorm_1.Entity)()
 ], Concert);
-exports.Concert = Concert;

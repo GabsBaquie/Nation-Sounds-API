@@ -42,3 +42,5 @@ AppDataSource.initialize()
   .catch((error: Error) => {
     console.error("Erreur lors de la connexion à la base de données :", error);
   });
+
+  export default app;

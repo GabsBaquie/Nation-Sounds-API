@@ -14,6 +14,7 @@ exports.POI = void 0;
 const typeorm_1 = require("typeorm");
 let POI = class POI {
 };
+exports.POI = POI;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -38,7 +39,6 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], POI.prototype, "description", void 0);
-POI = __decorate([
+exports.POI = POI = __decorate([
     (0, typeorm_1.Entity)()
 ], POI);
-exports.POI = POI;

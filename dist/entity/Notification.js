@@ -14,6 +14,7 @@ exports.Notification = void 0;
 const typeorm_1 = require("typeorm");
 let Notification = class Notification {
 };
+exports.Notification = Notification;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -34,7 +35,6 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Notification.prototype, "createdAt", void 0);
-Notification = __decorate([
+exports.Notification = Notification = __decorate([
     (0, typeorm_1.Entity)()
 ], Notification);
-exports.Notification = Notification;
