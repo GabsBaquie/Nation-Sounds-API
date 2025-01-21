@@ -1,5 +1,5 @@
 // src/entity/POI.ts
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
 @Entity()
 export class POI {
@@ -20,4 +20,10 @@ export class POI {
 
   @Column({ nullable: true })
   description!: string;
+
+  @CreateDateColumn()
+    createdAt!: Date;
+  
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

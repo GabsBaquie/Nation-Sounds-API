@@ -14,6 +14,14 @@ router.get("/", PoiController.getAll);
 
 /**
  * @swagger
+ * /api/pois:
+ *   post:
+ *     summary: Créer un point d'intérêt
+ */
+router.post("/", PoiController.create);
+
+/**
+ * @swagger
  * /api/pois/{id}:
  *   get:
  *     summary: Obtenir un point d'intérêt par ID

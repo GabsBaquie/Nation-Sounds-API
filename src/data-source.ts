@@ -36,6 +36,6 @@ export const AppDataSource = new DataSource({
     SecurityInfo,
     Content,
   ],
-  migrations: [],
+  migrations: ['src/migration/**/*.ts'],
   subscribers: [],
 });
