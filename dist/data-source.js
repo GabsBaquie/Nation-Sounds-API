@@ -69,6 +69,6 @@ exports.AppDataSource = new typeorm_1.DataSource({
         SecurityInfo_1.SecurityInfo,
         Content_1.Content,
     ],
-    migrations: [],
+    migrations: ['src/migration/**/*.ts'],
     subscribers: [],
 });
