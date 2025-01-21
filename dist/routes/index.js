@@ -31,14 +31,15 @@ const notificationRoutes_1 = __importDefault(require("./notificationRoutes"));
 const poiRoutes_1 = __importDefault(require("./poiRoutes"));
 const programRoutes_1 = __importDefault(require("./programRoutes"));
 const securityInfoRoutes_1 = __importDefault(require("./securityInfoRoutes"));
+const middleware_1 = require("../middleware");
 const router = (0, express_1.Router)();
-router.use('/auth', authRoutes_1.default);
+router.use('/auth', authRoutes_1.default, middleware_1.authMiddleware);
 router.use('/notifications', notificationRoutes_1.default);
 router.use('/pois', poiRoutes_1.default);
 router.use('/programs', programRoutes_1.default);
 router.use('/days', dayRoutes_1.default);
 router.use('/concerts', concertRoutes_1.default);
-router.use('/admin', adminRoutes_1.default);
+router.use('/admin', adminRoutes_1.default, middleware_1.authMiddleware, middleware_1.adminMiddleware);
 router.use('/contents', contentRoutes_1.default);
 router.use('/securityInfos', securityInfoRoutes_1.default);
 // Route pour récupérer toutes les données

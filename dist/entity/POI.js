@@ -28,17 +28,25 @@ __decorate([
     __metadata("design:type", String)
 ], POI.prototype, "type", void 0);
 __decorate([
-    (0, typeorm_1.Column)('double precision'),
+    (0, typeorm_1.Column)('double'),
     __metadata("design:type", Number)
 ], POI.prototype, "latitude", void 0);
 __decorate([
-    (0, typeorm_1.Column)('double precision'),
+    (0, typeorm_1.Column)('double'),
     __metadata("design:type", Number)
 ], POI.prototype, "longitude", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], POI.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], POI.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], POI.prototype, "updatedAt", void 0);
 exports.POI = POI = __decorate([
     (0, typeorm_1.Entity)()
 ], POI);

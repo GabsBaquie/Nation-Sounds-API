@@ -29,6 +29,26 @@ class PoiController {
       res.status(404).json({ message: "Point d’intérêt non trouvé" });
     }
   }
+
+  static async create(req: Request, res: Response) {
+    const poiRepository = AppDataSource.getRepository(POI);
+    const { name, type, latitude, longitude, description } = req.body;
+
+    const poi = poiRepository.create({
+      title: name,
+      type,
+      latitude,
+      longitude,
+      description
+    });
+
+    try {
+      await poiRepository.save(poi);
+      res.status(201).json(poi);
+    } catch (error) {
+      res.status(400).json({ message: "Erreur lors de la création du point d’intérêt" });
+    }
+  }
 }
 
 export default PoiController;

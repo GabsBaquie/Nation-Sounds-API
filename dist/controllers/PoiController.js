@@ -39,5 +39,25 @@ class PoiController {
             }
         });
     }
+    static create(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const poiRepository = data_source_1.AppDataSource.getRepository(POI_1.POI);
+            const { name, type, latitude, longitude, description } = req.body;
+            const poi = poiRepository.create({
+                title: name,
+                type,
+                latitude,
+                longitude,
+                description
+            });
+            try {
+                yield poiRepository.save(poi);
+                res.status(201).json(poi);
+            }
+            catch (error) {
+                res.status(400).json({ message: "Erreur lors de la création du point d’intérêt" });
+            }
+        });
+    }
 }
 exports.default = PoiController;

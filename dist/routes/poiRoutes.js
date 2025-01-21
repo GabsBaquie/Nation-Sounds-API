@@ -16,6 +16,13 @@ const router = (0, express_1.Router)();
 router.get("/", PoiController_1.default.getAll);
 /**
  * @swagger
+ * /api/pois:
+ *   post:
+ *     summary: Créer un point d'intérêt
+ */
+router.post("/", PoiController_1.default.create);
+/**
+ * @swagger
  * /api/pois/{id}:
  *   get:
  *     summary: Obtenir un point d'intérêt par ID

@@ -28,15 +28,18 @@ app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 // Routes
 app.use("/api", routes_1.default);
-// Connexion à la base de données et démarrage du serveur
-data_source_1.AppDataSource.initialize()
-    .then(() => {
-    console.log("Connexion à la base de données réussie !");
-    const PORT = process.env.PORT || 4000;
-    app.listen(PORT, () => {
-        console.log(`Serveur démarré sur http://localhost:${PORT}`);
+// Connexion à la base de données et lancement du serveur uniquement en dehors de NODE_ENV=test
+if (process.env.NODE_ENV !== 'test') {
+    data_source_1.AppDataSource.initialize()
+        .then(() => {
+        console.log('Connexion à la base de données réussie !');
+        const PORT = process.env.PORT || 4000;
+        app.listen(PORT, () => {
+            console.log(`Serveur démarré sur http://localhost:${PORT}`);
+        });
+    })
+        .catch((error) => {
+        console.error('Erreur lors de la connexion à la base de données :', error);
     });
-})
-    .catch((error) => {
-    console.error("Erreur lors de la connexion à la base de données :", error);
-});
+}
+exports.default = app;
