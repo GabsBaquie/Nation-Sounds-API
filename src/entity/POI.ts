@@ -12,10 +12,10 @@ export class POI {
   @Column()
   type!: string; // e.g., 'stage', 'shop', 'restroom'
 
-  @Column('double precision')
+  @Column('double')
   latitude!: number;
 
-  @Column('double precision')
+  @Column('double')
   longitude!: number;
 
   @Column({ nullable: true })

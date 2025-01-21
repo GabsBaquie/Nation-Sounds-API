@@ -13,6 +13,7 @@ exports.SecurityInfo = void 0;
 const typeorm_1 = require("typeorm");
 let SecurityInfo = class SecurityInfo {
 };
+exports.SecurityInfo = SecurityInfo;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -41,7 +42,6 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], SecurityInfo.prototype, "updatedAt", void 0);
-SecurityInfo = __decorate([
+exports.SecurityInfo = SecurityInfo = __decorate([
     (0, typeorm_1.Entity)()
 ], SecurityInfo);
-exports.SecurityInfo = SecurityInfo;

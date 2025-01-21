@@ -14,6 +14,7 @@ const class_validator_1 = require("class-validator");
 const typeorm_1 = require("typeorm");
 let User = class User {
 };
+exports.User = User;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -58,8 +59,7 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], User.prototype, "created_at", void 0);
-User = __decorate([
+exports.User = User = __decorate([
     (0, typeorm_1.Entity)(),
     (0, typeorm_1.Unique)(["email", "username"])
 ], User);
-exports.User = User;

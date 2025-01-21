@@ -16,6 +16,7 @@ const Concert_1 = require("./Concert");
 const Program_1 = require("./Program");
 let Day = class Day {
 };
+exports.Day = Day;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
@@ -30,15 +31,15 @@ __decorate([
 ], Day.prototype, "date", void 0);
 __decorate([
     (0, typeorm_1.ManyToMany)(() => Concert_1.Concert, (concert) => concert.days, {
-        cascade: false,
+        cascade: false, // Désactive le cascade pour éviter les suppressions circulaires
         eager: true, // Charge automatiquement les concerts associés lors de la récupération de Day
     }),
     __metadata("design:type", Array)
 ], Day.prototype, "concerts", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => Program_1.Program, (program) => program.day, {
-        nullable: true,
-        onDelete: "SET NULL",
+        nullable: true, // Rendre la relation optionnelle
+        onDelete: "SET NULL", // Mettre dayId à NULL lors de la suppression d'un Day
         eager: true, // Charger automatiquement le Program associé
     }),
     __metadata("design:type", Program_1.Program)
@@ -51,7 +52,6 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Day.prototype, "updatedAt", void 0);
-Day = __decorate([
+exports.Day = Day = __decorate([
     (0, typeorm_1.Entity)()
 ], Day);
-exports.Day = Day;
