@@ -17,16 +17,17 @@ import notificationRoutes from './notificationRoutes';
 import poiRoutes from './poiRoutes';
 import programRoutes from './programRoutes';
 import securityInfoRoutes from './securityInfoRoutes';
+import { authMiddleware, adminMiddleware } from '../middleware';
 
 const router = Router();
 
-router.use('/auth', authRoutes);
+router.use('/auth', authRoutes, authMiddleware);
 router.use('/notifications', notificationRoutes);
 router.use('/pois', poiRoutes);
 router.use('/programs', programRoutes);
 router.use('/days', dayRoutes);
 router.use('/concerts', concertRoutes);
-router.use('/admin', adminRoutes);
+router.use('/admin', adminRoutes, authMiddleware, adminMiddleware);
 router.use('/contents', contentRoutes);
 router.use('/securityInfos', securityInfoRoutes);
 

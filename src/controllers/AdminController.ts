@@ -116,6 +116,14 @@ class AdminController {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
+      // Si l'utilisateur à supprimer est un admin, vérifier qu'il reste au moins un autre admin
+      if (user.role === 'admin') {
+        const adminCount = await userRepository.count({ where: { role: 'admin' } });
+        if (adminCount <= 1) {
+          return res.status(400).json({ message: "Impossible de supprimer le dernier administrateur" });
+        }
+      }
+
       await userRepository.remove(user);
 
       return res
