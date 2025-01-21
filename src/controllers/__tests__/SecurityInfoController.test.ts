@@ -1,4 +1,3 @@
-// src/controllers/__tests__/SecurityInfoController.test.ts
 import request from 'supertest';
 import { AppDataSource } from '../../data-source';
 import app from '../../index';
@@ -6,15 +5,30 @@ import { SecurityInfo } from '../../entity/SecurityInfo';
 
 beforeAll(async () => {
   await AppDataSource.initialize();
-  // La propriété dropSchema supprime le schéma si NODE_ENV=test
+
+  if (process.env.NODE_ENV === 'test') {
+    await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 0;'); // Désactiver les clés étrangères
+    const entities = AppDataSource.entityMetadatas;
+
+    // Supprimer les données des tables
+    for (const entity of entities) {
+      const repository = AppDataSource.getRepository(entity.name);
+      await repository.query(`DROP TABLE IF EXISTS ${entity.tableName};`);
+    }
+
+    await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 1;'); // Réactiver les clés étrangères
+    await AppDataSource.synchronize(); // Recréer les tables
+  }
 });
 
 afterAll(async () => {
-  await AppDataSource.destroy();
+  if (AppDataSource.isInitialized) {
+    await AppDataSource.destroy(); // Fermer la connexion après les tests
+  }
 });
 
 describe('SecurityInfo API', () => {
-  it('devrait créer une nouvelle information de sécurité', async () => {
+  it('créer une nouvelle information de sécurité', async () => {
     const res = await request(app)
       .post('/api/securityInfos')
       .send({
@@ -28,13 +42,13 @@ describe('SecurityInfo API', () => {
     expect(res.body.title).toBe('Test Sécurité');
   });
 
-  it('devrait récupérer toutes les informations de sécurité', async () => {
+  it('récupérer toutes les informations de sécurité', async () => {
     const res = await request(app).get('/api/securityInfos');
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
   });
 
-  it('devrait récupérer une information de sécurité par ID', async () => {
+  it('récupérer une information de sécurité par ID', async () => {
     const securityInfo = await AppDataSource.getRepository(SecurityInfo).save({
       title: 'Info Par ID',
       description: 'Description par ID',
@@ -47,7 +61,7 @@ describe('SecurityInfo API', () => {
     expect(res.body.title).toBe('Info Par ID');
   });
 
-  it('devrait mettre à jour une information de sécurité', async () => {
+  it('mettre à jour une information de sécurité', async () => {
     const securityInfo = await AppDataSource.getRepository(SecurityInfo).save({
       title: 'Info à Mettre à Jour',
       description: 'Description initiale',
@@ -67,7 +81,7 @@ describe('SecurityInfo API', () => {
     expect(res.body.title).toBe('Info Mise à Jour');
   });
 
-  it('devrait supprimer une information de sécurité', async () => {
+  it('supprimer une information de sécurité', async () => {
     const securityInfo = await AppDataSource.getRepository(SecurityInfo).save({
       title: 'Info à Supprimer',
       description: 'Description à supprimer',
@@ -77,6 +91,8 @@ describe('SecurityInfo API', () => {
 
     const res = await request(app).delete(`/api/securityInfos/${securityInfo.id}`);
     expect(res.status).toBe(200);
-    expect(res.body.message).toBe('Information de sécurité supprimée avec succès');
+    expect(res.body.message).toBe(
+      'Information de sécurité supprimée avec succès'
+    );
   });
 });

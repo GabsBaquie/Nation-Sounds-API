@@ -18,12 +18,14 @@ const isTest = process.env.NODE_ENV === 'test';
 export const AppDataSource = new DataSource({
   type: "mysql",
   url: isTest ? process.env.TEST_JAWSDB_MARIA_URL : process.env.JAWSDB_MARIA_URL,
-  dropSchema: isTest,
-  synchronize: process.env.NODE_ENV !== "production",
+  synchronize: isTest, // Désactivé pour éviter des recréations non contrôlées
+  dropSchema: false, // Désactivé pour éviter des suppressions involontaires
   logging: process.env.NODE_ENV === "development",
-  ssl: {
-    rejectUnauthorized: false
-  },
+  ssl: isTest
+    ? false
+    : {
+        rejectUnauthorized: false,
+      },
   entities: [
     User,
     Program,
