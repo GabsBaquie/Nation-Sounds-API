@@ -16,7 +16,7 @@ export class Concert {
   id!: number;
 
   @Column()
-  name!: string;
+  title!: string;
 
   @Column("text")
   description!: string;
