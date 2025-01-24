@@ -16,7 +16,7 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: [
         "https://admin-frontend-omega.vercel.app", // Frontend de production
-        "http://localhost:3001", // frontend de développement
+        "http://localhost:3000", // frontend de développement
     ],
     credentials: true, // Permet l'envoi de cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Méthodes autorisées
