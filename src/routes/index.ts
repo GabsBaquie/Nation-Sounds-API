@@ -4,7 +4,6 @@ import { AppDataSource } from '../data-source';
 import { Concert } from '../entity/Concert';
 import { Content } from '../entity/Content';
 import { Day } from '../entity/Day';
-import { Notification } from '../entity/Notification';
 import { POI } from '../entity/POI';
 import { Program } from '../entity/Program';
 import { SecurityInfo } from '../entity/SecurityInfo';
@@ -13,7 +12,6 @@ import authRoutes from './authRoutes';
 import concertRoutes from './concertRoutes';
 import contentRoutes from './contentRoutes';
 import dayRoutes from './dayRoutes';
-import notificationRoutes from './notificationRoutes';
 import poiRoutes from './poiRoutes';
 import programRoutes from './programRoutes';
 import securityInfoRoutes from './securityInfoRoutes';
@@ -22,7 +20,6 @@ import { authMiddleware, adminMiddleware } from '../middleware';
 const router = Router();
 
 router.use('/auth', authRoutes, authMiddleware);
-router.use('/notifications', notificationRoutes);
 router.use('/pois', poiRoutes);
 router.use('/programs', programRoutes);
 router.use('/days', dayRoutes);
@@ -45,7 +42,6 @@ router.get('/', async (req, res) => {
         relations: ['days'],
       }),
       pois: await AppDataSource.getRepository(POI).find(),
-      notifications: await AppDataSource.getRepository(Notification).find(),
       contents: await AppDataSource.getRepository(Content).find(),
       securityInfos: await AppDataSource.getRepository(SecurityInfo).find(),
     };
