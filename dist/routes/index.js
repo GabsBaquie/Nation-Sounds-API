@@ -18,7 +18,6 @@ const data_source_1 = require("../data-source");
 const Concert_1 = require("../entity/Concert");
 const Content_1 = require("../entity/Content");
 const Day_1 = require("../entity/Day");
-const Notification_1 = require("../entity/Notification");
 const POI_1 = require("../entity/POI");
 const Program_1 = require("../entity/Program");
 const SecurityInfo_1 = require("../entity/SecurityInfo");
@@ -27,14 +26,12 @@ const authRoutes_1 = __importDefault(require("./authRoutes"));
 const concertRoutes_1 = __importDefault(require("./concertRoutes"));
 const contentRoutes_1 = __importDefault(require("./contentRoutes"));
 const dayRoutes_1 = __importDefault(require("./dayRoutes"));
-const notificationRoutes_1 = __importDefault(require("./notificationRoutes"));
 const poiRoutes_1 = __importDefault(require("./poiRoutes"));
 const programRoutes_1 = __importDefault(require("./programRoutes"));
 const securityInfoRoutes_1 = __importDefault(require("./securityInfoRoutes"));
 const middleware_1 = require("../middleware");
 const router = (0, express_1.Router)();
 router.use('/auth', authRoutes_1.default, middleware_1.authMiddleware);
-router.use('/notifications', notificationRoutes_1.default);
 router.use('/pois', poiRoutes_1.default);
 router.use('/programs', programRoutes_1.default);
 router.use('/days', dayRoutes_1.default);
@@ -56,7 +53,6 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 relations: ['days'],
             }),
             pois: yield data_source_1.AppDataSource.getRepository(POI_1.POI).find(),
-            notifications: yield data_source_1.AppDataSource.getRepository(Notification_1.Notification).find(),
             contents: yield data_source_1.AppDataSource.getRepository(Content_1.Content).find(),
             securityInfos: yield data_source_1.AppDataSource.getRepository(SecurityInfo_1.SecurityInfo).find(),
         };
