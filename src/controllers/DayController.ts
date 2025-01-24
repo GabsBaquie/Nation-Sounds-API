@@ -11,7 +11,7 @@ class DayController {
     try {
       const dayRepository = AppDataSource.getRepository(Day);
       const days = await dayRepository.find({
-        relations: ['program', 'concerts'],
+        relations: ['concerts'],
       });
       return res.status(200).json(days);
     } catch (error) {
@@ -28,7 +28,7 @@ class DayController {
       const dayRepository = AppDataSource.getRepository(Day);
       const day = await dayRepository.findOne({
         where: { id: dayId },
-        relations: ['program', 'concerts'],
+        relations: ['concerts'],
       });
 
       if (!day) {
@@ -46,9 +46,9 @@ class DayController {
   static async create(req: Request, res: Response) {
     try {
       const dayRepository = AppDataSource.getRepository(Day);
-      const { title, date, program, concerts } = req.body;
+      const { title, date, concerts } = req.body;
 
-      const day = dayRepository.create({ title, date, program, concerts });
+      const day = dayRepository.create({ title, date, concerts });
 
       const errors = await validate(day);
       if (errors.length > 0) {
@@ -71,7 +71,7 @@ class DayController {
       const dayRepository = AppDataSource.getRepository(Day);
       let day = await dayRepository.findOne({
         where: { id: dayId },
-        relations: ['program', 'concerts'],
+        relations: ['concerts'],
       });
 
       if (!day) {

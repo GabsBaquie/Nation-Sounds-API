@@ -3,10 +3,8 @@ import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { Concert } from './entity/Concert';
-import { Content } from './entity/Content';
 import { Day } from './entity/Day';
 import { POI } from './entity/POI';
-import { Program } from './entity/Program';
 import { SecurityInfo } from './entity/SecurityInfo';
 import { User } from './entity/User';
 
@@ -27,12 +25,10 @@ export const AppDataSource = new DataSource({
       },
   entities: [
     User,
-    Program,
     Day,
     Concert,
     POI,
     SecurityInfo,
-    Content,
   ],
   migrations: ['src/migration/**/*.ts'],
   subscribers: [],

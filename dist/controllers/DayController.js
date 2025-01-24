@@ -20,7 +20,7 @@ class DayController {
             try {
                 const dayRepository = data_source_1.AppDataSource.getRepository(Day_1.Day);
                 const days = yield dayRepository.find({
-                    relations: ['program', 'concerts'],
+                    relations: ['concerts'],
                 });
                 return res.status(200).json(days);
             }
@@ -38,7 +38,7 @@ class DayController {
                 const dayRepository = data_source_1.AppDataSource.getRepository(Day_1.Day);
                 const day = yield dayRepository.findOne({
                     where: { id: dayId },
-                    relations: ['program', 'concerts'],
+                    relations: ['concerts'],
                 });
                 if (!day) {
                     return res.status(404).json({ message: 'Jour non trouvé' });
@@ -56,8 +56,8 @@ class DayController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const dayRepository = data_source_1.AppDataSource.getRepository(Day_1.Day);
-                const { title, date, program, concerts } = req.body;
-                const day = dayRepository.create({ title, date, program, concerts });
+                const { title, date, concerts } = req.body;
+                const day = dayRepository.create({ title, date, concerts });
                 const errors = yield (0, class_validator_1.validate)(day);
                 if (errors.length > 0) {
                     return res.status(400).json(errors);
@@ -79,7 +79,7 @@ class DayController {
                 const dayRepository = data_source_1.AppDataSource.getRepository(Day_1.Day);
                 let day = yield dayRepository.findOne({
                     where: { id: dayId },
-                    relations: ['program', 'concerts'],
+                    relations: ['concerts'],
                 });
                 if (!day) {
                     return res.status(404).json({ message: 'Jour non trouvé' });

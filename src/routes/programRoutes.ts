@@ -21,28 +21,5 @@ router.get("/", ProgramController.getAll);
  */
 router.get("/:id", ProgramController.getById);
 
-/**
- * @swagger
- * /api/programs:
- *   post:
- *     summary: Créer un nouveau programme
- */
-router.post("/", [checkJwt], ProgramController.create);
-
-/**
- * @swagger
- * /api/programs/{id}:
- *   put:
- *     summary: Mettre à jour un programme
- */
-router.put("/:id", [checkJwt], ProgramController.update);
-
-/**
- * @swagger
- * /api/programs/{id}:
- *   delete:
- *     summary: Supprimer un programme
- */
-router.delete("/:id", [checkJwt], ProgramController.delete);
 
 export default router;

@@ -13,7 +13,6 @@ exports.Day = void 0;
 // src/entity/Day.ts
 const typeorm_1 = require("typeorm");
 const Concert_1 = require("./Concert");
-const Program_1 = require("./Program");
 let Day = class Day {
 };
 exports.Day = Day;
@@ -36,14 +35,6 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], Day.prototype, "concerts", void 0);
-__decorate([
-    (0, typeorm_1.OneToOne)(() => Program_1.Program, (program) => program.day, {
-        nullable: true, // Rendre la relation optionnelle
-        onDelete: "SET NULL", // Mettre dayId à NULL lors de la suppression d'un Day
-        eager: true, // Charger automatiquement le Program associé
-    }),
-    __metadata("design:type", Program_1.Program)
-], Day.prototype, "program", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
