@@ -143,20 +143,46 @@ class DayController {
     // DELETE /api/days/:id
     static delete(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const dayId = parseInt(req.params.id);
+            const dayId = parseInt(req.params.id, 10);
+            if (isNaN(dayId)) {
+                return res.status(400).json({ message: "ID de jour invalide" });
+            }
+            const queryRunner = data_source_1.AppDataSource.createQueryRunner();
+            yield queryRunner.connect();
+            yield queryRunner.startTransaction();
             try {
-                const dayRepository = data_source_1.AppDataSource.getRepository(Day_1.Day);
-                const result = yield dayRepository.delete(dayId);
-                if (result.affected === 1) {
-                    return res.status(200).json({ message: 'Jour supprimé avec succès' });
+                const dayRepository = queryRunner.manager.getRepository(Day_1.Day);
+                const concertRepository = queryRunner.manager.getRepository(Concert_1.Concert);
+                // Récupérer le Day avec ses concerts
+                const day = yield dayRepository.findOne({
+                    where: { id: dayId },
+                    relations: ["concerts"],
+                });
+                if (!day) {
+                    yield queryRunner.rollbackTransaction();
+                    return res.status(404).json({ message: "Jour non trouvé" });
+                }
+                // Détacher les concerts associés
+                day.concerts = [];
+                yield dayRepository.save(day);
+                // Maintenant, supprimer le Day
+                const deleteResult = yield dayRepository.delete(dayId);
+                if (deleteResult.affected === 1) {
+                    yield queryRunner.commitTransaction();
+                    return res.status(200).json({ message: "Jour supprimé avec succès" });
                 }
                 else {
-                    return res.status(404).json({ message: 'Jour non trouvé' });
+                    yield queryRunner.rollbackTransaction();
+                    return res.status(404).json({ message: "Jour non trouvé" });
                 }
             }
             catch (error) {
-                console.error('Erreur lors de la suppression du jour:', error);
-                return res.status(500).json({ message: 'Erreur serveur' });
+                yield queryRunner.rollbackTransaction();
+                console.error("Erreur lors de la suppression du jour:", error);
+                return res.status(500).json({ message: "Erreur serveur" });
+            }
+            finally {
+                yield queryRunner.release();
             }
         });
     }

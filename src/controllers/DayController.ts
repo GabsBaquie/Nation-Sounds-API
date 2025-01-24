@@ -146,20 +146,52 @@ class DayController {
 
   // DELETE /api/days/:id
   static async delete(req: Request, res: Response) {
-    const dayId = parseInt(req.params.id);
+    const dayId = parseInt(req.params.id, 10);
+
+    if (isNaN(dayId)) {
+      return res.status(400).json({ message: "ID de jour invalide" });
+    }
+
+    const queryRunner = AppDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      const dayRepository = AppDataSource.getRepository(Day);
-      const result = await dayRepository.delete(dayId);
+      const dayRepository = queryRunner.manager.getRepository(Day);
+      const concertRepository = queryRunner.manager.getRepository(Concert);
 
-      if (result.affected === 1) {
-        return res.status(200).json({ message: 'Jour supprimé avec succès' });
+      // Récupérer le Day avec ses concerts
+      const day = await dayRepository.findOne({
+        where: { id: dayId },
+        relations: ["concerts"],
+      });
+
+      if (!day) {
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({ message: "Jour non trouvé" });
+      }
+
+      // Détacher les concerts associés
+      day.concerts = [];
+      await dayRepository.save(day);
+
+      // Maintenant, supprimer le Day
+      const deleteResult = await dayRepository.delete(dayId);
+
+      if (deleteResult.affected === 1) {
+        await queryRunner.commitTransaction();
+        return res.status(200).json({ message: "Jour supprimé avec succès" });
       } else {
-        return res.status(404).json({ message: 'Jour non trouvé' });
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({ message: "Jour non trouvé" });
       }
     } catch (error) {
-      console.error('Erreur lors de la suppression du jour:', error);
-      return res.status(500).json({ message: 'Erreur serveur' });
+      await queryRunner.rollbackTransaction();
+      console.error("Erreur lors de la suppression du jour:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    } finally {
+      await queryRunner.release();
     }
   }
 
