@@ -23,7 +23,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Concert.prototype, "name", void 0);
+], Concert.prototype, "title", void 0);
 __decorate([
     (0, typeorm_1.Column)("text"),
     __metadata("design:type", String)
