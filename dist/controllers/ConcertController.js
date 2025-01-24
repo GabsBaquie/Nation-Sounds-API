@@ -54,9 +54,9 @@ class ConcertController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const concertRepository = data_source_1.AppDataSource.getRepository(Concert_1.Concert);
-                const { name, description, performer, time, location, image, days } = req.body;
+                const { title, description, performer, time, location, image, days } = req.body;
                 const concert = concertRepository.create({
-                    name,
+                    title,
                     description,
                     performer,
                     time,
