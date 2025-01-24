@@ -44,11 +44,11 @@ class ConcertController {
   static async create(req: Request, res: Response) {
     try {
       const concertRepository = AppDataSource.getRepository(Concert);
-      const { name, description, performer, time, location, image, days } =
+      const { title, description, performer, time, location, image, days } =
         req.body;
 
       const concert = concertRepository.create({
-        name,
+        title,
         description,
         performer,
         time,
