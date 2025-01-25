@@ -59,10 +59,6 @@ class DayController {
                 const dayRepository = data_source_1.AppDataSource.getRepository(Day_1.Day);
                 const concertRepository = data_source_1.AppDataSource.getRepository(Concert_1.Concert);
                 const { title, date, concertIds } = req.body; // Utilisez 'concertIds' pour recevoir les IDs des concerts
-                // Vérifier que 'concertIds' est un tableau valide
-                if (!Array.isArray(concertIds)) {
-                    return res.status(400).json({ message: "Les IDs des concerts doivent être un tableau." });
-                }
                 // Récupérer les concerts depuis la base de données
                 const concerts = yield concertRepository.findByIds(concertIds);
                 if (concerts.length !== concertIds.length) {
