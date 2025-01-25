@@ -51,11 +51,6 @@ class DayController {
       
       const { title, date, concertIds } = req.body; // Utilisez 'concertIds' pour recevoir les IDs des concerts
 
-      // Vérifier que 'concertIds' est un tableau valide
-      if (!Array.isArray(concertIds)) {
-        return res.status(400).json({ message: "Les IDs des concerts doivent être un tableau." });
-      }
-
       // Récupérer les concerts depuis la base de données
       const concerts = await concertRepository.findByIds(concertIds);
 
