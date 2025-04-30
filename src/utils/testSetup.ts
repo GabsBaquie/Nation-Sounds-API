@@ -9,18 +9,36 @@ import { User } from '../entity/User';
  * Initialise la connexion à la base de données pour les tests.
  */
 export const initializeTestDB = async () => {
-  await AppDataSource.initialize();
-  if (process.env.NODE_ENV === 'test') {
-    await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 0;');
-    const entities = AppDataSource.entityMetadatas;
-
-    for (const entity of entities) {
-      const repository = AppDataSource.getRepository(entity.name);
-      await repository.query(`DROP TABLE IF EXISTS ${entity.tableName};`);
+  try {
+    console.log('Initialisation de la base de données de test...');
+    console.log(`URL de connexion: ${process.env.TEST_JAWSDB_MARIA_URL ? 'Configurée' : 'Manquante'}`);
+    
+    if (!process.env.TEST_JAWSDB_MARIA_URL) {
+      console.error('La variable TEST_JAWSDB_MARIA_URL n\'est pas définie.');
+      console.error('Veuillez configurer une base de données de test valide.');
+      throw new Error('Configuration de base de données de test manquante');
     }
 
-    await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 1;');
-    await AppDataSource.synchronize();
+    await AppDataSource.initialize();
+    console.log('Connexion à la base de données de test réussie !');
+    
+    if (process.env.NODE_ENV === 'test') {
+      console.log('Réinitialisation de la base de données de test...');
+      await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 0;');
+      const entities = AppDataSource.entityMetadatas;
+
+      for (const entity of entities) {
+        const repository = AppDataSource.getRepository(entity.name);
+        await repository.query(`DROP TABLE IF EXISTS ${entity.tableName};`);
+      }
+
+      await AppDataSource.query('SET FOREIGN_KEY_CHECKS = 1;');
+      await AppDataSource.synchronize();
+      console.log('Base de données de test réinitialisée avec succès.');
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation de la base de données de test:', error);
+    throw error;
   }
 };
 
@@ -28,8 +46,14 @@ export const initializeTestDB = async () => {
  * Ferme la connexion à la base de données après les tests.
  */
 export const closeTestDB = async () => {
-  if (AppDataSource.isInitialized) {
-    await AppDataSource.destroy();
+  try {
+    if (AppDataSource.isInitialized) {
+      console.log('Fermeture de la connexion à la base de données de test...');
+      await AppDataSource.destroy();
+      console.log('Connexion à la base de données de test fermée avec succès.');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la fermeture de la connexion à la base de données de test:', error);
   }
 };
 

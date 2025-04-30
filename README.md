@@ -119,12 +119,43 @@ npm run migration:run
 Les tests utilisent une base JawsDB dédiée :
 
 ```bash
+# Configuration de l'environnement de test
+npm run setup:test
+
 # Exécuter tous les tests
 npm test
 
 # Tests avec couverture
 npm test -- --coverage
 ```
+
+### Configuration de la base de données de test
+
+Pour que les tests fonctionnent correctement, vous devez configurer correctement la variable d'environnement `TEST_JAWSDB_MARIA_URL` :
+
+1. Créez un fichier `.env.test` à la racine du projet avec :
+   ```
+   NODE_ENV=test
+   TEST_JAWSDB_MARIA_URL=mysql://username:password@your-database-host:3306/test_database
+   ```
+
+2. Options disponibles pour la base de données de test :
+   
+   - **Option 1: Base JawsDB Maria dédiée sur Heroku**
+     - Créez une seconde instance JawsDB : `heroku addons:create jawsdb-maria:kitefin -a your-app-name --name test-db`
+     - Récupérez l'URL : `heroku config:get JAWSDB_MARIA_URL -a your-app-name`
+   
+   - **Option 2: MySQL local avec Docker**
+     ```bash
+     docker run --name test-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test -p 3306:3306 -d mysql:8.0
+     ```
+     - Utilisez l'URL : `mysql://root:password@localhost:3306/test`
+
+3. Exécutez `npm run setup:test` pour configurer automatiquement votre environnement de test.
+
+### Erreurs courantes
+
+- **ECONNREFUSED 127.0.0.1:3306** : Cette erreur indique que l'application essaie de se connecter à MySQL sur localhost, qui n'existe pas dans l'environnement de test. Assurez-vous que `TEST_JAWSDB_MARIA_URL` pointe vers une base de données accessible.
 
 ## Architecture du projet
 
