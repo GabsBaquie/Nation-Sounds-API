@@ -45,24 +45,34 @@ const SecurityInfo_1 = require("./entity/SecurityInfo");
 const User_1 = require("./entity/User");
 dotenv.config();
 const isTest = process.env.NODE_ENV === 'test';
-exports.AppDataSource = new typeorm_1.DataSource({
-    type: "mysql",
-    url: isTest ? process.env.TEST_JAWSDB_MARIA_URL : process.env.JAWSDB_MARIA_URL,
-    synchronize: isTest, // Désactivé pour éviter des recréations non contrôlées
-    dropSchema: false, // Désactivé pour éviter des suppressions involontaires
-    logging: process.env.NODE_ENV === "development",
-    ssl: isTest
-        ? false
-        : {
-            rejectUnauthorized: false,
-        },
-    entities: [
-        User_1.User,
-        Day_1.Day,
-        Concert_1.Concert,
-        POI_1.POI,
-        SecurityInfo_1.SecurityInfo,
-    ],
+// Configuration pour les tests (MySQL)
+const testOptions = {
+    type: 'mysql',
+    url: process.env.TEST_JAWSDB_MARIA_URL,
+    synchronize: true,
+    dropSchema: true,
+    logging: false,
+    entities: [User_1.User, Day_1.Day, Concert_1.Concert, POI_1.POI, SecurityInfo_1.SecurityInfo],
+    ssl: {
+        rejectUnauthorized: false,
+    }
+};
+// Configuration pour la production / développement (MySQL)
+const prodOptions = {
+    type: 'mysql',
+    url: process.env.JAWSDB_MARIA_URL,
+    synchronize: false,
+    dropSchema: false,
+    logging: process.env.NODE_ENV === 'development',
+    ssl: {
+        rejectUnauthorized: false,
+    },
+    entities: [User_1.User, Day_1.Day, Concert_1.Concert, POI_1.POI, SecurityInfo_1.SecurityInfo],
     migrations: ['src/migration/**/*.ts'],
     subscribers: [],
-});
+};
+// Sélection de la configuration selon l'environnement
+const dataSourceOptions = isTest
+    ? testOptions
+    : prodOptions;
+exports.AppDataSource = new typeorm_1.DataSource(dataSourceOptions);
