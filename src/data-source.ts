@@ -29,7 +29,7 @@ const testOptions: MysqlConnectionOptions = {
 // Configuration pour la production / développement (MySQL)
 const prodOptions: MysqlConnectionOptions = {
   type: 'mysql',
-  url: process.env.JAWSDB_MARIA_URL,
+  url: process.env.MYSQL_PUBLIC_URL || process.env.JAWSDB_MARIA_URL,
   synchronize: false,
   dropSchema: false,
   logging: process.env.NODE_ENV === 'development',
