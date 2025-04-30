@@ -149,7 +149,3 @@ src/
   - `GET /api/securityInfos`          : Liste des informations de sécurité
 
 > Pour la liste complète des endpoints (CRUD, paramètres et exemples de requêtes), consulter les fichiers de routes dans `src/routes/`.
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails. 
