@@ -10,11 +10,11 @@ Backend robust pour l'application Nation Sounds, offrant une API RESTful en Type
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Démarrage](#démarrage)
-- [Base de données et migrations](#base-de-données-et-migrations)
-- [Seed](#seed)
+- [Base de données](#base-de-données)
 - [Tests](#tests)
 - [Architecture du projet](#architecture-du-projet)
 - [Endpoints principaux](#endpoints-principaux)
+- [Déploiement](#déploiement)
 - [Contribution](#contribution)
 - [Licence](#licence)
 
@@ -29,23 +29,27 @@ Backend robust pour l'application Nation Sounds, offrant une API RESTful en Type
 
 ## Technologies
 
-- Node.js (v18+)
+- Node.js (≥18)
 - TypeScript
 - Express.js
-- TypeORM (MySQL / MariaDB)
+- TypeORM (MySQL / MariaDB via JawsDB)
 - class-validator, bcrypt, jsonwebtoken, helmet, cors
 
 ## Prérequis
 
-- [Node.js](https://nodejs.org/) et npm ou yarn
+- [Node.js](https://nodejs.org/) ≥18 et npm
 - Base de données MySQL / MariaDB (ex. JawsDB ou service local)
+- Compte [Heroku](https://heroku.com) pour le déploiement
 - Fichier `.env` à la racine du projet
 
 ## Installation
 
 ```bash
-git clone <URL_DU_REPO>
+# Cloner le repo
+git clone https://github.com/GabsBaquie/Nation-Sounds-API.git
 cd nation-sounds-api
+
+# Installer les dépendances
 npm install
 ```
 
@@ -86,34 +90,40 @@ npm run build
 npm start
 ```
 
-## Base de données et migrations
+## Base de données
 
-TypeORM gère les migrations via la CLI :
+L'application utilise JawsDB Maria (MySQL) via TypeORM :
 
-- Générer une migration :
-  ```bash
-  npm run migration:generate -- -n NomMigration
-  ```
+- **Production** : Base de données principale
+  - `synchronize: false` (pas de modifications automatiques)
+  - `dropSchema: false` (protection des données)
+  - Migrations requises pour les changements de schéma
 
-- Appliquer les migrations :
-  ```bash
-  npm run migration:run
-  ```
+- **Tests** : Base de données de test
+  - `synchronize: true` (création automatique des tables)
+  - `dropSchema: true` (réinitialisation à chaque test)
+  - Pas besoin de migrations
 
-## Seed
-
-Pour peupler la base initialement :
+### Migrations
 
 ```bash
-npm run seed
+# Générer une migration
+npm run migration:generate -- -n NomMigration
+
+# Appliquer les migrations
+npm run migration:run
 ```
 
 ## Tests
 
-Les tests unitaires et d'intégration sont écrits avec Jest et Supertest :
+Les tests utilisent une base JawsDB dédiée :
 
 ```bash
+# Exécuter tous les tests
 npm test
+
+# Tests avec couverture
+npm test -- --coverage
 ```
 
 ## Architecture du projet
@@ -121,13 +131,13 @@ npm test
 ```bash
 src/
 ├── controllers/        # Logique métier et gestion des requêtes
-├── entity/             # Entités TypeORM (User, Day, Concert, POI, SecurityInfo)
-├── middleware/         # Middlewares (authentification, rôles, erreurs)
-├── routes/             # Définition des routes Express
-├── migration/          # Fichiers de migration TypeORM
-├── utils/              # Fonctions utilitaires (seed, helpers)
-├── data-source.ts      # Configuration TypeORM
-└── index.ts            # Point d'entrée de l'application
+├── entity/            # Entités TypeORM (User, Day, Concert, POI, SecurityInfo)
+├── middleware/        # Middlewares (authentification, rôles, erreurs)
+├── routes/           # Définition des routes Express
+├── migration/        # Fichiers de migration TypeORM
+├── utils/           # Fonctions utilitaires (seed, helpers)
+├── data-source.ts   # Configuration TypeORM
+└── index.ts         # Point d'entrée de l'application
 ```
 
 ## Endpoints principaux
@@ -142,10 +152,42 @@ src/
   - `DELETE /api/admin/users/:id` : Suppression d'un utilisateur
 
 - **Programme & données**
-  - `GET /api/`                        : Récupération globale (jours, concerts, POIs, securityInfos)
-  - `GET /api/days`                   : Liste des journées
-  - `GET /api/concerts`               : Liste des concerts
-  - `GET /api/pois`                   : Liste des points d'intérêt
-  - `GET /api/securityInfos`          : Liste des informations de sécurité
+  - `GET /api/`              : Récupération globale (jours, concerts, POIs, securityInfos)
+  - `GET /api/days`          : Liste des journées
+  - `GET /api/concerts`      : Liste des concerts
+  - `GET /api/pois`         : Liste des points d'intérêt
+  - `GET /api/securityInfos` : Liste des informations de sécurité
 
-> Pour la liste complète des endpoints (CRUD, paramètres et exemples de requêtes), consulter les fichiers de routes dans `src/routes/`.
+## Déploiement
+
+L'application est déployée sur Heroku :
+
+```bash
+# Premier déploiement
+heroku create nation-sounds-api
+heroku addons:create jawsdb-maria:kitefin
+git push heroku main
+
+# Déploiements suivants
+git push heroku main
+```
+
+Variables d'environnement Heroku requises :
+- `JAWSDB_MARIA_URL` (ajouté automatiquement par l'addon)
+- `TEST_JAWSDB_MARIA_URL` (pour les tests CI)
+- `JWT_SECRET`
+- `NODE_ENV=production`
+
+## Contribution
+
+Les contributions sont les bienvenues ! Merci de :
+
+1. Forker le dépôt
+2. Créer une branche (`git checkout -b feature/ma-fonctionnalite`)
+3. Committer vos modifications (`git commit -m "Ajout d'une fonctionnalité"`)
+4. Pusher sur votre branche (`git push origin feature/ma-fonctionnalite`)
+5. Ouvrir une Pull Request
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
