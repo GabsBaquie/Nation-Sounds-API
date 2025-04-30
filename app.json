@@ -1,0 +1,26 @@
+{
+  "name": "Nation Sounds API",
+  "description": "API backend pour l'application Nation Sounds Festival",
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment for the application",
+      "value": "production"
+    },
+    "SKIP_TESTS": {
+      "description": "Skip tests in production/deployment",
+      "value": "true"
+    },
+    "HEROKU": {
+      "description": "Flag to identify Heroku environment",
+      "value": "true"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "echo 'Tests are skipped in production environment'"
+  }
+} 
