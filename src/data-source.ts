@@ -30,7 +30,7 @@ const testOptions: MysqlConnectionOptions = {
 const prodOptions: MysqlConnectionOptions = {
   type: 'mysql',
   url: process.env.MYSQL_PUBLIC_URL || process.env.JAWSDB_MARIA_URL,
-  synchronize: false,
+  synchronize: true,
   dropSchema: false,
   logging: process.env.NODE_ENV === 'development',
   ssl: {
@@ -40,6 +40,8 @@ const prodOptions: MysqlConnectionOptions = {
   migrations: ['src/migration/**/*.ts'],
   subscribers: [],
 };
+
+console.log("MySQL URL utilisée :", process.env.MYSQL_PUBLIC_URL);
 
 // Sélection de la configuration selon l'environnement
 const dataSourceOptions: DataSourceOptions = isTest
