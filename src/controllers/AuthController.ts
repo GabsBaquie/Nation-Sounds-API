@@ -25,7 +25,7 @@ class AuthController {
       if (!user) {
         return res
           .status(401)
-          .json({ message: "Email ou mot de passe invalide" });
+          .json({ message: "Email invalide" });
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -33,7 +33,7 @@ class AuthController {
       if (!isPasswordValid) {
         return res
           .status(401)
-          .json({ message: "Email ou mot de passe invalide" });
+          .json({ message: "Mot de passe invalide" });
       }
 
       // Génération du JWT
