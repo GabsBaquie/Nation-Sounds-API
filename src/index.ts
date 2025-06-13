@@ -14,16 +14,22 @@ app.use(
   cors({
     origin: [
       "https://admin-frontend-omega.vercel.app", // Frontend de production
-      "http://localhost:3000", // frontend de développement
+      "http://localhost:3000", // frontend de développement local
+      "https://nation-sounds-backend.up.railway.app", // Backend de production
+      "http://localhost:4000", // Backend de développement local
     ],
     credentials: true, // Permet l'envoi de cookies
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Méthodes autorisées
-    allowedHeaders: ["Content-Type", "Authorization"], // En-têtes autorisés
+    allowedHeaders: ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"], // En-têtes autorisés
+    exposedHeaders: ["Set-Cookie"], // Permet l'accès aux cookies dans le frontend
   })
 );
 
-// Middlewares
-app.use(helmet());
+// Middlewares de sécurité
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -45,4 +51,4 @@ if (process.env.NODE_ENV !== 'test') {
     });
 }
 
-  export default app;
+export default app;
