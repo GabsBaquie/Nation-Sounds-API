@@ -139,13 +139,20 @@ class AuthController {
   static async requestPasswordReset(req: Request, res: Response) {
     const { email } = req.body;
 
+    if (!email) {
+      return res.status(400).json({ message: "L'email est requis" });
+    }
+
     try {
       const user = await AppDataSource.getRepository(User).findOne({
         where: { email },
       });
 
       if (!user) {
-        return res.status(404).json({ message: "Utilisateur non trouvé" });
+        // Pour des raisons de sécurité, ne pas indiquer si l'utilisateur existe ou non
+        return res.status(200).json({ 
+          message: "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé." 
+        });
       }
 
       // Générer un jeton unique pour la réinitialisation
@@ -155,16 +162,28 @@ class AuthController {
 
       await AppDataSource.getRepository(User).save(user);
 
-      // Envoyer un email avec le lien de réinitialisation
-      const resetLink = `https://admin-frontend-omega.vercel.app/reset-password/${resetToken}`;
-      await sendResetEmail(user.email, resetLink);
+      // Utiliser FRONTEND_URL depuis les variables d'environnement
+      const frontendUrl = process.env.FRONTEND_URL || 'https://admin-frontend-omega.vercel.app';
+      const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
-      return res
-        .status(200)
-        .json({ message: "Email de réinitialisation envoyé" });
+      try {
+        await sendResetEmail(user.email, resetLink);
+        return res.status(200).json({ 
+          message: "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé." 
+        });
+      } catch (emailError) {
+        console.error("Erreur lors de l'envoi de l'email:", emailError);
+        // Annuler les changements en base de données si l'email n'a pas pu être envoyé
+        user.resetToken = null;
+        user.resetTokenExpiration = null;
+        await AppDataSource.getRepository(User).save(user);
+        throw emailError;
+      }
     } catch (error) {
       console.error("Erreur lors de la demande de réinitialisation:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      return res.status(500).json({ 
+        message: "Une erreur est survenue lors de la demande de réinitialisation" 
+      });
     }
   }
 
