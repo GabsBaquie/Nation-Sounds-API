@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { Day } from '../entity/Day';
 import { Concert } from '../entity/Concert';
+import { In } from 'typeorm';
 
 class DayController {
   // GET /api/days
@@ -49,17 +50,19 @@ class DayController {
       const dayRepository = AppDataSource.getRepository(Day);
       const concertRepository = AppDataSource.getRepository(Concert);
       
-      const { title, date, concertIds } = req.body; // Utilisez 'concertIds' pour recevoir les IDs des concerts
+      const { title, date, concertIds = [] } = req.body;
 
-      // Récupérer les concerts depuis la base de données
-      const concerts = await concertRepository.findByIds(concertIds);
+      // Créer le nouveau jour
+      const day = dayRepository.create({ title, date });
 
-      if (concerts.length !== concertIds.length) {
-        return res.status(404).json({ message: "Un ou plusieurs concerts n'ont pas été trouvés." });
+      // Si des concertIds sont fournis, les associer
+      if (concertIds && concertIds.length > 0) {
+        const concerts = await concertRepository.findBy({ id: In(concertIds) });
+        if (concerts.length !== concertIds.length) {
+          return res.status(404).json({ message: "Un ou plusieurs concerts n'ont pas été trouvés." });
+        }
+        day.concerts = concerts;
       }
-
-      // Créer le nouveau jour avec les concerts associés
-      const day = dayRepository.create({ title, date, concerts });
 
       // Valider les données
       const errors = await validate(day);
@@ -71,7 +74,7 @@ class DayController {
       await dayRepository.save(day);
       return res.status(201).json(day);
     } catch (error) {
-      console.error('Erreur lors de la création du jour avec concerts:', error);
+      console.error('Erreur lors de la création du jour:', error);
       return res.status(500).json({ message: 'Erreur serveur' });
     }
   }

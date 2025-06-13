@@ -14,6 +14,7 @@ const class_validator_1 = require("class-validator");
 const data_source_1 = require("../data-source");
 const Day_1 = require("../entity/Day");
 const Concert_1 = require("../entity/Concert");
+const typeorm_1 = require("typeorm");
 class DayController {
     // GET /api/days
     static getAll(req, res) {
@@ -58,14 +59,17 @@ class DayController {
             try {
                 const dayRepository = data_source_1.AppDataSource.getRepository(Day_1.Day);
                 const concertRepository = data_source_1.AppDataSource.getRepository(Concert_1.Concert);
-                const { title, date, concertIds } = req.body; // Utilisez 'concertIds' pour recevoir les IDs des concerts
-                // Récupérer les concerts depuis la base de données
-                const concerts = yield concertRepository.findByIds(concertIds);
-                if (concerts.length !== concertIds.length) {
-                    return res.status(404).json({ message: "Un ou plusieurs concerts n'ont pas été trouvés." });
+                const { title, date, concertIds = [] } = req.body;
+                // Créer le nouveau jour
+                const day = dayRepository.create({ title, date });
+                // Si des concertIds sont fournis, les associer
+                if (concertIds && concertIds.length > 0) {
+                    const concerts = yield concertRepository.findBy({ id: (0, typeorm_1.In)(concertIds) });
+                    if (concerts.length !== concertIds.length) {
+                        return res.status(404).json({ message: "Un ou plusieurs concerts n'ont pas été trouvés." });
+                    }
+                    day.concerts = concerts;
                 }
-                // Créer le nouveau jour avec les concerts associés
-                const day = dayRepository.create({ title, date, concerts });
                 // Valider les données
                 const errors = yield (0, class_validator_1.validate)(day);
                 if (errors.length > 0) {
@@ -76,7 +80,7 @@ class DayController {
                 return res.status(201).json(day);
             }
             catch (error) {
-                console.error('Erreur lors de la création du jour avec concerts:', error);
+                console.error('Erreur lors de la création du jour:', error);
                 return res.status(500).json({ message: 'Erreur serveur' });
             }
         });

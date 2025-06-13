@@ -65,13 +65,13 @@ class AuthController {
                 if (!user) {
                     return res
                         .status(401)
-                        .json({ message: "Email ou mot de passe invalide" });
+                        .json({ message: "Email invalide" });
                 }
                 const isPasswordValid = yield bcrypt.compare(password, user.password);
                 if (!isPasswordValid) {
                     return res
                         .status(401)
-                        .json({ message: "Email ou mot de passe invalide" });
+                        .json({ message: "Mot de passe invalide" });
                 }
                 // Génération du JWT
                 const token = jwt.sign({
@@ -167,28 +167,47 @@ class AuthController {
     static requestPasswordReset(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email } = req.body;
+            if (!email) {
+                return res.status(400).json({ message: "L'email est requis" });
+            }
             try {
                 const user = yield data_source_1.AppDataSource.getRepository(User_1.User).findOne({
                     where: { email },
                 });
                 if (!user) {
-                    return res.status(404).json({ message: "Utilisateur non trouvé" });
+                    // Pour des raisons de sécurité, ne pas indiquer si l'utilisateur existe ou non
+                    return res.status(200).json({
+                        message: "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé."
+                    });
                 }
                 // Générer un jeton unique pour la réinitialisation
                 const resetToken = (0, uuid_1.v4)();
                 user.resetToken = resetToken;
                 user.resetTokenExpiration = new Date(Date.now() + 3600000); // Expire dans 1 heure
                 yield data_source_1.AppDataSource.getRepository(User_1.User).save(user);
-                // Envoyer un email avec le lien de réinitialisation
-                const resetLink = `https://admin-frontend-omega.vercel.app/reset-password/${resetToken}`;
-                yield (0, emailService_1.sendResetEmail)(user.email, resetLink);
-                return res
-                    .status(200)
-                    .json({ message: "Email de réinitialisation envoyé" });
+                // Utiliser FRONTEND_URL depuis les variables d'environnement
+                const frontendUrl = process.env.FRONTEND_URL || 'https://admin-frontend-omega.vercel.app';
+                const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
+                try {
+                    yield (0, emailService_1.sendResetEmail)(user.email, resetLink);
+                    return res.status(200).json({
+                        message: "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé."
+                    });
+                }
+                catch (emailError) {
+                    console.error("Erreur lors de l'envoi de l'email:", emailError);
+                    // Annuler les changements en base de données si l'email n'a pas pu être envoyé
+                    user.resetToken = null;
+                    user.resetTokenExpiration = null;
+                    yield data_source_1.AppDataSource.getRepository(User_1.User).save(user);
+                    throw emailError;
+                }
             }
             catch (error) {
                 console.error("Erreur lors de la demande de réinitialisation:", error);
-                return res.status(500).json({ message: "Erreur serveur" });
+                return res.status(500).json({
+                    message: "Une erreur est survenue lors de la demande de réinitialisation"
+                });
             }
         });
     }

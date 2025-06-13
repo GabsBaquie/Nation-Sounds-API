@@ -60,17 +60,29 @@ const testOptions = {
 // Configuration pour la production / développement (MySQL)
 const prodOptions = {
     type: 'mysql',
-    url: process.env.JAWSDB_MARIA_URL,
-    synchronize: false,
-    dropSchema: false,
+    url: process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL || process.env.JAWSDB_MARIA_URL,
+    synchronize: false, // Désactivé en production pour la sécurité
     logging: process.env.NODE_ENV === 'development',
-    ssl: {
-        rejectUnauthorized: false,
-    },
     entities: [User_1.User, Day_1.Day, Concert_1.Concert, POI_1.POI, SecurityInfo_1.SecurityInfo],
     migrations: ['src/migration/**/*.ts'],
     subscribers: [],
+    ssl: {
+        rejectUnauthorized: false,
+    },
+    extra: {
+        connectionLimit: 5,
+        connectTimeout: 60000,
+        acquireTimeout: 60000,
+        timeout: 60000,
+        keepAlive: true,
+        waitForConnections: true,
+        queueLimit: 0,
+    },
+    // Désactiver le dropSchema en production
+    dropSchema: false,
 };
+const mysqlUrl = process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL || process.env.JAWSDB_MARIA_URL;
+console.log("MySQL URL utilisée :", mysqlUrl === null || mysqlUrl === void 0 ? void 0 : mysqlUrl.replace(/:[^:]*@/, ':****@')); // Masquer le mot de passe dans les logs
 // Sélection de la configuration selon l'environnement
 const dataSourceOptions = isTest
     ? testOptions
