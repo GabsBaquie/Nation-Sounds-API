@@ -1,16 +1,18 @@
-# Dockerfile
 FROM node:18
 
 WORKDIR /app
 
+# Copie les fichiers package.json et package-lock.json
 COPY package*.json ./
 
+# Installation des dépendances
 RUN npm install
 
+# Copie le reste du code
 COPY . .
 
+# Compilation TypeScript → JavaScript
 RUN npm run build
 
-EXPOSE 3000
-
-CMD ["node", "dist/index.js"]
+# Lancement de l'app en production
+CMD ["npm", "run", "start:prod"]

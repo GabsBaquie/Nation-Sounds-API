@@ -21,5 +21,4 @@ router.get("/", ProgramController.getAll);
  */
 router.get("/:id", ProgramController.getById);
 
-
 export default router;

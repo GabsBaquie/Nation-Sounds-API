@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "0.0.0.0:8080:8080"
+    command: npm run start:prod
+    volumes:
+      - ./src/migration:/app/src/migration
+
+volumes:
+  db-data:

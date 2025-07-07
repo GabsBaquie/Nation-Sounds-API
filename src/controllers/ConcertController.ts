@@ -43,10 +43,20 @@ class ConcertController {
   // POST /api/concerts
   static async create(req: Request, res: Response) {
     try {
+      console.log('Début création concert avec données:', req.body);
+      
       const concertRepository = AppDataSource.getRepository(Concert);
-      const { title, description, performer, time, location, image, days } =
-        req.body;
+      const { title, description, performer, time, location, image, days = [] } = req.body;
 
+      // Vérification des champs requis
+      if (!title || !description || !performer || !time || !location || !image) {
+        return res.status(400).json({ 
+          message: "Tous les champs sont requis", 
+          required: ["title", "description", "performer", "time", "location", "image"] 
+        });
+      }
+
+      // Création du concert
       const concert = concertRepository.create({
         title,
         description,
@@ -54,19 +64,29 @@ class ConcertController {
         time,
         location,
         image,
-        days,
+        days: [] // On initialise avec un tableau vide
       });
 
+      console.log('Concert créé:', concert);
+
+      // Validation
       const errors = await validate(concert);
       if (errors.length > 0) {
+        console.error('Erreurs de validation:', errors);
         return res.status(400).json(errors);
       }
 
-      await concertRepository.save(concert);
-      return res.status(201).json(concert);
+      // Sauvegarde
+      const savedConcert = await concertRepository.save(concert);
+      console.log('Concert sauvegardé avec succès:', savedConcert);
+
+      return res.status(201).json(savedConcert);
     } catch (error) {
-      console.error("Erreur lors de la création du concert:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      console.error('Erreur détaillée lors de la création du concert:', error);
+      return res.status(500).json({ 
+        message: 'Erreur serveur',
+        error: error instanceof Error ? error.message : 'Erreur inconnue'
+      });
     }
   }
 

@@ -1,5 +1,11 @@
 // src/entity/POI.ts
-import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class POI {
@@ -12,18 +18,18 @@ export class POI {
   @Column()
   type!: string; // e.g., 'stage', 'shop', 'restroom'
 
-  @Column('double')
+  @Column("float")
   latitude!: number;
 
-  @Column('double')
+  @Column("float")
   longitude!: number;
 
   @Column({ nullable: true })
   description!: string;
 
   @CreateDateColumn()
-    createdAt!: Date;
-  
+  createdAt!: Date;
+
   @UpdateDateColumn()
   updatedAt!: Date;
 }
