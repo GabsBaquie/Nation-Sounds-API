@@ -1,7 +1,9 @@
 // src/routes/dayRoutes.ts
 import { Router } from "express";
 import DayController from "../controllers/DayController";
+import { CreateDayDto } from "../dto/create-day.dto";
 import { checkJwt } from "../middleware/checkJwt";
+import { validateDto } from "../middleware/validateDto";
 
 const router = Router();
 
@@ -27,7 +29,7 @@ router.get("/:id", DayController.getById);
  *   post:
  *     summary: Créer un nouveau jour
  */
-router.post("/", [checkJwt], DayController.create);
+router.post("/", [checkJwt, validateDto(CreateDayDto)], DayController.create);
 
 /**
  * @swagger

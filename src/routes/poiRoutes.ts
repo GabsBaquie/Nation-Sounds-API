@@ -1,6 +1,8 @@
 // src/routes/poiRoutes.ts
 import { Router } from "express";
 import PoiController from "../controllers/PoiController";
+import { CreatePoiDto } from "../dto/create-poi.dto";
+import { validateDto } from "../middleware/validateDto";
 
 const router = Router();
 
@@ -18,7 +20,7 @@ router.get("/", PoiController.getAll);
  *   post:
  *     summary: Créer un point d'intérêt
  */
-router.post("/", PoiController.create);
+router.post("/", validateDto(CreatePoiDto), PoiController.create);
 
 /**
  * @swagger
@@ -27,5 +29,10 @@ router.post("/", PoiController.create);
  *     summary: Obtenir un point d'intérêt par ID
  */
 router.get("/:id", PoiController.getById);
+
+// Ajout de la route PUT pour la mise à jour d'un POI
+router.put("/:id", validateDto(CreatePoiDto), PoiController.update);
+
+router.delete("/:id", PoiController.delete);
 
 export default router;

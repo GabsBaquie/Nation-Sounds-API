@@ -24,17 +24,21 @@ console.log(
   postgresUrl?.replace(/:[^:]*@/, ":****@")
 );
 
+const isDev = process.env.NODE_ENV === "development";
+
 // Configuration TypeORM
 const postgresOptions: DataSourceOptions = {
   type: "postgres",
   url: postgresUrl,
   synchronize: false, // À garder désactivé en production
-  logging: process.env.NODE_ENV === "development",
+  logging: isDev,
   entities: [User, Day, Concert, POI, SecurityInfo],
-  migrations: ["dist/migration/**/*.js"],
+  migrations: [isDev ? "src/migration/*.ts" : __dirname + "/migration/*.js"],
   subscribers: [],
   ssl: false, // À activer si tu te connectes à une BDD distante sécurisée
 };
+
+console.log("Migrations chargées :", postgresOptions.migrations);
 
 // Log de vérification (mot de passe masqué)
 

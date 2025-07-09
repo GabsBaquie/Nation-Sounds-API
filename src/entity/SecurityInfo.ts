@@ -4,7 +4,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 
 @Entity()
 export class SecurityInfo {
@@ -17,10 +17,10 @@ export class SecurityInfo {
   @Column()
   description!: string;
 
-  @Column('boolean', { default: false })
+  @Column("boolean", { default: false })
   urgence!: boolean;
 
-  @Column('boolean', { default: true })
+  @Column("boolean", { default: true })
   actif!: boolean;
 
   @CreateDateColumn()

@@ -27,6 +27,12 @@ export class POI {
   @Column({ nullable: true })
   description!: string;
 
+  @Column({ nullable: true })
+  category?: string;
+
+  @Column({ nullable: true })
+  address?: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 

@@ -1,11 +1,12 @@
 // src/controllers/DayController.ts
 
-import { validate } from 'class-validator';
-import { Request, Response } from 'express';
-import { AppDataSource } from '../data-source';
-import { Day } from '../entity/Day';
-import { Concert } from '../entity/Concert';
-import { In } from 'typeorm';
+import { validate } from "class-validator";
+import { Request, Response } from "express";
+import { In } from "typeorm";
+import { AppDataSource } from "../data-source";
+import { CreateDayDto } from "../dto/create-day.dto";
+import { Concert } from "../entity/Concert";
+import { Day } from "../entity/Day";
 
 class DayController {
   // GET /api/days
@@ -13,12 +14,12 @@ class DayController {
     try {
       const dayRepository = AppDataSource.getRepository(Day);
       const days = await dayRepository.find({
-        relations: ['concerts'],
+        relations: ["concerts"],
       });
       return res.status(200).json(days);
     } catch (error) {
-      console.error('Erreur lors de la récupération des jours:', error);
-      return res.status(500).json({ message: 'Erreur serveur' });
+      console.error("Erreur lors de la récupération des jours:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 
@@ -30,115 +31,113 @@ class DayController {
       const dayRepository = AppDataSource.getRepository(Day);
       const day = await dayRepository.findOne({
         where: { id: dayId },
-        relations: ['concerts'],
-      });
-
-      if (!day) {
-        return res.status(404).json({ message: 'Jour non trouvé' });
-      }
-
-      return res.status(200).json(day);
-    } catch (error) {
-      console.error('Erreur lors de la récupération du jour:', error);
-      return res.status(500).json({ message: 'Erreur serveur' });
-    }
-  }
-
-  // POST /api/days
-  static async create(req: Request, res: Response) {
-    try {
-      const dayRepository = AppDataSource.getRepository(Day);
-      const concertRepository = AppDataSource.getRepository(Concert);
-      
-      const { title, date, concertIds = [] } = req.body;
-
-      // Créer le nouveau jour
-      const day = dayRepository.create({ title, date });
-
-      // Si des concertIds sont fournis, les associer
-      if (concertIds && concertIds.length > 0) {
-        const concerts = await concertRepository.findBy({ id: In(concertIds) });
-        if (concerts.length !== concertIds.length) {
-          return res.status(404).json({ message: "Un ou plusieurs concerts n'ont pas été trouvés." });
-        }
-        day.concerts = concerts;
-      }
-
-      // Valider les données
-      const errors = await validate(day);
-      if (errors.length > 0) {
-        return res.status(400).json(errors);
-      }
-
-      // Enregistrer le jour dans la base de données
-      await dayRepository.save(day);
-      return res.status(201).json(day);
-    } catch (error) {
-      console.error('Erreur lors de la création du jour:', error);
-      return res.status(500).json({ message: 'Erreur serveur' });
-    }
-  }
-
-  // PUT /api/days/:id
-  static async update(req: Request, res: Response) {
-    const dayId = parseInt(req.params.id, 10);
-    const { title, date, concertIds } = req.body; // Ajout de 'concertIds' optionnel
-
-    if (isNaN(dayId)) {
-      return res.status(400).json({ message: "ID de jour invalide" });
-    }
-
-    try {
-      const dayRepository = AppDataSource.getRepository(Day);
-      const concertRepository = AppDataSource.getRepository(Concert);
-
-      // Récupérer le jour avec ses concerts actuels
-      const day = await dayRepository.findOne({
-        where: { id: dayId },
-        relations: ['concerts'],
+        relations: ["concerts"],
       });
 
       if (!day) {
         return res.status(404).json({ message: "Jour non trouvé" });
       }
 
-      // Mettre à jour les propriétés du jour
-      if (title !== undefined) day.title = title;
-      if (date !== undefined) day.date = date;
+      return res.status(200).json(day);
+    } catch (error) {
+      console.error("Erreur lors de la récupération du jour:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
 
-      // Si 'concertIds' est fourni, ajouter les concerts
-      if (concertIds) {
-        if (!Array.isArray(concertIds)) {
-          return res.status(400).json({ message: "Les IDs des concerts doivent être un tableau." });
-        }
-
-        // Récupérer les concerts depuis la base de données
-        const concertsToAdd = await concertRepository.findByIds(concertIds);
-
-        if (concertsToAdd.length !== concertIds.length) {
-          return res.status(404).json({ message: "Un ou plusieurs concerts n'ont pas été trouvés." });
-        }
-
-        // Éviter les doublons
-        const existingConcertIds = day.concerts.map(concert => concert.id);
-        const newConcerts = concertsToAdd.filter(concert => !existingConcertIds.includes(concert.id));
-
-        // Ajouter les nouveaux concerts
-        day.concerts = [...day.concerts, ...newConcerts];
-      }
-
-      // Valider les données
-      const errors = await validate(day);
+  // POST /api/days
+  static async create(req: Request, res: Response) {
+    try {
+      const dto = Object.assign(new CreateDayDto(), req.body);
+      const errors = await validate(dto);
       if (errors.length > 0) {
         return res.status(400).json(errors);
       }
 
-      // Enregistrer les modifications
-      await dayRepository.save(day);
-      return res.status(200).json(day);
+      const dayRepository = AppDataSource.getRepository(Day);
+      const concertRepository = AppDataSource.getRepository(Concert);
+
+      // Création du Day
+      const day = dayRepository.create({
+        title: dto.title,
+        date: dto.date,
+      });
+
+      // Si concertIds est fourni, on associe les concerts
+      if (dto.concertIds && dto.concertIds.length > 0) {
+        const concerts = await concertRepository.findBy({
+          id: In(dto.concertIds),
+        });
+        if (concerts.length !== dto.concertIds.length) {
+          return res.status(404).json({
+            message: "Un ou plusieurs concerts n'ont pas été trouvés.",
+          });
+        }
+        day.concerts = concerts;
+      }
+
+      const saved = await dayRepository.save(day);
+      return res.status(201).json(saved);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du jour:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      });
+    }
+  }
+
+  // PUT /api/days/:id
+  static async update(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const dto = Object.assign(new CreateDayDto(), req.body);
+      const errors = await validate(dto);
+      if (errors.length > 0) {
+        return res.status(400).json(errors);
+      }
+
+      const dayRepository = AppDataSource.getRepository(Day);
+      const concertRepository = AppDataSource.getRepository(Concert);
+      const day = await dayRepository.findOne({
+        where: { id },
+        relations: ["concerts"],
+      });
+      if (!day) {
+        return res.status(404).json({ message: "Day non trouvé" });
+      }
+
+      day.title = dto.title;
+      day.date = dto.date;
+
+      // Si concertIds est fourni, on associe les concerts
+      if (dto.concertIds) {
+        if (dto.concertIds.length > 0) {
+          const concerts = await concertRepository.findBy({
+            id: In(dto.concertIds),
+          });
+          if (concerts.length !== dto.concertIds.length) {
+            return res.status(404).json({
+              message: "Un ou plusieurs concerts n'ont pas été trouvés.",
+            });
+          }
+          day.concerts = concerts;
+        } else {
+          day.concerts = [];
+        }
+      }
+
+      const saved = await dayRepository.save(day);
+      // Recharge le Day avec les concerts liés
+      const dayWithConcerts = await dayRepository.findOne({
+        where: { id: saved.id },
+        relations: ["concerts"],
+      });
+      return res.status(200).json(dayWithConcerts);
+    } catch (error) {
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      });
     }
   }
 
@@ -205,8 +204,13 @@ class DayController {
       return res.status(400).json({ message: "ID de jour invalide" });
     }
 
-    if (!Array.isArray(concertIds) || concertIds.some(id => isNaN(parseInt(id, 10)))) {
-      return res.status(400).json({ message: "Liste d'IDs de concerts invalide" });
+    if (
+      !Array.isArray(concertIds) ||
+      concertIds.some((id) => isNaN(parseInt(id, 10)))
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Liste d'IDs de concerts invalide" });
     }
 
     try {
@@ -215,7 +219,7 @@ class DayController {
 
       const day = await dayRepository.findOne({
         where: { id: dayId },
-        relations: ['concerts'],
+        relations: ["concerts"],
       });
 
       if (!day) {
@@ -225,7 +229,9 @@ class DayController {
       const concerts = await concertRepository.findByIds(concertIds);
 
       if (concerts.length !== concertIds.length) {
-        return res.status(404).json({ message: "Un ou plusieurs concerts non trouvés" });
+        return res
+          .status(404)
+          .json({ message: "Un ou plusieurs concerts non trouvés" });
       }
 
       day.concerts = [...day.concerts, ...concerts];

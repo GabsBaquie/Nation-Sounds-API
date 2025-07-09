@@ -1,9 +1,12 @@
 // src/controllers/ConcertController.ts
 
-import { Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { Concert } from "../entity/Concert";
 import { validate } from "class-validator";
+import { Request, Response } from "express";
+import { In } from "typeorm";
+import { AppDataSource } from "../data-source";
+import { CreateConcertDto } from "../dto/create-concert.dto";
+import { Concert } from "../entity/Concert";
+import { Day } from "../entity/Day";
 
 class ConcertController {
   // GET /api/concerts
@@ -43,79 +46,96 @@ class ConcertController {
   // POST /api/concerts
   static async create(req: Request, res: Response) {
     try {
-      console.log('Début création concert avec données:', req.body);
-      
-      const concertRepository = AppDataSource.getRepository(Concert);
-      const { title, description, performer, time, location, image, days = [] } = req.body;
-
-      // Vérification des champs requis
-      if (!title || !description || !performer || !time || !location || !image) {
-        return res.status(400).json({ 
-          message: "Tous les champs sont requis", 
-          required: ["title", "description", "performer", "time", "location", "image"] 
-        });
-      }
-
-      // Création du concert
-      const concert = concertRepository.create({
-        title,
-        description,
-        performer,
-        time,
-        location,
-        image,
-        days: [] // On initialise avec un tableau vide
-      });
-
-      console.log('Concert créé:', concert);
-
-      // Validation
-      const errors = await validate(concert);
+      const dto = Object.assign(new CreateConcertDto(), req.body);
+      const errors = await validate(dto);
       if (errors.length > 0) {
-        console.error('Erreurs de validation:', errors);
         return res.status(400).json(errors);
       }
-
-      // Sauvegarde
-      const savedConcert = await concertRepository.save(concert);
-      console.log('Concert sauvegardé avec succès:', savedConcert);
-
-      return res.status(201).json(savedConcert);
+      const concertRepository = AppDataSource.getRepository(Concert);
+      const dayRepository = AppDataSource.getRepository(Day);
+      const concert = concertRepository.create({
+        title: dto.title,
+        description: dto.description,
+        performer: dto.performer,
+        time: dto.time,
+        location: dto.location,
+        image: dto.image,
+      });
+      if (dto.dayIds && dto.dayIds.length > 0) {
+        const days = await dayRepository.findBy({ id: In(dto.dayIds) });
+        if (days.length !== dto.dayIds.length) {
+          return res
+            .status(404)
+            .json({ message: "Un ou plusieurs days n'ont pas été trouvés." });
+        }
+        concert.days = days;
+      }
+      const saved = await concertRepository.save(concert);
+      // Recharge avec les days liés pour la réponse
+      const concertWithDays = await concertRepository.findOne({
+        where: { id: saved.id },
+        relations: ["days"],
+      });
+      return res.status(201).json(concertWithDays);
     } catch (error) {
-      console.error('Erreur détaillée lors de la création du concert:', error);
-      return res.status(500).json({ 
-        message: 'Erreur serveur',
-        error: error instanceof Error ? error.message : 'Erreur inconnue'
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : "Erreur inconnue",
       });
     }
   }
 
   // PUT /api/concerts/:id
   static async update(req: Request, res: Response) {
-    const concertId = parseInt(req.params.id);
-
     try {
-      const concertRepository = AppDataSource.getRepository(Concert);
-      let concert = await concertRepository.findOne({
-        where: { id: concertId },
-        relations: ["days"],
-      });
-
-      if (!concert) {
-        return res.status(404).json({ message: "Concert non trouvé" });
-      }
-
-      concertRepository.merge(concert, req.body);
-      const errors = await validate(concert);
+      const id = Number(req.params.id);
+      const dto = Object.assign(new CreateConcertDto(), req.body);
+      const errors = await validate(dto);
       if (errors.length > 0) {
         return res.status(400).json(errors);
       }
-
-      const results = await concertRepository.save(concert);
-      return res.status(200).json(results);
+      const concertRepository = AppDataSource.getRepository(Concert);
+      const dayRepository = AppDataSource.getRepository(Day);
+      const concert = await concertRepository.findOne({
+        where: { id },
+        relations: ["days"],
+      });
+      if (!concert) {
+        return res.status(404).json({ message: "Concert non trouvé" });
+      }
+      concert.title = dto.title;
+      concert.description = dto.description;
+      concert.performer = dto.performer;
+      concert.time = dto.time;
+      concert.location = dto.location;
+      concert.image = dto.image;
+      if (dto.dayIds) {
+        if (dto.dayIds.length > 0) {
+          const days = await dayRepository.findBy({ id: In(dto.dayIds) });
+          if (days.length !== dto.dayIds.length) {
+            return res
+              .status(404)
+              .json({ message: "Un ou plusieurs days n'ont pas été trouvés." });
+          }
+          concert.days = days;
+        } else {
+          concert.days = [];
+        }
+      }
+      const saved = await concertRepository.save(concert);
+      // Recharge avec les days liés pour la réponse
+      const concertWithDays = await concertRepository.findOne({
+        where: { id: saved.id },
+        relations: ["days"],
+      });
+      return res.status(200).json(concertWithDays);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du concert:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
+      return res
+        .status(500)
+        .json({
+          message: "Erreur serveur",
+          error: error instanceof Error ? error.message : "Erreur inconnue",
+        });
     }
   }
 
