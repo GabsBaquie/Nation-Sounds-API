@@ -15,9 +15,6 @@ if (process.env.NODE_ENV === "production") {
   console.log("Chargement de .env");
 }
 
-// Ajoute ce log juste après dotenv.config()
-console.log("DEBUG DATABASE_URL:", process.env.DATABASE_URL);
-
 const isDocker = process.env.IS_DOCKER === "true";
 
 // Détection intelligente de l'URL de base de données
