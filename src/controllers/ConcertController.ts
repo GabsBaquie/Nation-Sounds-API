@@ -61,11 +61,11 @@ class ConcertController {
       const concertRepository = AppDataSource.getRepository(Concert);
       const dayRepository = AppDataSource.getRepository(Day);
       const concert = concertRepository.create({
-        title: dto.title,
-        description: dto.description,
-        performer: dto.performer,
-        time: dto.time,
-        location: dto.location,
+        title: String(dto.title),
+        description: String(dto.description),
+        performer: String(dto.performer),
+        time: String(dto.time),
+        location: String(dto.location),
         image: dto.image
           ? Buffer.from(
               dto.image.replace(/^data:image\/\w+;base64,/, ""),
@@ -126,11 +126,11 @@ class ConcertController {
       if (!concert) {
         return res.status(404).json({ message: "Concert non trouvé" });
       }
-      concert.title = dto.title;
-      concert.description = dto.description;
-      concert.performer = dto.performer;
-      concert.time = dto.time;
-      concert.location = dto.location;
+      concert.title = String(dto.title);
+      concert.description = String(dto.description);
+      concert.performer = String(dto.performer);
+      concert.time = String(dto.time);
+      concert.location = String(dto.location);
       if (dto.image) {
         concert.image = Buffer.from(
           dto.image.replace(/^data:image\/\w+;base64,/, ""),
