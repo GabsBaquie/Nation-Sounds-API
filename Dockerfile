@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Compilation TypeScript → JavaScript
-RUN npm run build
+RUN npm run build && ls dist/migration
 
 # Lancement de l'app en production
 CMD ["npm", "run", "start:prod"]
