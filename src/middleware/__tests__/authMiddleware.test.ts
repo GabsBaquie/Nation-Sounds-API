@@ -1,13 +1,24 @@
 // src/middleware/__tests__/authMiddleware.test.ts
 import dotenv from "dotenv";
-dotenv.config();
 
-import request from "supertest";
-import express, { Request, Response } from "express";
+if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: ".env.docker" });
+  console.log("Chargement de .env.docker");
+} else {
+  dotenv.config();
+  console.log("Chargement de .env");
+}
+
 import cookieParser from "cookie-parser";
-import { checkJwt } from "../checkJwt";
-import { initializeTestDB, closeTestDB, createAdminUser } from "../../utils/testSetup";
+import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import request from "supertest";
+import {
+  closeTestDB,
+  createAdminUser,
+  initializeTestDB,
+} from "../../utils/testSetup";
+import { checkJwt } from "../checkJwt";
 
 // Créer une application Express de test avec cookie-parser
 const app = express();
@@ -57,7 +68,12 @@ describe("Auth Middleware", () => {
 
   it("devrait refuser l'accès avec un token expiré", async () => {
     const expiredToken = jwt.sign(
-      { id: 1, role: "admin", username: "adminuser", email: "admin@example.com" },
+      {
+        id: 1,
+        role: "admin",
+        username: "adminuser",
+        email: "admin@example.com",
+      },
       process.env.JWT_SECRET as string,
       { expiresIn: "-1h" } // Token expiré
     );

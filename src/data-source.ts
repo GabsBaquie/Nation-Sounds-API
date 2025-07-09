@@ -7,7 +7,13 @@ import { POI } from "./entity/POI";
 import { SecurityInfo } from "./entity/SecurityInfo";
 import { User } from "./entity/User";
 
-dotenv.config();
+if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: ".env.docker" });
+  console.log("Chargement de .env.docker");
+} else {
+  dotenv.config();
+  console.log("Chargement de .env");
+}
 
 // Ajoute ce log juste après dotenv.config()
 console.log("DEBUG DATABASE_URL:", process.env.DATABASE_URL);
@@ -24,7 +30,12 @@ console.log(
   postgresUrl?.replace(/:[^:]*@/, ":****@")
 );
 
+// Log la valeur de NODE_ENV
+console.log("NODE_ENV:", process.env.NODE_ENV);
+
+// isDev = true seulement si NODE_ENV === "development", sinon prod par défaut
 const isDev = process.env.NODE_ENV === "development";
+console.log("isDev:", isDev);
 
 // Configuration TypeORM
 const postgresOptions: DataSourceOptions = {

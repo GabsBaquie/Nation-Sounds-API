@@ -79,39 +79,22 @@ class SecurityInfoController {
   // PUT /api/securityInfos/:id
   static async update(req: Request, res: Response) {
     const securityInfoId = parseInt(req.params.id);
-
     try {
       const securityInfoRepository = AppDataSource.getRepository(SecurityInfo);
       let info = await securityInfoRepository.findOne({
         where: { id: securityInfoId },
       });
-
       if (!info) {
         return res
           .status(404)
           .json({ message: "Information de sécurité non trouvée" });
       }
-
-      // 1. Valide le body comme DTO
-      const dto = Object.assign(new CreateSecurityInfoDto(), req.body);
-      const errors = await validate(dto, {
-        forbidNonWhitelisted: true,
-        whitelist: true,
-      });
-      if (errors.length > 0) {
-        return res.status(400).json(errors);
-      }
-
-      // 2. Merge les champs validés dans l'entité
+      // Utilise le DTO validé
+      const dto = req.dto as CreateSecurityInfoDto;
       securityInfoRepository.merge(info, dto);
-
       const results = await securityInfoRepository.save(info);
       return res.status(200).json(results);
     } catch (error) {
-      console.error(
-        "Erreur lors de la mise à jour de l’information de sécurité:",
-        error
-      );
       return res.status(500).json({ message: "Erreur serveur" });
     }
   }

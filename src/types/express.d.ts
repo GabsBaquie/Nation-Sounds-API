@@ -9,6 +9,7 @@ declare global {
         username: string;
         email: string;
       };
+      dto?: any;
     }
   }
 }

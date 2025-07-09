@@ -37,7 +37,7 @@ router.post("/", [checkJwt, validateDto(CreateDayDto)], DayController.create);
  *   put:
  *     summary: Mettre à jour un jour
  */
-router.put("/:id", [checkJwt], DayController.update);
+router.put("/:id", [checkJwt, validateDto(CreateDayDto)], DayController.update);
 
 /**
  * @swagger

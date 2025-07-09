@@ -1,6 +1,5 @@
 // src/controllers/ConcertController.ts
 
-import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { In } from "typeorm";
 import { AppDataSource } from "../data-source";
@@ -46,11 +45,7 @@ class ConcertController {
   // POST /api/concerts
   static async create(req: Request, res: Response) {
     try {
-      const dto = Object.assign(new CreateConcertDto(), req.body);
-      const errors = await validate(dto);
-      if (errors.length > 0) {
-        return res.status(400).json(errors);
-      }
+      const dto = req.dto as CreateConcertDto;
       const concertRepository = AppDataSource.getRepository(Concert);
       const dayRepository = AppDataSource.getRepository(Day);
       const concert = concertRepository.create({
@@ -89,11 +84,7 @@ class ConcertController {
   static async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const dto = Object.assign(new CreateConcertDto(), req.body);
-      const errors = await validate(dto);
-      if (errors.length > 0) {
-        return res.status(400).json(errors);
-      }
+      const dto = req.dto as CreateConcertDto;
       const concertRepository = AppDataSource.getRepository(Concert);
       const dayRepository = AppDataSource.getRepository(Day);
       const concert = await concertRepository.findOne({
@@ -130,12 +121,10 @@ class ConcertController {
       });
       return res.status(200).json(concertWithDays);
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          message: "Erreur serveur",
-          error: error instanceof Error ? error.message : "Erreur inconnue",
-        });
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      });
     }
   }
 

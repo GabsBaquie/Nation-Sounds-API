@@ -41,7 +41,11 @@ router.post(
  *   put:
  *     summary: Mettre à jour un concert
  */
-router.put("/:id", [checkJwt], ConcertController.update);
+router.put(
+  "/:id",
+  [checkJwt, validateDto(CreateConcertDto)],
+  ConcertController.update
+);
 
 /**
  * @swagger

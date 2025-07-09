@@ -1,5 +1,4 @@
 // src/controllers/PoiController.ts
-import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { CreatePoiDto } from "../dto/create-poi.dto";
@@ -34,12 +33,11 @@ class PoiController {
 
   static async create(req: Request, res: Response) {
     try {
-      const dto = Object.assign(new CreatePoiDto(), req.body);
-      const errors = await validate(dto);
-      if (errors.length > 0) {
-        return res.status(400).json(errors);
-      }
-      const poi = AppDataSource.getRepository(POI).create(dto);
+      const dto = req.dto as CreatePoiDto;
+      const poi = AppDataSource.getRepository(POI).create({
+        ...dto,
+        description: dto.description ?? "",
+      });
       const saved = await AppDataSource.getRepository(POI).save(poi);
       return res.status(201).json(saved);
     } catch (error) {
@@ -54,31 +52,22 @@ class PoiController {
   static async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      console.log("[POI UPDATE] id:", id, "body:", req.body);
-      const dto = Object.assign(new CreatePoiDto(), req.body);
-      const errors = await validate(dto);
-      if (errors.length > 0) {
-        console.log("[POI UPDATE] validation errors:", errors);
-        return res.status(400).json(errors);
-      }
+      const dto = req.dto as CreatePoiDto;
       const poiRepository = AppDataSource.getRepository(POI);
       const poi = await poiRepository.findOne({ where: { id } });
       if (!poi) {
-        console.log("[POI UPDATE] POI not found for id:", id);
         return res.status(404).json({ message: "POI non trouvé" });
       }
       poi.title = dto.title;
       poi.type = dto.type;
       poi.latitude = dto.latitude;
       poi.longitude = dto.longitude;
-      poi.description = dto.description;
+      poi.description = dto.description ?? "";
       poi.category = dto.category;
       poi.address = dto.address;
       const saved = await poiRepository.save(poi);
-      console.log("[POI UPDATE] POI updated:", saved);
       return res.status(200).json(saved);
     } catch (error) {
-      console.error("[POI UPDATE] error:", error);
       return res.status(500).json({
         message: "Erreur serveur",
         error: error instanceof Error ? error.message : "Erreur inconnue",

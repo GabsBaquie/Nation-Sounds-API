@@ -1,6 +1,5 @@
 // src/controllers/DayController.ts
 
-import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { In } from "typeorm";
 import { AppDataSource } from "../data-source";
@@ -48,21 +47,14 @@ class DayController {
   // POST /api/days
   static async create(req: Request, res: Response) {
     try {
-      const dto = Object.assign(new CreateDayDto(), req.body);
-      const errors = await validate(dto);
-      if (errors.length > 0) {
-        return res.status(400).json(errors);
-      }
-
+      const dto = req.dto as CreateDayDto;
       const dayRepository = AppDataSource.getRepository(Day);
       const concertRepository = AppDataSource.getRepository(Concert);
-
       // Création du Day
       const day = dayRepository.create({
         title: dto.title,
-        date: dto.date,
+        date: new Date(dto.date),
       });
-
       // Si concertIds est fourni, on associe les concerts
       if (dto.concertIds && dto.concertIds.length > 0) {
         const concerts = await concertRepository.findBy({
@@ -75,7 +67,6 @@ class DayController {
         }
         day.concerts = concerts;
       }
-
       const saved = await dayRepository.save(day);
       return res.status(201).json(saved);
     } catch (error) {
@@ -90,12 +81,7 @@ class DayController {
   static async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const dto = Object.assign(new CreateDayDto(), req.body);
-      const errors = await validate(dto);
-      if (errors.length > 0) {
-        return res.status(400).json(errors);
-      }
-
+      const dto = req.dto as CreateDayDto;
       const dayRepository = AppDataSource.getRepository(Day);
       const concertRepository = AppDataSource.getRepository(Concert);
       const day = await dayRepository.findOne({
@@ -105,10 +91,8 @@ class DayController {
       if (!day) {
         return res.status(404).json({ message: "Day non trouvé" });
       }
-
       day.title = dto.title;
-      day.date = dto.date;
-
+      day.date = new Date(dto.date);
       // Si concertIds est fourni, on associe les concerts
       if (dto.concertIds) {
         if (dto.concertIds.length > 0) {
@@ -125,7 +109,6 @@ class DayController {
           day.concerts = [];
         }
       }
-
       const saved = await dayRepository.save(day);
       // Recharge le Day avec les concerts liés
       const dayWithConcerts = await dayRepository.findOne({
