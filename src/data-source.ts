@@ -41,7 +41,7 @@ const postgresOptions: DataSourceOptions = {
   synchronize: false, // À garder désactivé en production
   logging: isDev,
   entities: [User, Day, Concert, POI, SecurityInfo],
-  migrations: [isDev ? "src/migration/*.ts" : __dirname + "/migration/*.js"],
+  migrations: [isDev ? "src/migration/*.ts" : "dist/migration/*.js"],
   subscribers: [],
   ssl: false, // À activer si tu te connectes à une BDD distante sécurisée
 };
