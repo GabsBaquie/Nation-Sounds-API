@@ -1,7 +1,9 @@
 // src/routes/concertRoutes.ts
 import { Router } from "express";
 import ConcertController from "../controllers/ConcertController";
+import { CreateConcertDto } from "../dto/create-concert.dto";
 import { checkJwt } from "../middleware/checkJwt";
+import { validateDto } from "../middleware/validateDto";
 
 const router = Router();
 
@@ -27,7 +29,11 @@ router.get("/:id", ConcertController.getById);
  *   post:
  *     summary: Créer un nouveau concert
  */
-router.post("/", [checkJwt], ConcertController.create);
+router.post(
+  "/",
+  [checkJwt, validateDto(CreateConcertDto)],
+  ConcertController.create
+);
 
 /**
  * @swagger

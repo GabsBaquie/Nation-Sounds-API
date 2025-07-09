@@ -1,6 +1,8 @@
 // src/controllers/PoiController.ts
+import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
+import { CreatePoiDto } from "../dto/create-poi.dto";
 import { POI } from "../entity/POI";
 
 class PoiController {
@@ -31,22 +33,74 @@ class PoiController {
   }
 
   static async create(req: Request, res: Response) {
-    const poiRepository = AppDataSource.getRepository(POI);
-    const { name, type, latitude, longitude, description } = req.body;
-
-    const poi = poiRepository.create({
-      title: name,
-      type,
-      latitude,
-      longitude,
-      description
-    });
-
     try {
-      await poiRepository.save(poi);
-      res.status(201).json(poi);
+      const dto = Object.assign(new CreatePoiDto(), req.body);
+      const errors = await validate(dto);
+      if (errors.length > 0) {
+        return res.status(400).json(errors);
+      }
+      const poi = AppDataSource.getRepository(POI).create(dto);
+      const saved = await AppDataSource.getRepository(POI).save(poi);
+      return res.status(201).json(saved);
     } catch (error) {
-      res.status(400).json({ message: "Erreur lors de la création du point d’intérêt" });
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      });
+    }
+  }
+
+  // Ajout de la méthode update pour PUT /api/pois/:id
+  static async update(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      console.log("[POI UPDATE] id:", id, "body:", req.body);
+      const dto = Object.assign(new CreatePoiDto(), req.body);
+      const errors = await validate(dto);
+      if (errors.length > 0) {
+        console.log("[POI UPDATE] validation errors:", errors);
+        return res.status(400).json(errors);
+      }
+      const poiRepository = AppDataSource.getRepository(POI);
+      const poi = await poiRepository.findOne({ where: { id } });
+      if (!poi) {
+        console.log("[POI UPDATE] POI not found for id:", id);
+        return res.status(404).json({ message: "POI non trouvé" });
+      }
+      poi.title = dto.title;
+      poi.type = dto.type;
+      poi.latitude = dto.latitude;
+      poi.longitude = dto.longitude;
+      poi.description = dto.description;
+      poi.category = dto.category;
+      poi.address = dto.address;
+      const saved = await poiRepository.save(poi);
+      console.log("[POI UPDATE] POI updated:", saved);
+      return res.status(200).json(saved);
+    } catch (error) {
+      console.error("[POI UPDATE] error:", error);
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      });
+    }
+  }
+
+  static async delete(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const poiRepository = AppDataSource.getRepository(POI);
+      const poi = await poiRepository.findOne({ where: { id } });
+      if (!poi) {
+        return res.status(404).json({ message: "POI non trouvé" });
+      }
+      await poiRepository.remove(poi);
+      return res.status(200).json({ message: "POI supprimé avec succès" });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      });
     }
   }
 }

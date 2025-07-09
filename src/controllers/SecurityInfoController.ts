@@ -1,7 +1,8 @@
-import { validate } from 'class-validator';
-import { Request, Response } from 'express';
-import { AppDataSource } from '../data-source';
-import { SecurityInfo } from '../entity/SecurityInfo';
+import { validate } from "class-validator";
+import { Request, Response } from "express";
+import { AppDataSource } from "../data-source";
+import { CreateSecurityInfoDto } from "../dto/create-security-info.dto";
+import { SecurityInfo } from "../entity/SecurityInfo";
 
 class SecurityInfoController {
   // GET /api/securityInfos
@@ -9,15 +10,15 @@ class SecurityInfoController {
     try {
       const securityInfoRepository = AppDataSource.getRepository(SecurityInfo);
       const infos = await securityInfoRepository.find({
-        order: { createdAt: 'DESC' },
+        order: { createdAt: "DESC" },
       });
       return res.status(200).json(infos);
     } catch (error) {
       console.error(
-        'Erreur lors de la récupération des informations de sécurité:',
-        error,
+        "Erreur lors de la récupération des informations de sécurité:",
+        error
       );
-      return res.status(500).json({ message: 'Erreur serveur' });
+      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 
@@ -34,45 +35,44 @@ class SecurityInfoController {
       if (!info) {
         return res
           .status(404)
-          .json({ message: 'Information de sécurité non trouvée' });
+          .json({ message: "Information de sécurité non trouvée" });
       }
 
       return res.status(200).json(info);
     } catch (error) {
       console.error(
-        'Erreur lors de la récupération de l’information de sécurité:',
-        error,
+        "Erreur lors de la récupération de l’information de sécurité:",
+        error
       );
-      return res.status(500).json({ message: 'Erreur serveur' });
+      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 
   // POST /api/securityInfos
   static async create(req: Request, res: Response) {
     try {
-      const securityInfoRepository = AppDataSource.getRepository(SecurityInfo);
-      const { title, description, urgence, actif } = req.body;
+      // Transforme le body en instance de DTO
+      const dto = Object.assign(new CreateSecurityInfoDto(), req.body);
 
-      const info = securityInfoRepository.create({
-        title,
-        description,
-        urgence,
-        actif,
-      });
-
-      const errors = await validate(info);
+      // Validation
+      const errors = await validate(dto);
       if (errors.length > 0) {
         return res.status(400).json(errors);
       }
 
-      await securityInfoRepository.save(info);
-      return res.status(201).json(info);
-    } catch (error) {
-      console.error(
-        'Erreur lors de la création de l’information de sécurité:',
-        error,
+      // Création de l'entité à partir du DTO
+      const securityInfo =
+        AppDataSource.getRepository(SecurityInfo).create(dto);
+      const saved = await AppDataSource.getRepository(SecurityInfo).save(
+        securityInfo
       );
-      return res.status(500).json({ message: 'Erreur serveur' });
+
+      return res.status(201).json(saved);
+    } catch (error) {
+      return res.status(500).json({
+        message: "Erreur serveur",
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -89,30 +89,30 @@ class SecurityInfoController {
       if (!info) {
         return res
           .status(404)
-          .json({ message: 'Information de sécurité non trouvée' });
+          .json({ message: "Information de sécurité non trouvée" });
       }
 
-      const { title, description, urgence, actif } = req.body;
-      securityInfoRepository.merge(info, {
-        title,
-        description,
-        urgence,
-        actif,
+      // 1. Valide le body comme DTO
+      const dto = Object.assign(new CreateSecurityInfoDto(), req.body);
+      const errors = await validate(dto, {
+        forbidNonWhitelisted: true,
+        whitelist: true,
       });
-
-      const errors = await validate(info);
       if (errors.length > 0) {
         return res.status(400).json(errors);
       }
+
+      // 2. Merge les champs validés dans l'entité
+      securityInfoRepository.merge(info, dto);
 
       const results = await securityInfoRepository.save(info);
       return res.status(200).json(results);
     } catch (error) {
       console.error(
-        'Erreur lors de la mise à jour de l’information de sécurité:',
-        error,
+        "Erreur lors de la mise à jour de l’information de sécurité:",
+        error
       );
-      return res.status(500).json({ message: 'Erreur serveur' });
+      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 
@@ -127,18 +127,18 @@ class SecurityInfoController {
       if (result.affected === 1) {
         return res
           .status(200)
-          .json({ message: 'Information de sécurité supprimée avec succès' });
+          .json({ message: "Information de sécurité supprimée avec succès" });
       } else {
         return res
           .status(404)
-          .json({ message: 'Information de sécurité non trouvée' });
+          .json({ message: "Information de sécurité non trouvée" });
       }
     } catch (error) {
       console.error(
-        'Erreur lors de la suppression de l’information de sécurité:',
-        error,
+        "Erreur lors de la suppression de l’information de sécurité:",
+        error
       );
-      return res.status(500).json({ message: 'Erreur serveur' });
+      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 }
