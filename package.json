@@ -12,7 +12,6 @@
     "test": "NODE_ENV=test jest --detectOpenHandles --setupFiles=dotenv/config",
     "test:railway": "node scripts/test-railway-db.js",
     "setup:test": "./scripts/setup-test-env.sh",
-    "heroku-postbuild": "node scripts/disable-tests.js && npm run build",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli",
     "migration:generate": "npm run typeorm -- migration:generate src/migration/$npm_config_name -d src/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts"
