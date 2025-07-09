@@ -40,8 +40,16 @@ app.use(
     crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.use(cookieParser());
+
+// Log la taille du body pour chaque requête (debug 413)
+app.use((req, res, next) => {
+  const len = req.headers["content-length"];
+  console.log(`Requête ${req.method} ${req.url} - Content-Length: ${len}`);
+  next();
+});
 
 // Routes
 app.use("/api", routes);
