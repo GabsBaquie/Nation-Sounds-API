@@ -13,7 +13,14 @@ class ConcertController {
     try {
       const concertRepository = AppDataSource.getRepository(Concert);
       const concerts = await concertRepository.find({ relations: ["days"] });
-      return res.status(200).json(concerts);
+      // Transforme l'image Buffer en base64 pour chaque concert
+      const concertsWithImage = concerts.map((concert) => ({
+        ...concert,
+        image: concert.image
+          ? `data:image/png;base64,${concert.image.toString("base64")}`
+          : null,
+      }));
+      return res.status(200).json(concertsWithImage);
     } catch (error) {
       console.error("Erreur lors de la récupération des concerts:", error);
       return res.status(500).json({ message: "Erreur serveur" });
@@ -35,7 +42,12 @@ class ConcertController {
         return res.status(404).json({ message: "Concert non trouvé" });
       }
 
-      return res.status(200).json(concert);
+      // Transforme l'image Buffer en base64
+      const imageBase64 = concert.image
+        ? `data:image/png;base64,${concert.image.toString("base64")}`
+        : null;
+
+      return res.status(200).json({ ...concert, image: imageBase64 });
     } catch (error) {
       console.error("Erreur lors de la récupération du concert:", error);
       return res.status(500).json({ message: "Erreur serveur" });
@@ -54,7 +66,12 @@ class ConcertController {
         performer: dto.performer,
         time: dto.time,
         location: dto.location,
-        image: dto.image,
+        image: dto.image
+          ? Buffer.from(
+              dto.image.replace(/^data:image\/\w+;base64,/, ""),
+              "base64"
+            )
+          : undefined,
       });
       if (dto.dayIds && dto.dayIds.length > 0) {
         const days = await dayRepository.findBy({ id: In(dto.dayIds) });
@@ -71,7 +88,11 @@ class ConcertController {
         where: { id: saved.id },
         relations: ["days"],
       });
-      return res.status(201).json(concertWithDays);
+      // Transforme l'image Buffer en base64
+      const imageBase64 = concertWithDays?.image
+        ? `data:image/png;base64,${concertWithDays.image.toString("base64")}`
+        : null;
+      return res.status(201).json({ ...concertWithDays, image: imageBase64 });
     } catch (error) {
       return res.status(500).json({
         message: "Erreur serveur",
@@ -99,7 +120,12 @@ class ConcertController {
       concert.performer = dto.performer;
       concert.time = dto.time;
       concert.location = dto.location;
-      concert.image = dto.image;
+      if (dto.image) {
+        concert.image = Buffer.from(
+          dto.image.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        );
+      }
       if (dto.dayIds) {
         if (dto.dayIds.length > 0) {
           const days = await dayRepository.findBy({ id: In(dto.dayIds) });
@@ -119,7 +145,11 @@ class ConcertController {
         where: { id: saved.id },
         relations: ["days"],
       });
-      return res.status(200).json(concertWithDays);
+      // Transforme l'image Buffer en base64
+      const imageBase64 = concertWithDays?.image
+        ? `data:image/png;base64,${concertWithDays.image.toString("base64")}`
+        : null;
+      return res.status(200).json({ ...concertWithDays, image: imageBase64 });
     } catch (error) {
       return res.status(500).json({
         message: "Erreur serveur",

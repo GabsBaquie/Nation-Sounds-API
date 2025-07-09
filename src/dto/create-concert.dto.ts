@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsArray, IsInt } from "class-validator";
+import { IsArray, IsInt, IsOptional, IsString } from "class-validator";
 
 export class CreateConcertDto {
   @IsString()
@@ -16,8 +16,9 @@ export class CreateConcertDto {
   @IsString()
   location!: string;
 
+  @IsOptional()
   @IsString()
-  image!: string;
+  image?: string;
 
   @IsOptional()
   @IsArray()

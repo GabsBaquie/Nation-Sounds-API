@@ -1,11 +1,11 @@
 // src/entity/Concert.ts
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToMany,
-  JoinTable,
   CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Day } from "./Day";
@@ -30,8 +30,8 @@ export class Concert {
   @Column()
   location!: string;
 
-  @Column()
-  image!: string;
+  @Column("bytea", { nullable: true })
+  image?: Buffer;
 
   @ManyToMany(() => Day, (day: Day): Concert[] => day.concerts, {
     cascade: false, // Désactive le cascade pour éviter les suppressions circulaires
