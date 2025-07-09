@@ -82,6 +82,17 @@ class ConcertController {
         }
         concert.days = days;
       }
+      // Log de debug avant sauvegarde
+      console.log("Concert à sauvegarder :", {
+        title: concert.title,
+        description: concert.description,
+        performer: concert.performer,
+        time: concert.time,
+        location: concert.location,
+        imageType: typeof concert.image,
+        imageIsBuffer: concert.image instanceof Buffer,
+        imageLength: concert.image?.length,
+      });
       const saved = await concertRepository.save(concert);
       // Recharge avec les days liés pour la réponse
       const concertWithDays = await concertRepository.findOne({
@@ -126,19 +137,17 @@ class ConcertController {
           "base64"
         );
       }
-      if (dto.dayIds) {
-        if (dto.dayIds.length > 0) {
-          const days = await dayRepository.findBy({ id: In(dto.dayIds) });
-          if (days.length !== dto.dayIds.length) {
-            return res
-              .status(404)
-              .json({ message: "Un ou plusieurs days n'ont pas été trouvés." });
-          }
-          concert.days = days;
-        } else {
-          concert.days = [];
-        }
-      }
+      // Log de debug avant sauvegarde
+      console.log("Concert à sauvegarder :", {
+        title: concert.title,
+        description: concert.description,
+        performer: concert.performer,
+        time: concert.time,
+        location: concert.location,
+        imageType: typeof concert.image,
+        imageIsBuffer: concert.image instanceof Buffer,
+        imageLength: concert.image?.length,
+      });
       const saved = await concertRepository.save(concert);
       // Recharge avec les days liés pour la réponse
       const concertWithDays = await concertRepository.findOne({
