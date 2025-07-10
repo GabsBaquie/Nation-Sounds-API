@@ -22,7 +22,7 @@ export const uploadImage = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 Mo max
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.match(/^image\/(jpeg|png|gif|webp)$/)) {
-      return cb(new Error("Format d'image non supporté"), false);
+      return cb(null, false);
     }
     cb(null, true);
   },
