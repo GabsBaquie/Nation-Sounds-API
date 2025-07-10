@@ -16,5 +16,5 @@
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts"],
-  "include": ["src", "src/migration"]
+  "include": ["src", "src/migration", "src/scripts"]
 }

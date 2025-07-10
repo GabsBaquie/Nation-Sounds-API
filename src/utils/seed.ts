@@ -1,41 +1,45 @@
 // src/utils/seed.ts
 import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
-import bcrypt from "bcrypt";
+import { seedDaysAndConcerts } from "../seeds/day-concert.seed";
+import { seedPois } from "../seeds/poi.seed";
+import { seedSecurityInfos } from "../seeds/security.seed";
+import { seedUsers } from "../seeds/user.seed";
 
-
-// Fonction pour créer un utilisateur par défaut si aucun utilisateur n'existe dans la base de données
-// Cette fonction est appelée lors de l'exécution de la commande npm run seed
-// ! Cette fonction ne doit être utilisée qu'en développement
-
-const createDefaultUser = async () => {
-  const userRepository = AppDataSource.getRepository(User);
-
-  const existingUser = await userRepository.findOne({ where: { email: "test@example.com" } });
-  if (existingUser) {
-    console.log("Utilisateur par défaut déjà existant.");
-    return;
+const cleanDatabase = async (dataSource: typeof AppDataSource) => {
+  // Respecter l'ordre des contraintes FK
+  const entities = [
+    "concert_days_day", // table de jointure ManyToMany
+    "day",
+    "concert",
+    "poi",
+    "security_info",
+    "user",
+  ];
+  for (const entity of entities) {
+    try {
+      await dataSource.query(
+        `TRUNCATE TABLE "${entity}" RESTART IDENTITY CASCADE;`
+      );
+      console.log(`Table ${entity} nettoyée.`);
+    } catch (e) {
+      console.error(`Erreur lors du nettoyage de ${entity}:`, e);
+    }
   }
-
-  const hashedPassword = await bcrypt.hash("password123", 10);
-
-  const user = userRepository.create({
-    username: "testuser",
-    email: "test@example.com",
-    password: hashedPassword,
-    role: "admin", // ou "user" selon vos besoins
-  });
-
-  await userRepository.save(user);
-  console.log("Utilisateur par défaut créé avec succès.");
 };
 
 AppDataSource.initialize()
   .then(async () => {
-    await createDefaultUser();
-    process.exit(0);
+    console.log("🌱 Nettoyage de la base...");
+    await cleanDatabase(AppDataSource);
+    console.log("🌱 Seeding DB...");
+    await seedUsers(AppDataSource);
+    await seedSecurityInfos(AppDataSource);
+    await seedDaysAndConcerts(AppDataSource);
+    await seedPois(AppDataSource);
+    await AppDataSource.destroy();
+    console.log("✅ Seed terminé.");
   })
   .catch((error) => {
-    console.error("Erreur lors de la création de l'utilisateur par défaut :", error);
+    console.error("❌ Erreur lors du seed :", error);
     process.exit(1);
   });
