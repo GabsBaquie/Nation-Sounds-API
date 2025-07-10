@@ -17,8 +17,7 @@ export class CreateConcertDto {
   location!: string;
 
   @IsOptional()
-  @IsString()
-  image?: string;
+  image?: string | null;
 
   @IsOptional()
   @IsArray()

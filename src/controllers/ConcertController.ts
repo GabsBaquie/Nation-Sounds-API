@@ -7,13 +7,20 @@ import { CreateConcertDto } from "../dto/create-concert.dto";
 import { Concert } from "../entity/Concert";
 import { Day } from "../entity/Day";
 
+const normalizeConcertImage = (concert: Concert | null) => {
+  if (!concert) return null;
+  // Clone l'objet pour ne pas modifier l'instance TypeORM
+  const obj = { ...concert, image: concert.image ?? null };
+  return obj;
+};
+
 class ConcertController {
   // GET /api/concerts
   static async getAll(req: Request, res: Response) {
     try {
       const concertRepository = AppDataSource.getRepository(Concert);
       const concerts = await concertRepository.find({ relations: ["days"] });
-      return res.status(200).json(concerts);
+      return res.status(200).json(concerts.map(normalizeConcertImage));
     } catch (error) {
       console.error("Erreur lors de la récupération des concerts:", error);
       return res.status(500).json({ message: "Erreur serveur" });
@@ -35,7 +42,7 @@ class ConcertController {
         return res.status(404).json({ message: "Concert non trouvé" });
       }
 
-      return res.status(200).json(concert);
+      return res.status(200).json(normalizeConcertImage(concert));
     } catch (error) {
       console.error("Erreur lors de la récupération du concert:", error);
       return res.status(500).json({ message: "Erreur serveur" });
@@ -54,7 +61,7 @@ class ConcertController {
         performer: String(dto.performer),
         time: String(dto.time),
         location: String(dto.location),
-        image: dto.image,
+        image: dto.image ?? undefined,
       });
       if (dto.dayIds && dto.dayIds.length > 0) {
         const days = await dayRepository.findBy({ id: In(dto.dayIds) });
@@ -70,7 +77,7 @@ class ConcertController {
         where: { id: saved.id },
         relations: ["days"],
       });
-      return res.status(201).json(concertWithDays);
+      return res.status(201).json(normalizeConcertImage(concertWithDays));
     } catch (error) {
       return res.status(500).json({
         message: "Erreur serveur",
@@ -98,7 +105,14 @@ class ConcertController {
       concert.performer = String(dto.performer);
       concert.time = String(dto.time);
       concert.location = String(dto.location);
-      concert.image = dto.image;
+      // Gestion correcte de la suppression d'image
+      if ("image" in dto) {
+        if (dto.image === null || dto.image === "") {
+          concert.image = undefined;
+        } else {
+          concert.image = dto.image;
+        }
+      }
       if (dto.dayIds && dto.dayIds.length > 0) {
         const days = await dayRepository.findBy({ id: In(dto.dayIds) });
         if (days.length !== dto.dayIds.length) {
@@ -113,7 +127,7 @@ class ConcertController {
         where: { id: saved.id },
         relations: ["days"],
       });
-      return res.status(200).json(concertWithDays);
+      return res.status(200).json(normalizeConcertImage(concertWithDays));
     } catch (error) {
       return res.status(500).json({
         message: "Erreur serveur",
