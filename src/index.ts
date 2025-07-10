@@ -14,10 +14,10 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://admin-frontend-omega.vercel.app", // Frontend de production
+      "https://admin-frontend-omega.vercel.app", // BackOffice de production
+      "https://nation-sound-front.vercel.app", // Frontend de production
       "http://localhost:3000", // frontend de développement local
       "http://localhost:3001", // frontend de développement local 2
-      "https://nation-sounds-backend.up.railway.app", // Backend de production
       "http://localhost:8080", // Backend de développement local
       "http://51.15.241.119:8080", // Backend de production
     ],
