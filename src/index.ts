@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import path from "path";
 import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import routes from "./routes";
@@ -53,6 +54,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api", routes);
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Connexion à la base de données et lancement du serveur uniquement en dehors de NODE_ENV=test
 if (process.env.NODE_ENV !== "test") {

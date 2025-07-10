@@ -14,6 +14,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 1",
       time: "12:00",
       location: "Paris",
+      image: "",
     },
     {
       title: "Groupe de jazz All in Jazz",
@@ -21,6 +22,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 2",
       time: "14:00",
       location: "Classic",
+      image: "",
     },
     {
       title: "Jazz Vance",
@@ -28,6 +30,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 3",
       time: "15:00",
       location: "VIP",
+      image: "",
     },
     {
       title: "Villette",
@@ -35,6 +38,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 4",
       time: "16:00",
       location: "Lyon",
+      image: "",
     },
     {
       title: "The Count Basie",
@@ -42,6 +46,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 5",
       time: "17:00",
       location: "Marseille",
+      image: "",
     },
     {
       title: "The Modern Jazz Quartet",
@@ -49,6 +54,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 6",
       time: "18:00",
       location: "Bordeaux",
+      image: "",
     },
     {
       title: "Blue Note All Stars",
@@ -56,6 +62,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 7",
       time: "19:00",
       location: "Nice",
+      image: "",
     },
     {
       title: "Paris Jazz Big Band",
@@ -63,6 +70,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 8",
       time: "20:00",
       location: "Paris",
+      image: "",
     },
     {
       title: "Jazz Messengers",
@@ -70,6 +78,7 @@ export const seedDaysAndConcerts = async (dataSource: DataSource) => {
       performer: "Artiste 9",
       time: "21:00",
       location: "Toulouse",
+      image: "",
     },
   ];
   const concerts: Concert[] = [];

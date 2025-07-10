@@ -30,8 +30,8 @@ export class Concert {
   @Column()
   location!: string;
 
-  @Column("bytea", { nullable: true })
-  image?: Buffer;
+  @Column({ nullable: true })
+  image?: string;
 
   @ManyToMany(() => Day, (day: Day): Concert[] => day.concerts, {
     cascade: false, // Désactive le cascade pour éviter les suppressions circulaires

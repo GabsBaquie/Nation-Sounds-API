@@ -5,13 +5,14 @@ import { Concert } from "../entity/Concert";
 import { Day } from "../entity/Day";
 import { POI } from "../entity/POI";
 import { SecurityInfo } from "../entity/SecurityInfo";
+import { adminMiddleware, authMiddleware } from "../middleware";
 import adminRoutes from "./adminRoutes";
 import authRoutes from "./authRoutes";
 import concertRoutes from "./concertRoutes";
 import dayRoutes from "./dayRoutes";
 import poiRoutes from "./poiRoutes";
 import securityInfoRoutes from "./securityInfoRoutes";
-import { authMiddleware, adminMiddleware } from "../middleware";
+import uploadRoutes from "./uploadRoutes";
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.use("/auth", authRoutes, authMiddleware);
 router.use("/pois", poiRoutes);
 router.use("/days", dayRoutes);
 router.use("/concerts", concertRoutes);
+router.use("/upload", uploadRoutes);
 router.use("/admin", adminRoutes, authMiddleware, adminMiddleware);
 router.use("/securityInfos", securityInfoRoutes);
 
