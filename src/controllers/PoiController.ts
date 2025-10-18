@@ -1,46 +1,46 @@
 // src/controllers/PoiController.ts
 import { Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { CreatePoiDto } from "../dto/create-poi.dto";
-import { POI } from "../entity/POI";
+import { PoiService } from "../services/PoiService";
+import { CreatePoiDto } from "../types/database";
 
 class PoiController {
   static async getAll(req: Request, res: Response) {
-    const poiRepository = AppDataSource.getRepository(POI);
-    const type = req.query.type as string;
-
-    let pois;
-    if (type) {
-      pois = await poiRepository.find({ where: { type } });
-    } else {
-      pois = await poiRepository.find();
+    try {
+      const type = req.query.type as string;
+      const pois = await PoiService.findAll(type);
+      return res.status(200).json(pois);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des POIs:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
     }
-
-    res.json(pois);
   }
 
   static async getById(req: Request, res: Response) {
-    const poiRepository = AppDataSource.getRepository(POI);
     const id = parseInt(req.params.id);
 
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID de POI invalide" });
+    }
+
     try {
-      const poi = await poiRepository.findOneOrFail({ where: { id } });
-      res.json(poi);
+      const poi = await PoiService.findById(id);
+      if (!poi) {
+        return res.status(404).json({ message: "Point d'intérêt non trouvé" });
+      }
+      return res.status(200).json(poi);
     } catch (error) {
-      res.status(404).json({ message: "Point d’intérêt non trouvé" });
+      console.error("Erreur lors de la récupération du POI:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
     }
   }
 
   static async create(req: Request, res: Response) {
     try {
       const dto = req.dto as CreatePoiDto;
-      const poi = AppDataSource.getRepository(POI).create({
-        ...dto,
-        description: dto.description ?? "",
-      });
-      const saved = await AppDataSource.getRepository(POI).save(poi);
-      return res.status(201).json(saved);
+      const poi = await PoiService.create(dto);
+      return res.status(201).json(poi);
     } catch (error) {
+      console.error("Erreur lors de la création du POI:", error);
       return res.status(500).json({
         message: "Erreur serveur",
         error: error instanceof Error ? error.message : "Erreur inconnue",
@@ -48,26 +48,22 @@ class PoiController {
     }
   }
 
-  // Ajout de la méthode update pour PUT /api/pois/:id
   static async update(req: Request, res: Response) {
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID de POI invalide" });
+    }
+
     try {
-      const id = Number(req.params.id);
       const dto = req.dto as CreatePoiDto;
-      const poiRepository = AppDataSource.getRepository(POI);
-      const poi = await poiRepository.findOne({ where: { id } });
+      const poi = await PoiService.update(id, dto);
       if (!poi) {
         return res.status(404).json({ message: "POI non trouvé" });
       }
-      poi.title = dto.title;
-      poi.type = dto.type;
-      poi.latitude = dto.latitude;
-      poi.longitude = dto.longitude;
-      poi.description = dto.description ?? "";
-      poi.category = dto.category;
-      poi.address = dto.address;
-      const saved = await poiRepository.save(poi);
-      return res.status(200).json(saved);
+      return res.status(200).json(poi);
     } catch (error) {
+      console.error("Erreur lors de la mise à jour du POI:", error);
       return res.status(500).json({
         message: "Erreur serveur",
         error: error instanceof Error ? error.message : "Erreur inconnue",
@@ -76,16 +72,21 @@ class PoiController {
   }
 
   static async delete(req: Request, res: Response) {
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID de POI invalide" });
+    }
+
     try {
-      const id = Number(req.params.id);
-      const poiRepository = AppDataSource.getRepository(POI);
-      const poi = await poiRepository.findOne({ where: { id } });
-      if (!poi) {
+      const deleted = await PoiService.delete(id);
+      if (deleted) {
+        return res.status(200).json({ message: "POI supprimé avec succès" });
+      } else {
         return res.status(404).json({ message: "POI non trouvé" });
       }
-      await poiRepository.remove(poi);
-      return res.status(200).json({ message: "POI supprimé avec succès" });
     } catch (error) {
+      console.error("Erreur lors de la suppression du POI:", error);
       return res.status(500).json({
         message: "Erreur serveur",
         error: error instanceof Error ? error.message : "Erreur inconnue",

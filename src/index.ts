@@ -3,8 +3,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import path from "path";
-import "reflect-metadata";
-import { AppDataSource } from "./data-source";
+import { testConnection } from "./database/connection";
 import routes from "./routes";
 
 const app = express();
@@ -102,19 +101,30 @@ app.use(
 );
 
 // Démarrage du serveur
-if (process.env.NODE_ENV !== "test") {
-  AppDataSource.initialize()
-    .then(() => {
-      console.log("✅ Connexion à la base de données réussie !");
-      const PORT = parseInt(process.env.PORT ?? "8080", 10);
+const startServer = async () => {
+  try {
+    const isConnected = await testConnection();
+    if (isConnected) {
+      const PORT = parseInt(process.env.PORT ?? "3000", 10);
       app.listen(PORT, "0.0.0.0", () => {
         console.log(`🚀 Serveur démarré sur http://0.0.0.0:${PORT}`);
         console.log("🌐 CORS autorisé pour :", allowedOrigins);
       });
-    })
-    .catch((error: Error) => {
-      console.error("❌ Erreur DB :", error);
-    });
+    } else {
+      console.error(
+        "❌ Impossible de démarrer le serveur sans connexion à la base de données"
+      );
+      process.exit(1);
+    }
+  } catch (error: any) {
+    console.error("❌ Erreur DB :", error);
+    process.exit(1);
+  }
+};
+
+// Démarrer le serveur sauf si c'est un test unitaire
+if (process.env.NODE_ENV !== "test" || process.argv.includes("--start-server")) {
+  startServer();
 }
 
 export default app;

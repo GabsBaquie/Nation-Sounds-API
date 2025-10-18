@@ -1,11 +1,10 @@
 // src/routes/index.ts
 import { Router } from "express";
-import { AppDataSource } from "../data-source";
-import { Concert } from "../entity/Concert";
-import { Day } from "../entity/Day";
-import { POI } from "../entity/POI";
-import { SecurityInfo } from "../entity/SecurityInfo";
 import { adminMiddleware, authMiddleware } from "../middleware";
+import { ConcertService } from "../services/ConcertService";
+import { DayService } from "../services/DayService";
+import { PoiService } from "../services/PoiService";
+import { SecurityInfoService } from "../services/SecurityInfoService";
 import adminRoutes from "./adminRoutes";
 import authRoutes from "./authRoutes";
 import concertRoutes from "./concertRoutes";
@@ -28,14 +27,10 @@ router.use("/securityInfos", securityInfoRoutes);
 router.get("/", async (req, res) => {
   try {
     const data = {
-      days: await AppDataSource.getRepository(Day).find({
-        relations: ["concerts"],
-      }),
-      concerts: await AppDataSource.getRepository(Concert).find({
-        relations: ["days"],
-      }),
-      pois: await AppDataSource.getRepository(POI).find(),
-      securityInfos: await AppDataSource.getRepository(SecurityInfo).find(),
+      days: await DayService.findAll(),
+      concerts: await ConcertService.findAll(),
+      pois: await PoiService.findAll(),
+      securityInfos: await SecurityInfoService.findAll(),
     };
     res.status(200).json(data);
   } catch (error) {

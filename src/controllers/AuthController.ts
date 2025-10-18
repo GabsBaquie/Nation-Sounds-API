@@ -1,14 +1,11 @@
-// src/controllers/AuthController.ts
 import * as bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
 import { v4 as uuidv4 } from "uuid";
+import { UserService } from "../services/UserService";
 import { sendResetEmail } from "../utils/emailService";
-import { MoreThan } from "typeorm";
 
-class AuthController {
+export class AuthController {
   // Connexion de l'utilisateur
   static async login(req: Request, res: Response) {
     const { email, password } = req.body;
@@ -19,21 +16,16 @@ class AuthController {
     }
 
     try {
-      const userRepository = AppDataSource.getRepository(User);
-      const user = await userRepository.findOne({ where: { email } });
+      const user = await UserService.findByEmail(email);
 
       if (!user) {
-        return res
-          .status(401)
-          .json({ message: "Email invalide" });
+        return res.status(401).json({ message: "Email invalide" });
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
-        return res
-          .status(401)
-          .json({ message: "Mot de passe invalide" });
+        return res.status(401).json({ message: "Mot de passe invalide" });
       }
 
       // Génération du JWT
@@ -51,8 +43,8 @@ class AuthController {
       // Définition du cookie
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // true en production
-        sameSite: "none", // 'strict' ou 'lax' pourrait ne pas fonctionner pour les requêtes cross-site
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
         path: "/",
         maxAge: 24 * 60 * 60 * 1000, // 1 jour
       });
@@ -74,19 +66,14 @@ class AuthController {
 
   // Récupérer les informations du profil de l'utilisateur connecté
   static async getProfile(req: Request, res: Response) {
-    const userRepository = AppDataSource.getRepository(User);
-
     try {
-      // Trouver l'utilisateur connecté à partir de l'ID stocké dans `req.user`
-      const user = await userRepository.findOne({
-        where: { id: req.user?.id },
-      });
+      const user = await UserService.findById(req.user?.id);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
-      // Retourner les informations de l'utilisateur
+      // Retourner les informations de l'utilisateur (sans le mot de passe)
       return res.status(200).json({
         username: user.username,
         email: user.email,
@@ -101,12 +88,10 @@ class AuthController {
   // Changer le mot de passe de l'utilisateur connecté
   static async changePassword(req: Request, res: Response) {
     const { oldPassword, newPassword } = req.body;
-    const userId = req.user.id; // Assurez-vous que l'utilisateur est authentifié et que son ID est disponible
+    const userId = req.user.id;
 
     try {
-      const user = await AppDataSource.getRepository(User).findOne({
-        where: { id: userId },
-      });
+      const user = await UserService.findById(userId);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -122,9 +107,9 @@ class AuthController {
 
       // Hash du nouveau mot de passe
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      user.password = hashedPassword;
 
-      await AppDataSource.getRepository(User).save(user);
+      // Mettre à jour le mot de passe
+      await UserService.update(userId, { password: hashedPassword } as any);
 
       return res
         .status(200)
@@ -144,45 +129,48 @@ class AuthController {
     }
 
     try {
-      const user = await AppDataSource.getRepository(User).findOne({
-        where: { email },
-      });
+      const user = await UserService.findByEmail(email);
 
       if (!user) {
         // Pour des raisons de sécurité, ne pas indiquer si l'utilisateur existe ou non
-        return res.status(200).json({ 
-          message: "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé." 
+        return res.status(200).json({
+          message:
+            "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé.",
         });
       }
 
       // Générer un jeton unique pour la réinitialisation
       const resetToken = uuidv4();
-      user.resetToken = resetToken;
-      user.resetTokenExpiration = new Date(Date.now() + 3600000); // Expire dans 1 heure
+      const resetTokenExpiration = new Date(Date.now() + 3600000); // Expire dans 1 heure
 
-      await AppDataSource.getRepository(User).save(user);
+      await UserService.updateResetToken(
+        user.email,
+        resetToken,
+        resetTokenExpiration
+      );
 
       // Utiliser FRONTEND_URL depuis les variables d'environnement
-      const frontendUrl = process.env.FRONTEND_URL || 'https://admin-frontend-omega.vercel.app';
+      const frontendUrl =
+        process.env.FRONTEND_URL || "https://admin-frontend-omega.vercel.app";
       const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
       try {
         await sendResetEmail(user.email, resetLink);
-        return res.status(200).json({ 
-          message: "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé." 
+        return res.status(200).json({
+          message:
+            "Si un compte existe avec cet email, un lien de réinitialisation sera envoyé.",
         });
       } catch (emailError) {
         console.error("Erreur lors de l'envoi de l'email:", emailError);
         // Annuler les changements en base de données si l'email n'a pas pu être envoyé
-        user.resetToken = null;
-        user.resetTokenExpiration = null;
-        await AppDataSource.getRepository(User).save(user);
+        await UserService.updateResetToken(user.email, "", new Date(0));
         throw emailError;
       }
     } catch (error) {
       console.error("Erreur lors de la demande de réinitialisation:", error);
-      return res.status(500).json({ 
-        message: "Une erreur est survenue lors de la demande de réinitialisation" 
+      return res.status(500).json({
+        message:
+          "Une erreur est survenue lors de la demande de réinitialisation",
       });
     }
   }
@@ -192,28 +180,15 @@ class AuthController {
     const { token, newPassword } = req.body;
 
     try {
-      const user = await AppDataSource.getRepository(User).findOne({
-        where: {
-          resetToken: token,
-          resetTokenExpiration: MoreThan(new Date()),
-        },
-      });
+      const success = await UserService.resetPassword(token, newPassword);
 
-      if (!user) {
+      if (success) {
+        return res
+          .status(200)
+          .json({ message: "Mot de passe réinitialisé avec succès" });
+      } else {
         return res.status(400).json({ message: "Jeton invalide ou expiré" });
       }
-
-      // Mettre à jour le mot de passe et supprimer le jeton de réinitialisation
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      user.password = hashedPassword;
-      user.resetToken = null;
-      user.resetTokenExpiration = null;
-
-      await AppDataSource.getRepository(User).save(user);
-
-      return res
-        .status(200)
-        .json({ message: "Mot de passe réinitialisé avec succès" });
     } catch (error) {
       console.error(
         "Erreur lors de la réinitialisation du mot de passe:",

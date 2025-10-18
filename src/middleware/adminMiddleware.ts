@@ -1,7 +1,6 @@
 // src/middleware/adminMiddleware.ts
 import { NextFunction, Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
+import { UserService } from "../services/UserService";
 
 export const adminMiddleware = async (
   req: Request,
@@ -17,9 +16,7 @@ export const adminMiddleware = async (
         .json({ message: "Non autorisé - Utilisateur non identifié" });
     }
 
-    const foundUser = await AppDataSource.getRepository(User).findOne({
-      where: { id: userId },
-    });
+    const foundUser = await UserService.findById(userId);
 
     if (foundUser && foundUser.role === "admin") {
       next();
