@@ -1,8 +1,8 @@
 // src/controllers/__tests__/ConcertController.test.ts
 import request from "supertest";
-import app from "../../index";
-import { ConcertService } from "../../services/ConcertService";
-import { closeTestDB, initializeTestDB } from "../../utils/testSetup";
+import app from "../../../src/index";
+import { ConcertService } from "../../../src/services/ConcertService";
+import { closeTestDB, initializeTestDB } from "../../../src/utils/testSetup";
 
 describe("ConcertController API", () => {
   beforeAll(async () => {

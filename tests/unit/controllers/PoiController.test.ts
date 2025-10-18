@@ -1,8 +1,8 @@
 // src/controllers/__tests__/PoiController.test.ts
 import request from "supertest";
-import app from "../../index";
-import { PoiService } from "../../services/PoiService";
-import { closeTestDB, initializeTestDB } from "../../utils/testSetup";
+import app from "../../../src/index";
+import { PoiService } from "../../../src/services/PoiService";
+import { closeTestDB, initializeTestDB } from "../../../src/utils/testSetup";
 
 describe("PoiController API", () => {
   beforeAll(async () => {

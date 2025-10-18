@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { UserService } from "../services/UserService";
+import "../types/express";
 import { sendResetEmail } from "../utils/emailService";
 
 export class AuthController {

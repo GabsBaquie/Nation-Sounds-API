@@ -69,14 +69,14 @@ async function main() {
       break;
 
     case "api":
-      await runCommand("node scripts/testing/test-api.js", "Test de l'API");
+      await runCommand("node tests/scripts/test-api.js", "Test de l'API");
       break;
 
     case "all":
       log("🚀 Exécution de tous les tests...\n", "magenta");
 
       await runCommand("npm test", "Tests unitaires");
-      await runCommand("node scripts/testing/test-api.js", "Test de l'API");
+      await runCommand("node tests/scripts/test-api.js", "Test de l'API");
       await runCommand("node tests/start-and-test.sh", "Tests d'intégration");
 
       log("\n🎉 Tous les tests terminés avec succès !", "green");

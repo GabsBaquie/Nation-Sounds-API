@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CreateConcertDto } from "../dto/requests/create-concert.dto";
 import { ConcertService } from "../services/ConcertService";
+import "../types/express";
 
 const normalizeConcertImage = (concert: any) => {
   if (!concert) return null;

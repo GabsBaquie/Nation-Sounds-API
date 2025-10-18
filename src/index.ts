@@ -3,7 +3,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import path from "path";
-import { testConnection } from "./database/connection";
+import { testConnection } from "../database/scripts/connection";
 import routes from "./routes";
 
 const app = express();
@@ -123,7 +123,10 @@ const startServer = async () => {
 };
 
 // Démarrer le serveur sauf si c'est un test unitaire
-if (process.env.NODE_ENV !== "test" || process.argv.includes("--start-server")) {
+if (
+  process.env.NODE_ENV !== "test" ||
+  process.argv.includes("--start-server")
+) {
   startServer();
 }
 

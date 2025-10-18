@@ -1,4 +1,4 @@
-import { query, transaction } from "../database/connection";
+import { query, transaction } from "../../database/scripts/connection";
 import { CreateConcertDto } from "../dto/requests/create-concert.dto";
 import { Concert, ConcertWithDays } from "../types/database";
 

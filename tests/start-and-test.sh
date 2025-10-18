@@ -17,7 +17,7 @@ sleep 5
 
 # Tester l'API
 echo "🧪 Test de l'API..."
-node scripts/testing/test-api.js
+node tests/scripts/test-api.js
 
 # Arrêter le serveur
 echo "🛑 Arrêt du serveur..."

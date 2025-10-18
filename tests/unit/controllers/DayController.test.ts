@@ -1,8 +1,8 @@
 // src/controllers/__tests__/DayController.test.ts
 import request from "supertest";
-import app from "../../index";
-import { DayService } from "../../services/DayService";
-import { closeTestDB, initializeTestDB } from "../../utils/testSetup";
+import app from "../../../src/index";
+import { DayService } from "../../../src/services/DayService";
+import { closeTestDB, initializeTestDB } from "../../../src/utils/testSetup";
 
 describe("DayController API", () => {
   beforeAll(async () => {
@@ -28,7 +28,7 @@ describe("DayController API", () => {
         date: "2024-12-31",
       });
 
-      const res = await request(app).get(`/api/days/${day!.id}`);
+      const res = await request(app).get(`/api/days/${day.id}`);
       expect(res.status).toBe(200);
       expect(res.body.title).toBe("Jour Test");
     });
@@ -80,7 +80,7 @@ describe("DayController API", () => {
       };
 
       const res = await request(app)
-        .put(`/api/days/${day!.id}`)
+        .put(`/api/days/${day.id}`)
         .send(updateData);
 
       expect(res.status).toBe(200);
@@ -115,7 +115,7 @@ describe("DayController API", () => {
         date: "2024-12-31",
       });
 
-      const res = await request(app).delete(`/api/days/${day!.id}`);
+      const res = await request(app).delete(`/api/days/${day.id}`);
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("message", "Jour supprimé avec succès");
     });
@@ -152,7 +152,7 @@ describe("DayController API", () => {
       });
 
       const res = await request(app)
-        .put(`/api/days/${day!.id}/concerts`)
+        .put(`/api/days/${day}.id}/concerts`)
         .send({
           concertIds: [concert1!.id, concert2!.id],
         });
@@ -168,7 +168,7 @@ describe("DayController API", () => {
       });
 
       const res = await request(app)
-        .put(`/api/days/${day!.id}/concerts`)
+        .put(`/api/days/${day}.id}/concerts`)
         .send({
           concertIds: ["invalid", "also-invalid"],
         });

@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 import { CreatePoiDto } from "../dto/requests/create-poi.dto";
 import { PoiService } from "../services/PoiService";
+import "../types/express";
 
 class PoiController {
   static async getAll(req: Request, res: Response) {

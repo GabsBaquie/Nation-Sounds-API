@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { query } from "../database/connection";
+import { query } from "../../database/scripts/connection";
 
 export class StatsController {
   // Récupérer toutes les données (vue full_db)

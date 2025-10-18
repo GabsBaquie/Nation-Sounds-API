@@ -4,7 +4,6 @@
     "module": "CommonJS",
     "lib": ["ES6"],
     "outDir": "../dist",
-    "rootDir": "../src",
     "strict": true,
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
@@ -16,5 +15,5 @@
     "typeRoots": ["../node_modules/@types", "../src/types"]
   },
   "exclude": ["../node_modules", "../dist", "**/*.test.ts"],
-  "include": ["../src"]
+  "include": ["../src", "../database"]
 }

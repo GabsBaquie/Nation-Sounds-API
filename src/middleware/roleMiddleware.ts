@@ -1,5 +1,6 @@
 // src/middleware/roleMiddleware.ts
 import { NextFunction, Request, Response } from "express";
+import "../types/express";
 
 export const roleMiddleware = (roles: Array<"admin" | "user">) => {
   return (req: Request, res: Response, next: NextFunction) => {

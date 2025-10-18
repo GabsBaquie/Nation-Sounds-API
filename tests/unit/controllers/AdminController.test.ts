@@ -1,12 +1,12 @@
 // src/controllers/__tests__/AdminController.test.ts
 import request from "supertest";
-import app from "../../index";
-import { UserService } from "../../services/UserService";
+import app from "../../../src/index";
+import { UserService } from "../../../src/services/UserService";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../utils/testSetup";
+} from "../../../src/utils/testSetup";
 
 describe("AdminController API", () => {
   let adminToken: string;

@@ -1,4 +1,4 @@
-import { query, transaction } from "../database/connection";
+import { query, transaction } from "../../database/scripts/connection";
 import { CreateUserDto } from "../dto/requests/create-user.dto";
 import { User } from "../types/database";
 

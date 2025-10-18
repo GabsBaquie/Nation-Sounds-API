@@ -13,12 +13,12 @@ import cookieParser from "cookie-parser";
 import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import request from "supertest";
+import { checkJwt } from "../../../src/middleware/checkJwt";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../utils/testSetup";
-import { checkJwt } from "../checkJwt";
+} from "../../../src/utils/testSetup";
 
 // Créer une application Express de test avec cookie-parser
 const app = express();

@@ -1,5 +1,6 @@
 // src/middleware/adminMiddleware.ts
 import { NextFunction, Request, Response } from "express";
+import "../../types/express";
 import { UserService } from "../services/UserService";
 
 export const adminMiddleware = async (

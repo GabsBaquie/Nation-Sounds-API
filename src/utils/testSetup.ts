@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import request from "supertest";
-import { query, testConnection } from "../database/connection";
+import { query, testConnection } from "../../database/scripts/connection";
 import { UserRole } from "../dto/requests/create-user.dto";
 import app from "../index";
 import { UserService } from "../services/UserService";

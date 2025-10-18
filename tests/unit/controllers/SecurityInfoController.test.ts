@@ -1,7 +1,7 @@
 import request from "supertest";
-import app from "../../index";
-import { SecurityInfoService } from "../../services/SecurityInfoService";
-import { closeTestDB, initializeTestDB } from "../../utils/testSetup";
+import app from "../../../src/index";
+import { SecurityInfoService } from "../../../src/services/SecurityInfoService";
+import { closeTestDB, initializeTestDB } from "../../../src/utils/testSetup";
 
 beforeAll(async () => {
   await initializeTestDB();
