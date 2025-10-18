@@ -2,7 +2,7 @@ const axios = require("axios");
 require("dotenv").config({ path: ".env.test" });
 
 // Configuration de l'API
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL = "http://0.0.0.0:8081/api";
 
 // Fonction pour tester l'API
 async function testAPI() {

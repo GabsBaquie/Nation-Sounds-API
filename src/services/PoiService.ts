@@ -12,7 +12,7 @@ export class PoiService {
       params.push(type);
     }
 
-    queryText += ' ORDER BY "createdAt" DESC';
+    queryText += " ORDER BY created_at DESC";
 
     const result = await query(queryText, params);
     return result.rows;
@@ -80,7 +80,7 @@ export class PoiService {
   // Récupérer les POIs par type
   static async findByType(type: string): Promise<POI[]> {
     const result = await query(
-      'SELECT * FROM poi WHERE type = $1 ORDER BY "createdAt" DESC',
+      "SELECT * FROM poi WHERE type = $1 ORDER BY created_at DESC",
       [type]
     );
     return result.rows;
@@ -89,7 +89,7 @@ export class PoiService {
   // Récupérer les POIs par catégorie
   static async findByCategory(category: string): Promise<POI[]> {
     const result = await query(
-      'SELECT * FROM poi WHERE category = $1 ORDER BY "createdAt" DESC',
+      "SELECT * FROM poi WHERE category = $1 ORDER BY created_at DESC",
       [category]
     );
     return result.rows;
@@ -98,7 +98,7 @@ export class PoiService {
   // Rechercher des POIs par titre
   static async search(searchTerm: string): Promise<POI[]> {
     const result = await query(
-      'SELECT * FROM poi WHERE title ILIKE $1 ORDER BY "createdAt" DESC',
+      "SELECT * FROM poi WHERE title ILIKE $1 ORDER BY created_at DESC",
       [`%${searchTerm}%`]
     );
     return result.rows;
@@ -116,7 +116,7 @@ export class PoiService {
       SELECT * FROM poi 
       WHERE latitude BETWEEN $1 AND $2 
         AND longitude BETWEEN $3 AND $4
-      ORDER BY "createdAt" DESC
+      ORDER BY created_at DESC
     `,
       [minLat, maxLat, minLng, maxLng]
     );

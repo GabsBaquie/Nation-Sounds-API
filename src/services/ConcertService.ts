@@ -124,8 +124,8 @@ export class ConcertService {
                 'id', d.id,
                 'title', d.title,
                 'date', d.date,
-                'createdAt', d."createdAt",
-                'updatedAt', d."updatedAt"
+                'created_at', d.created_at,
+                'updated_at', d.updated_at
               )
             ) FILTER (WHERE d.id IS NOT NULL),
             '[]'::json

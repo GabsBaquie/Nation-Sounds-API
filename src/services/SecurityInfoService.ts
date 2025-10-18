@@ -5,7 +5,7 @@ export class SecurityInfoService {
   // Récupérer toutes les informations de sécurité
   static async findAll(): Promise<SecurityInfo[]> {
     const result = await query(
-      'SELECT * FROM security_info ORDER BY "createdAt" DESC'
+      "SELECT * FROM security_info ORDER BY created_at DESC"
     );
     return result.rows;
   }
@@ -72,7 +72,7 @@ export class SecurityInfoService {
   // Récupérer les informations de sécurité actives
   static async findActive(): Promise<SecurityInfo[]> {
     const result = await query(
-      'SELECT * FROM security_info WHERE actif = true ORDER BY "createdAt" DESC'
+      "SELECT * FROM security_info WHERE actif = true ORDER BY created_at DESC"
     );
     return result.rows;
   }
@@ -80,7 +80,7 @@ export class SecurityInfoService {
   // Récupérer les informations de sécurité urgentes
   static async findUrgent(): Promise<SecurityInfo[]> {
     const result = await query(
-      'SELECT * FROM security_info WHERE urgence = true AND actif = true ORDER BY "createdAt" DESC'
+      "SELECT * FROM security_info WHERE urgence = true AND actif = true ORDER BY created_at DESC"
     );
     return result.rows;
   }
@@ -88,7 +88,7 @@ export class SecurityInfoService {
   // Récupérer les informations de sécurité par urgence
   static async findByUrgency(urgence: boolean): Promise<SecurityInfo[]> {
     const result = await query(
-      'SELECT * FROM security_info WHERE urgence = $1 ORDER BY "createdAt" DESC',
+      "SELECT * FROM security_info WHERE urgence = $1 ORDER BY created_at DESC",
       [urgence]
     );
     return result.rows;
@@ -97,7 +97,7 @@ export class SecurityInfoService {
   // Récupérer les informations de sécurité par statut actif
   static async findByActiveStatus(actif: boolean): Promise<SecurityInfo[]> {
     const result = await query(
-      'SELECT * FROM security_info WHERE actif = $1 ORDER BY "createdAt" DESC',
+      "SELECT * FROM security_info WHERE actif = $1 ORDER BY created_at DESC",
       [actif]
     );
     return result.rows;
@@ -106,7 +106,7 @@ export class SecurityInfoService {
   // Rechercher des informations de sécurité par titre ou description
   static async search(searchTerm: string): Promise<SecurityInfo[]> {
     const result = await query(
-      'SELECT * FROM security_info WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY "createdAt" DESC',
+      "SELECT * FROM security_info WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY created_at DESC",
       [`%${searchTerm}%`]
     );
     return result.rows;
