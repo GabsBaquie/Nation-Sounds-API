@@ -1,5 +1,6 @@
 import { query, transaction } from "../database/connection";
-import { CreateDayDto, DayWithConcerts } from "../types/database";
+import { CreateDayDto } from "../dto/requests/create-day.dto";
+import { DayWithConcerts } from "../types/database";
 
 export class DayService {
   // Récupérer tous les jours avec leurs concerts

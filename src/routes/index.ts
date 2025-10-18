@@ -11,6 +11,7 @@ import concertRoutes from "./concertRoutes";
 import dayRoutes from "./dayRoutes";
 import poiRoutes from "./poiRoutes";
 import securityInfoRoutes from "./securityInfoRoutes";
+import statsRoutes from "./statsRoutes";
 import uploadRoutes from "./uploadRoutes";
 
 const router = Router();
@@ -22,6 +23,7 @@ router.use("/concerts", concertRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/admin", adminRoutes, authMiddleware, adminMiddleware);
 router.use("/securityInfos", securityInfoRoutes);
+router.use("/stats", statsRoutes);
 
 // Route pour récupérer toutes les données
 router.get("/", async (req, res) => {

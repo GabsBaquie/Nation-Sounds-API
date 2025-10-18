@@ -1,5 +1,6 @@
 import { query, transaction } from "../database/connection";
-import { CreateUserDto, User } from "../types/database";
+import { CreateUserDto } from "../dto/requests/create-user.dto";
+import { User } from "../types/database";
 
 export class UserService {
   // Récupérer tous les utilisateurs
@@ -51,8 +52,8 @@ export class UserService {
     id: number,
     userData: Partial<CreateUserDto>
   ): Promise<User | null> {
-    const fields = [];
-    const values = [];
+    const fields: string[] = [];
+    const values: any[] = [];
     let paramCount = 1;
 
     if (userData.username !== undefined) {
@@ -74,9 +75,9 @@ export class UserService {
 
     values.push(id);
     const result = await query(
-      `UPDATE "user" SET ${fields.join(
-        ", "
-      )} WHERE id = $${paramCount} RETURNING id, username, email, role, created_at`,
+      `UPDATE "user" SET ${fields.join(", ")} WHERE id = $${
+        paramCount + 1
+      } RETURNING id, username, email, role, created_at`,
       values
     );
     return result.rows[0] || null;

@@ -69,68 +69,7 @@ export interface DayWithConcerts extends Day {
   concerts?: Concert[];
 }
 
-// Types pour les DTOs (Data Transfer Objects)
-export interface CreateUserDto {
-  username: string;
-  email: string;
-  password: string;
-  role: "admin" | "user";
-}
+// Note: DTOs are now in src/dto/ directory
+// This file contains only database entity interfaces
 
-export interface CreateConcertDto {
-  title: string;
-  description: string;
-  performer: string;
-  time: string;
-  location: string;
-  image?: string | null;
-  dayIds?: number[];
-}
-
-export interface CreateDayDto {
-  title: string;
-  date: string;
-  concertIds?: number[];
-}
-
-export interface CreatePoiDto {
-  title: string;
-  type: string;
-  latitude: number;
-  longitude: number;
-  description?: string;
-  category?: string;
-  address?: string;
-}
-
-export interface CreateSecurityInfoDto {
-  title: string;
-  description: string;
-  urgence: boolean;
-  actif: boolean;
-}
-
-// Types pour les réponses API
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
-// Types pour les requêtes avec pagination
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
-  offset?: number;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+// Note: API response types are now in src/dto/common/api-response.dto.ts

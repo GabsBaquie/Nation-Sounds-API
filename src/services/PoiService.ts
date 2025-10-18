@@ -1,5 +1,6 @@
 import { query } from "../database/connection";
-import { CreatePoiDto, POI } from "../types/database";
+import { CreatePoiDto } from "../dto/requests/create-poi.dto";
+import { POI } from "../types/database";
 
 export class PoiService {
   // Récupérer tous les POIs

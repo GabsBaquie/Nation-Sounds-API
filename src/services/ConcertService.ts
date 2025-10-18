@@ -1,5 +1,6 @@
 import { query, transaction } from "../database/connection";
-import { Concert, ConcertWithDays, CreateConcertDto } from "../types/database";
+import { CreateConcertDto } from "../dto/requests/create-concert.dto";
+import { Concert, ConcertWithDays } from "../types/database";
 
 export class ConcertService {
   // Récupérer tous les concerts avec leurs jours associés

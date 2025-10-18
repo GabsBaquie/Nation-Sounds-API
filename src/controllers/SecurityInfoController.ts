@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
+import { CreateSecurityInfoDto } from "../dto/requests/create-security-info.dto";
 import { SecurityInfoService } from "../services/SecurityInfoService";
-import { CreateSecurityInfoDto } from "../types/database";
 
 class SecurityInfoController {
   // GET /api/securityInfos

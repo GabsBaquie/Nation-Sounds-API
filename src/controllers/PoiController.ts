@@ -1,7 +1,7 @@
 // src/controllers/PoiController.ts
 import { Request, Response } from "express";
+import { CreatePoiDto } from "../dto/requests/create-poi.dto";
 import { PoiService } from "../services/PoiService";
-import { CreatePoiDto } from "../types/database";
 
 class PoiController {
   static async getAll(req: Request, res: Response) {

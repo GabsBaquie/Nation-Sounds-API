@@ -7,7 +7,7 @@
     "start": "node dist/index.js",
     "start:prod": "NODE_ENV=production node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
+    "build": "tsc -p config/tsconfig.json",
     "seed:prod": "NODE_ENV=production node dist/utils/seed.js",
     "seed:dev": "NODE_ENV=development ts-node src/utils/seed.ts",
     "test": "NODE_ENV=test jest --detectOpenHandles --setupFiles=dotenv/config",
@@ -22,18 +22,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
-  },
+  "jest": "./config/jest.config.js",
   "dependencies": {
     "axios": "^1.12.2",
     "bcrypt": "^5.1.1",

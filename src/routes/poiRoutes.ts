@@ -1,7 +1,7 @@
 // src/routes/poiRoutes.ts
 import { Router } from "express";
 import PoiController from "../controllers/PoiController";
-import { CreatePoiDto } from "../dto/create-poi.dto";
+import { CreatePoiDto } from "../dto/requests/create-poi.dto";
 import { validateDto } from "../middleware/validateDto";
 
 const router = Router();

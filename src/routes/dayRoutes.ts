@@ -1,7 +1,7 @@
 // src/routes/dayRoutes.ts
 import { Router } from "express";
 import DayController from "../controllers/DayController";
-import { CreateDayDto } from "../dto/create-day.dto";
+import { CreateDayDto } from "../dto/requests/create-day.dto";
 import { checkJwt } from "../middleware/checkJwt";
 import { validateDto } from "../middleware/validateDto";
 

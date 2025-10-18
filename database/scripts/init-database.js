@@ -14,7 +14,7 @@ async function initTestDatabase() {
 
     console.log("Lecture du script SQL...");
     const sqlScript = fs.readFileSync(
-      path.join(__dirname, "src/scripts/init-db.sql"),
+      path.join(__dirname, "../migrations/init-schema.sql"),
       "utf8"
     );
 
