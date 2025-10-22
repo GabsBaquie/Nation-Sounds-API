@@ -207,8 +207,40 @@ export class ConcertService {
         }
       }
 
-      // Retourner le concert mis à jour avec ses jours
-      return await this.findById(id);
+      // Retourner le concert mis à jour avec ses jours en utilisant la transaction
+      const result = await client.query(
+        `
+        SELECT 
+          c.*,
+          COALESCE(
+            JSON_AGG(
+              JSON_BUILD_OBJECT(
+                'id', d.id,
+                'title', d.title,
+                'date', d.date,
+                'created_at', d.created_at,
+                'updated_at', d.updated_at
+              )
+            ) FILTER (WHERE d.id IS NOT NULL),
+            '[]'::json
+          ) as days
+        FROM concert c
+        LEFT JOIN concert_days_day cd ON c.id = cd."concertId"
+        LEFT JOIN day d ON cd."dayId" = d.id
+        WHERE c.id = $1
+        GROUP BY c.id
+      `,
+        [id]
+      );
+
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      return {
+        ...result.rows[0],
+        days: result.rows[0].days || [],
+      };
     });
   }
 

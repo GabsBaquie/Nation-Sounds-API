@@ -43,7 +43,7 @@ export class AdminController {
         role,
       });
 
-      return res.status(201).json({ message: "Utilisateur créé avec succès" });
+      return res.status(201).json(newUser);
     } catch (error) {
       console.error("Erreur lors de la création de l'utilisateur :", error);
       return res
@@ -58,7 +58,7 @@ export class AdminController {
 
     const userId = parseInt(id);
     if (isNaN(userId)) {
-      return res.status(400).json({ message: "ID utilisateur invalide" });
+      return res.status(400).json({ message: "ID d'utilisateur invalide" });
     }
 
     try {
@@ -105,7 +105,7 @@ export class AdminController {
     const userId = parseInt(id);
 
     if (isNaN(userId)) {
-      return res.status(400).json({ message: "ID utilisateur invalide" });
+      return res.status(400).json({ message: "ID d'utilisateur invalide" });
     }
 
     try {
@@ -119,11 +119,9 @@ export class AdminController {
       if (user.role === "admin") {
         const adminCount = await UserService.countByRole("admin");
         if (adminCount <= 1) {
-          return res
-            .status(400)
-            .json({
-              message: "Impossible de supprimer le dernier administrateur",
-            });
+          return res.status(400).json({
+            message: "Impossible de supprimer le dernier administrateur",
+          });
         }
       }
 
@@ -160,7 +158,7 @@ export class AdminController {
     const userId = parseInt(req.params.id);
 
     if (isNaN(userId)) {
-      return res.status(400).json({ message: "ID utilisateur invalide" });
+      return res.status(400).json({ message: "ID d'utilisateur invalide" });
     }
 
     try {

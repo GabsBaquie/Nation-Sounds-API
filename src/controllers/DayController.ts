@@ -61,7 +61,7 @@ export class DayController {
     }
 
     try {
-      const dto = req.dto as CreateDayDto;
+      const dto = (req.dto || req.body) as CreateDayDto;
       const day = await DayService.update(id, dto);
 
       if (!day) {
@@ -125,7 +125,10 @@ export class DayController {
         return res.status(404).json({ message: "Jour non trouvé" });
       }
 
-      return res.status(200).json(day);
+      return res.status(200).json({
+        message: "Concerts ajoutés avec succès",
+        day: day,
+      });
     } catch (error) {
       console.error("Erreur lors de l'ajout de concerts au jour:", error);
       return res.status(500).json({

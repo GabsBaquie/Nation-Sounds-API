@@ -1,0 +1,517 @@
+{
+  "info": {
+    "name": "Nation Sounds API",
+    "description": "Collection complète pour tester l'API Nation Sounds",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
+      "key": "apiUrl",
+      "value": "{{baseUrl}}/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔍 Tests de Base",
+      "item": [
+        {
+          "name": "Test API Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/",
+              "host": ["{{apiUrl}}"],
+              "path": [""]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔐 Authentification",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.token) {",
+                  "        pm.collectionVariables.set('token', response.token);",
+                  "        console.log('Token sauvegardé:', response.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/auth/login",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/auth/profile",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/auth/me",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request Password Reset",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/auth/request-password-reset",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "request-password-reset"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🎵 Concerts",
+      "item": [
+        {
+          "name": "Get All Concerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/concerts",
+              "host": ["{{apiUrl}}"],
+              "path": ["concerts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Concerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/concerts/search?q=rock",
+              "host": ["{{apiUrl}}"],
+              "path": ["concerts", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "rock"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Concert by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/concerts/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["concerts", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Concert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Concert Test\",\n  \"description\": \"Description du concert test\",\n  \"performer\": \"Artiste Test\",\n  \"time\": \"20:00\",\n  \"location\": \"Scène principale\",\n  \"image\": \"test-image.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/concerts",
+              "host": ["{{apiUrl}}"],
+              "path": ["concerts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Concert",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Concert Test Modifié\",\n  \"description\": \"Description modifiée\",\n  \"performer\": \"Artiste Modifié\",\n  \"time\": \"21:00\",\n  \"location\": \"Scène secondaire\",\n  \"image\": \"test-image-updated.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/concerts/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["concerts", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Concert",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/concerts/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["concerts", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📅 Jours/Programmes",
+      "item": [
+        {
+          "name": "Get All Days",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/days",
+              "host": ["{{apiUrl}}"],
+              "path": ["days"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Days by Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/days/date-range?start=2024-01-01&end=2024-12-31",
+              "host": ["{{apiUrl}}"],
+              "path": ["days", "date-range"],
+              "query": [
+                {
+                  "key": "start",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "end",
+                  "value": "2024-12-31"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Day by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/days/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["days", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Day",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Jour Test\",\n  \"date\": \"2024-07-01\",\n  \"description\": \"Description du jour test\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/days",
+              "host": ["{{apiUrl}}"],
+              "path": ["days"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Concerts to Day",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"concertIds\": [1, 2, 3]\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/days/1/concerts",
+              "host": ["{{apiUrl}}"],
+              "path": ["days", "1", "concerts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Day",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Jour Test Modifié\",\n  \"date\": \"2024-07-02\",\n  \"description\": \"Description modifiée\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/days/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["days", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Day",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/days/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["days", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📍 POI (Points d'Intérêt)",
+      "item": [
+        {
+          "name": "Get All POIs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/pois",
+              "host": ["{{apiUrl}}"],
+              "path": ["pois"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get POI by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/pois/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["pois", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔒 Admin",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/admin/users",
+              "host": ["{{apiUrl}}"],
+              "path": ["admin", "users"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 Stats",
+      "item": [
+        {
+          "name": "Get Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/stats",
+              "host": ["{{apiUrl}}"],
+              "path": ["stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 Upload",
+      "item": [
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{apiUrl}}/upload",
+              "host": ["{{apiUrl}}"],
+              "path": ["upload"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 import request from "supertest";
-import { CreatePoiDto } from "../../../src/dto/requests/create-poi.dto";
-import app from "../../../src/index";
-import { PoiService } from "../../../src/services/PoiService";
+import { CreatePoiDto } from "../../dto/requests/create-poi.dto";
+import app from "../../index";
+import { PoiService } from "../../services/PoiService";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../../src/utils/testSetup";
+} from "../../utils/testSetup";
 
 describe("PoiController API", () => {
   let adminToken: string;

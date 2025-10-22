@@ -1,12 +1,12 @@
 import request from "supertest";
-import { CreateConcertDto } from "../../../src/dto/requests/create-concert.dto";
-import app from "../../../src/index";
-import { ConcertService } from "../../../src/services/ConcertService";
+import { CreateConcertDto } from "../../dto/requests/create-concert.dto";
+import app from "../../index";
+import { ConcertService } from "../../services/ConcertService";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../../src/utils/testSetup";
+} from "../../utils/testSetup";
 
 describe("ConcertController API", () => {
   let adminToken: string;

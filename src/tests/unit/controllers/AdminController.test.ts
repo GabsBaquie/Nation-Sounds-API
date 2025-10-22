@@ -1,12 +1,12 @@
 import request from "supertest";
-import { CreateUserDto } from "../../../src/dto/requests/create-user.dto";
-import app from "../../../src/index";
-import { UserService } from "../../../src/services/UserService";
+import { CreateUserDto } from "../../dto/requests/create-user.dto";
+import app from "../../index";
+import { UserService } from "../../services/UserService";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../../src/utils/testSetup";
+} from "../../utils/testSetup";
 
 describe("AdminController API", () => {
   let adminToken: string;

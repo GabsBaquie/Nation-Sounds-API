@@ -113,8 +113,44 @@ export class DayService {
         }
       }
 
-      // Retourner le jour avec ses concerts
-      return await this.findById(day.id);
+      // Retourner le jour avec ses concerts en utilisant la transaction
+      const result = await client.query(
+        `
+        SELECT 
+          d.*,
+          COALESCE(
+            JSON_AGG(
+              JSON_BUILD_OBJECT(
+                'id', c.id,
+                'title', c.title,
+                'description', c.description,
+                'performer', c.performer,
+                'time', c.time,
+                'location', c.location,
+                'image', c.image,
+                'created_at', c.created_at,
+                'updated_at', c.updated_at
+              )
+            ) FILTER (WHERE c.id IS NOT NULL),
+            '[]'::json
+          ) as concerts
+        FROM day d
+        LEFT JOIN concert_days_day cd ON d.id = cd."dayId"
+        LEFT JOIN concert c ON cd."concertId" = c.id
+        WHERE d.id = $1
+        GROUP BY d.id
+      `,
+        [day.id]
+      );
+
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      return {
+        ...result.rows[0],
+        concerts: result.rows[0].concerts || [],
+      };
     });
   }
 
@@ -172,8 +208,44 @@ export class DayService {
         }
       }
 
-      // Retourner le jour mis à jour avec ses concerts
-      return await this.findById(id);
+      // Retourner le jour mis à jour avec ses concerts en utilisant le client de la transaction
+      const result = await client.query(
+        `
+        SELECT 
+          d.*,
+          COALESCE(
+            JSON_AGG(
+              JSON_BUILD_OBJECT(
+                'id', c.id,
+                'title', c.title,
+                'description', c.description,
+                'performer', c.performer,
+                'time', c.time,
+                'location', c.location,
+                'image', c.image,
+                'created_at', c.created_at,
+                'updated_at', c.updated_at
+              )
+            ) FILTER (WHERE c.id IS NOT NULL),
+            '[]'::json
+          ) as concerts
+        FROM day d
+        LEFT JOIN concert_days_day cd ON d.id = cd."dayId"
+        LEFT JOIN concert c ON cd."concertId" = c.id
+        WHERE d.id = $1
+        GROUP BY d.id
+      `,
+        [id]
+      );
+
+      const updatedDay = result.rows[0]
+        ? {
+            ...result.rows[0],
+            concerts: result.rows[0].concerts || [],
+          }
+        : null;
+
+      return updatedDay;
     });
   }
 

@@ -1,14 +1,14 @@
 import request from "supertest";
-import { CreateConcertDto } from "../../../src/dto/requests/create-concert.dto";
-import { CreateDayDto } from "../../../src/dto/requests/create-day.dto";
-import app from "../../../src/index";
-import { ConcertService } from "../../../src/services/ConcertService";
-import { DayService } from "../../../src/services/DayService";
+import { CreateConcertDto } from "../../dto/requests/create-concert.dto";
+import { CreateDayDto } from "../../dto/requests/create-day.dto";
+import app from "../../index";
+import { ConcertService } from "../../services/ConcertService";
+import { DayService } from "../../services/DayService";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../../src/utils/testSetup";
+} from "../../utils/testSetup";
 
 describe("DayController API", () => {
   let adminToken: string;

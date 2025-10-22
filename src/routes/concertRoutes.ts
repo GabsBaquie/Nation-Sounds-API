@@ -17,6 +17,14 @@ router.get("/", ConcertController.getAll);
 
 /**
  * @swagger
+ * /api/concerts/search:
+ *   get:
+ *     summary: Rechercher des concerts
+ */
+router.get("/search", ConcertController.search);
+
+/**
+ * @swagger
  * /api/concerts/{id}:
  *   get:
  *     summary: Obtenir un concert par ID

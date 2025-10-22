@@ -20,6 +20,12 @@ export class UserService {
     return result.rows[0] || null;
   }
 
+  // Récupérer un utilisateur par ID avec le mot de passe (pour l'authentification)
+  static async findByIdWithPassword(id: number): Promise<User | null> {
+    const result = await query('SELECT * FROM "user" WHERE id = $1', [id]);
+    return result.rows[0] || null;
+  }
+
   // Récupérer un utilisateur par email
   static async findByEmail(email: string): Promise<User | null> {
     const result = await query('SELECT * FROM "user" WHERE email = $1', [
@@ -75,9 +81,9 @@ export class UserService {
 
     values.push(id);
     const result = await query(
-      `UPDATE "user" SET ${fields.join(", ")} WHERE id = $${
-        paramCount + 1
-      } RETURNING id, username, email, role, created_at`,
+      `UPDATE "user" SET ${fields.join(
+        ", "
+      )} WHERE id = $${paramCount} RETURNING id, username, email, role, created_at`,
       values
     );
     return result.rows[0] || null;
@@ -111,6 +117,18 @@ export class UserService {
     return result.rowCount > 0;
   }
 
+  // Mettre à jour le token de réinitialisation avec une date expirée (pour les tests)
+  static async updateResetTokenExpired(
+    email: string,
+    token: string
+  ): Promise<boolean> {
+    const result = await query(
+      'UPDATE "user" SET "resetToken" = $1, "resetTokenExpiration" = NOW() - INTERVAL \'1 hour\' WHERE email = $2',
+      [token, email]
+    );
+    return result.rowCount > 0;
+  }
+
   // Réinitialiser le mot de passe
   static async resetPassword(
     token: string,
@@ -127,10 +145,14 @@ export class UserService {
         return false;
       }
 
+      // Hasher le nouveau mot de passe
+      const bcrypt = require("bcrypt");
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
       // Mettre à jour le mot de passe et supprimer le token
       const updateResult = await client.query(
         'UPDATE "user" SET password = $1, "resetToken" = NULL, "resetTokenExpiration" = NULL WHERE "resetToken" = $2',
-        [newPassword, token]
+        [hashedPassword, token]
       );
 
       return (updateResult.rowCount ?? 0) > 0;

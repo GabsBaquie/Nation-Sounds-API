@@ -161,7 +161,14 @@ export const closeTestDB = async () => {
 
   try {
     console.log("Fermeture de la connexion à la base de données de test...");
-    // Note: Le pool de connexions se ferme automatiquement à la fin du processus
+
+    // Fermer explicitement le pool de connexions
+    const { pool } = await import("../../database/scripts/connection");
+    if (pool) {
+      await pool.end();
+      console.log("Pool de connexions fermé avec succès.");
+    }
+
     console.log("Connexion à la base de données de test fermée avec succès.");
   } catch (error) {
     console.error(

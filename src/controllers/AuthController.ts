@@ -92,7 +92,7 @@ export class AuthController {
     const userId = req.user.id;
 
     try {
-      const user = await UserService.findById(userId);
+      const user = await UserService.findByIdWithPassword(userId);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });

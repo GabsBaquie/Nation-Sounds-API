@@ -128,6 +128,11 @@ if (
   process.argv.includes("--start-server")
 ) {
   startServer();
+} else {
+  // En mode test, initialiser la connexion DB sans démarrer le serveur
+  testConnection().catch(console.error);
 }
 
+// Export de l'application pour les tests
+export { app };
 export default app;

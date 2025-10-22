@@ -1,12 +1,12 @@
 import request from "supertest";
-import { CreateSecurityInfoDto } from "../../../src/dto/requests/create-security-info.dto";
-import app from "../../../src/index";
-import { SecurityInfoService } from "../../../src/services/SecurityInfoService";
+import { CreateSecurityInfoDto } from "../../dto/requests/create-security-info.dto";
+import app from "../../index";
+import { SecurityInfoService } from "../../services/SecurityInfoService";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../../src/utils/testSetup";
+} from "../../utils/testSetup";
 
 describe("SecurityInfoController API", () => {
   let adminToken: string;

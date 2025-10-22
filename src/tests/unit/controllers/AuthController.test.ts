@@ -1,11 +1,11 @@
 import request from "supertest";
-import app from "../../../src/index";
-import { UserService } from "../../../src/services/UserService";
+import app from "../../index";
+import { UserService } from "../../services/UserService";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../../src/utils/testSetup";
+} from "../../utils/testSetup";
 
 describe("AuthController API", () => {
   let adminToken: string;

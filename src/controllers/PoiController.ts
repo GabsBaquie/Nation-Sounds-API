@@ -60,7 +60,7 @@ class PoiController {
       const dto = req.dto as CreatePoiDto;
       const poi = await PoiService.update(id, dto);
       if (!poi) {
-        return res.status(404).json({ message: "POI non trouvé" });
+        return res.status(404).json({ message: "Point d'intérêt non trouvé" });
       }
       return res.status(200).json(poi);
     } catch (error) {
@@ -84,7 +84,7 @@ class PoiController {
       if (deleted) {
         return res.status(200).json({ message: "POI supprimé avec succès" });
       } else {
-        return res.status(404).json({ message: "POI non trouvé" });
+        return res.status(404).json({ message: "Point d'intérêt non trouvé" });
       }
     } catch (error) {
       console.error("Erreur lors de la suppression du POI:", error);

@@ -1,10 +1,10 @@
 import request from "supertest";
-import app from "../../../src/index";
+import app from "../../index";
 import {
   closeTestDB,
   createAdminUser,
   initializeTestDB,
-} from "../../../src/utils/testSetup";
+} from "../../utils/testSetup";
 
 describe("AuthMiddleware", () => {
   let adminToken: string;
