@@ -330,7 +330,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Jour Test\",\n  \"date\": \"2024-07-01\",\n  \"description\": \"Description du jour test\"\n}"
+              "raw": "{\n  \"title\": \"Jour Test\",\n  \"date\": \"2024-07-01\"\n}"
             },
             "url": {
               "raw": "{{apiUrl}}/days",
@@ -378,7 +378,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Jour Test Modifié\",\n  \"date\": \"2024-07-02\",\n  \"description\": \"Description modifiée\"\n}"
+              "raw": "{\n  \"title\": \"Jour Test Modifié\",\n  \"date\": \"2024-07-02\"\n}"
             },
             "url": {
               "raw": "{{apiUrl}}/days/1",

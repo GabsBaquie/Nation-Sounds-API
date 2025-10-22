@@ -1,19 +1,29 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2020",
     "module": "CommonJS",
-    "lib": ["ES6"],
+    "lib": ["ES2020"],
     "outDir": "../dist",
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": false,
-    "typeRoots": ["../node_modules/@types", "../src/types"]
+    "moduleResolution": "node",
+    "typeRoots": ["../node_modules/@types", "../src/types"],
+    "declaration": false,
+    "removeComments": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "noUncheckedIndexedAccess": false
   },
   "exclude": ["../node_modules", "../dist", "../src/tests"],
-  "include": ["../src", "../database"]
+  "include": ["../src/**/*", "../database/**/*"]
 }

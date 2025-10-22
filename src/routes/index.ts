@@ -16,7 +16,7 @@ import uploadRoutes from "./uploadRoutes";
 
 const router = Router();
 
-router.use("/auth", authRoutes, authMiddleware);
+router.use("/auth", authRoutes);
 router.use("/pois", poiRoutes);
 router.use("/days", dayRoutes);
 router.use("/concerts", concertRoutes);

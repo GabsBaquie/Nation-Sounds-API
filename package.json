@@ -2,10 +2,10 @@
   "name": "nation-sounds-backend",
   "version": "1.0.0",
   "description": "Backend for Nation Sounds app",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "start:prod": "NODE_ENV=production node dist/index.js",
+    "start": "node dist/src/index.js",
+    "start:prod": "NODE_ENV=production node dist/src/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc -p config/tsconfig.json",
     "seed:prod": "NODE_ENV=production node dist/utils/seed.js",
@@ -24,6 +24,7 @@
   },
   "jest": "./config/jest.config.js",
   "dependencies": {
+    "@supabase/supabase-js": "^2.76.1",
     "axios": "^1.12.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
