@@ -352,7 +352,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"concertIds\": [1, 2, 3]\n}"
+              "raw": "{\n  \"concertIds\": [2, 3]\n}"
             },
             "url": {
               "raw": "{{apiUrl}}/days/1/concerts",
@@ -538,6 +538,94 @@
       ]
     },
     {
+      "name": "🛡️ Security Info",
+      "item": [
+        {
+          "name": "Get All Security Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/securityInfos",
+              "host": ["{{apiUrl}}"],
+              "path": ["securityInfos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Security Info by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/securityInfos/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["securityInfos", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Security Info",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Alerte Sécurité\",\n  \"description\": \"Information importante sur la sécurité du festival\",\n  \"urgence\": true,\n  \"actif\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/securityInfos",
+              "host": ["{{apiUrl}}"],
+              "path": ["securityInfos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Security Info",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Alerte Sécurité Mise à Jour\",\n  \"description\": \"Information mise à jour sur la sécurité\",\n  \"urgence\": false,\n  \"actif\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/securityInfos/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["securityInfos", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Security Info",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/securityInfos/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["securityInfos", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "📁 Upload",
       "item": [
         {
@@ -554,16 +642,29 @@
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "file",
+                  "key": "image",
                   "type": "file",
                   "src": []
                 }
               ]
             },
             "url": {
-              "raw": "{{apiUrl}}/upload",
+              "raw": "{{apiUrl}}/upload/image",
               "host": ["{{apiUrl}}"],
-              "path": ["upload"]
+              "path": ["upload", "image"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Images",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/upload/list",
+              "host": ["{{apiUrl}}"],
+              "path": ["upload", "list"]
             }
           },
           "response": []

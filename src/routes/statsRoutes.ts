@@ -4,6 +4,9 @@ import { checkJwt } from "../middleware/checkJwt";
 
 const router = express.Router();
 
+// Route racine pour /api/stats/
+router.get("/", StatsController.getDatabaseStats);
+
 // Routes publiques (sans authentification)
 router.get("/public-data", StatsController.getPublicData);
 router.get("/stats", StatsController.getDatabaseStats);

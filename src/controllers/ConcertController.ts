@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { CreateConcertDto } from "../dto/requests/create-concert.dto";
 import { ConcertService } from "../services/ConcertService";
-import "../types/express";
 
 const normalizeConcertImage = (concert: any) => {
   if (!concert) return null;
@@ -48,7 +47,7 @@ export class ConcertController {
   // POST /api/concerts
   static async create(req: Request, res: Response) {
     try {
-      const dto = req.dto as CreateConcertDto;
+      const dto = (req as any).dto as CreateConcertDto;
       const concert = await ConcertService.create(dto);
       return res.status(201).json(normalizeConcertImage(concert));
     } catch (error) {
