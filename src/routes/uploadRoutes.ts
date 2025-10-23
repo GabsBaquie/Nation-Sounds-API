@@ -2,6 +2,7 @@ import { Router } from "express";
 import fs from "fs";
 import path from "path";
 import { uploadImage } from "../middleware/uploadImage";
+import { ConcertService } from "../services/ConcertService";
 
 const router = Router();
 
@@ -29,27 +30,45 @@ router.get("/list", (req, res) => {
 });
 
 // Supprimer une image
-router.delete("/image/:filename", (req, res) => {
+router.delete("/image/:filename", async (req, res) => {
   const { filename } = req.params;
   const imagePath = path.join(__dirname, "../../uploads/images", filename);
+  const imageUrl = `/uploads/images/${filename}`;
 
   // Vérifier que le fichier existe
   if (!fs.existsSync(imagePath)) {
     return res.status(404).json({ message: "Image non trouvée" });
   }
 
-  // Supprimer le fichier
-  fs.unlink(imagePath, (err) => {
-    if (err) {
-      console.error("Erreur lors de la suppression:", err);
-      return res
-        .status(500)
-        .json({ message: "Erreur lors de la suppression de l'image" });
-    }
+  try {
+    // 1. Supprimer les références à cette image dans la base de données
+    await ConcertService.removeImageReferences(imageUrl);
+    console.log(
+      `Références à l'image supprimées de la base de données: ${imageUrl}`
+    );
 
-    console.log(`Image supprimée: ${filename}`);
-    res.json({ message: "Image supprimée avec succès", filename });
-  });
+    // 2. Supprimer le fichier physique
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Erreur lors de la suppression du fichier:", err);
+        return res
+          .status(500)
+          .json({ message: "Erreur lors de la suppression de l'image" });
+      }
+
+      console.log(`Image supprimée: ${filename}`);
+      res.json({
+        message: "Image supprimée avec succès",
+        filename,
+        updatedConcerts: "Références supprimées de la base de données",
+      });
+    });
+  } catch (error) {
+    console.error("Erreur lors de la suppression des références:", error);
+    return res.status(500).json({
+      message: "Erreur lors de la suppression des références à l'image",
+    });
+  }
 });
 
 // Renommer une image

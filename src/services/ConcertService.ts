@@ -311,4 +311,20 @@ export class ConcertService {
       days: row.days || [],
     }));
   }
+
+  // Supprimer les références à une image dans tous les concerts
+  static async removeImageReferences(imageUrl: string): Promise<void> {
+    try {
+      await query(`UPDATE concert SET image = NULL WHERE image = $1`, [
+        imageUrl,
+      ]);
+      console.log(`Références à l'image supprimées: ${imageUrl}`);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la suppression des références à l'image:",
+        error
+      );
+      throw error;
+    }
+  }
 }
