@@ -83,11 +83,11 @@ export class DayService {
       // Insérer le jour
       const dayResult = await client.query(
         `
-        INSERT INTO day (title, date)
-        VALUES ($1, $2)
+        INSERT INTO day (title, date, image)
+        VALUES ($1, $2, $3)
         RETURNING *
       `,
-        [dayData.title, new Date(dayData.date)]
+        [dayData.title, new Date(dayData.date), dayData.image || null]
       );
 
       const day = dayResult.rows[0];
@@ -173,10 +173,10 @@ export class DayService {
       await client.query(
         `
         UPDATE day 
-        SET title = $1, date = $2
-        WHERE id = $3
+        SET title = $1, date = $2, image = $3
+        WHERE id = $4
       `,
-        [dayData.title, new Date(dayData.date), id]
+        [dayData.title, new Date(dayData.date), dayData.image || null, id]
       );
 
       // Mettre à jour les associations avec les concerts

@@ -68,7 +68,7 @@ export class ConcertController {
     }
 
     try {
-      const dto = req.dto as CreateConcertDto;
+      const dto = (req as any).dto as Partial<CreateConcertDto>;
       const concert = await ConcertService.update(id, dto);
 
       if (!concert) {

@@ -147,7 +147,7 @@ export class ConcertService {
   // Mettre à jour un concert
   static async update(
     id: number,
-    concertData: CreateConcertDto
+    concertData: Partial<CreateConcertDto>
   ): Promise<ConcertWithDays | null> {
     return await transaction(async (client) => {
       // Vérifier que le concert existe
@@ -159,23 +159,56 @@ export class ConcertService {
         return null;
       }
 
-      // Mettre à jour le concert
-      await client.query(
-        `
-        UPDATE concert 
-        SET title = $1, description = $2, performer = $3, time = $4, location = $5, image = $6
-        WHERE id = $7
-      `,
-        [
-          concertData.title,
-          concertData.description,
-          concertData.performer,
-          concertData.time,
-          concertData.location,
-          concertData.image || null,
-          id,
-        ]
-      );
+      // Mettre à jour le concert avec seulement les champs fournis
+      const updateFields: string[] = [];
+      const updateValues: any[] = [];
+      let paramIndex = 1;
+
+      if (concertData.title !== undefined) {
+        updateFields.push(`title = $${paramIndex}`);
+        updateValues.push(concertData.title);
+        paramIndex++;
+      }
+
+      if (concertData.description !== undefined) {
+        updateFields.push(`description = $${paramIndex}`);
+        updateValues.push(concertData.description);
+        paramIndex++;
+      }
+
+      if (concertData.performer !== undefined) {
+        updateFields.push(`performer = $${paramIndex}`);
+        updateValues.push(concertData.performer);
+        paramIndex++;
+      }
+
+      if (concertData.time !== undefined) {
+        updateFields.push(`time = $${paramIndex}`);
+        updateValues.push(concertData.time);
+        paramIndex++;
+      }
+
+      if (concertData.location !== undefined) {
+        updateFields.push(`location = $${paramIndex}`);
+        updateValues.push(concertData.location);
+        paramIndex++;
+      }
+
+      if (concertData.image !== undefined) {
+        updateFields.push(`image = $${paramIndex}`);
+        updateValues.push(concertData.image || null);
+        paramIndex++;
+      }
+
+      if (updateFields.length > 0) {
+        updateValues.push(id);
+        await client.query(
+          `UPDATE concert SET ${updateFields.join(
+            ", "
+          )} WHERE id = $${paramIndex}`,
+          updateValues
+        );
+      }
 
       // Mettre à jour les associations avec les jours
       if (concertData.dayIds !== undefined) {

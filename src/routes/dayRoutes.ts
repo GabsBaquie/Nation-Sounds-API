@@ -1,9 +1,11 @@
 // src/routes/dayRoutes.ts
 import { Router } from "express";
 import DayController from "../controllers/DayController";
-import { CreateDayDto } from "../dto/requests/day.dto";
 import { checkJwt } from "../middleware/checkJwt";
-import { validateDto } from "../middleware/validateDto";
+import {
+  validateCreateDay,
+  validateUpdateDay,
+} from "../middleware/validateDay";
 
 const router = Router();
 
@@ -37,7 +39,7 @@ router.get("/:id", DayController.getById);
  *   post:
  *     summary: Créer un nouveau jour
  */
-router.post("/", [checkJwt, validateDto(CreateDayDto)], DayController.create);
+router.post("/", [checkJwt, validateCreateDay], DayController.create);
 
 /**
  * @swagger
@@ -53,7 +55,7 @@ router.put("/:id/concerts", DayController.addConcerts);
  *   put:
  *     summary: Mettre à jour un jour
  */
-router.put("/:id", [checkJwt, validateDto(CreateDayDto)], DayController.update);
+router.put("/:id", [checkJwt, validateUpdateDay], DayController.update);
 
 /**
  * @swagger

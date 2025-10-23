@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { UserService } from "../services/UserService";
+import "../types/express";
 import { sendResetEmail } from "../utils/emailService";
 
 export class AuthController {
@@ -67,7 +68,11 @@ export class AuthController {
   // Récupérer les informations du profil de l'utilisateur connecté
   static async getProfile(req: Request, res: Response) {
     try {
-      const user = await UserService.findById(req.user?.id);
+      if (!req.user?.id) {
+        return res.status(401).json({ message: "Utilisateur non authentifié" });
+      }
+
+      const user = await UserService.findById(req.user.id);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -88,6 +93,11 @@ export class AuthController {
   // Changer le mot de passe de l'utilisateur connecté
   static async changePassword(req: Request, res: Response) {
     const { oldPassword, newPassword } = req.body;
+
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Utilisateur non authentifié" });
+    }
+
     const userId = req.user.id;
 
     try {
