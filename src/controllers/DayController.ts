@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { CreateDayDto } from "../dto/requests/day.dto";
 import { DayService } from "../services/DayService";
-import "../types/express";
 
 export class DayController {
   // GET /api/days

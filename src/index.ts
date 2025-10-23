@@ -107,7 +107,7 @@ const startServer = async () => {
   try {
     const isConnected = await testConnection();
     if (isConnected) {
-      const PORT = parseInt(process.env.PORT ?? "3000", 10);
+      const PORT = parseInt(process.env.PORT ?? "8080", 10);
       app.listen(PORT, "0.0.0.0", () => {
         console.log(`🚀 Serveur démarré sur http://0.0.0.0:${PORT}`);
         console.log("🌐 CORS autorisé pour :", allowedOrigins);
