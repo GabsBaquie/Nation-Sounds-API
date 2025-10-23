@@ -51,8 +51,8 @@ export const validateCreateConcert = async (
         "Le lieu est requis et doit être une chaîne de caractères non vide."
       );
     }
-    if (image !== undefined && typeof image !== "string") {
-      errors.push("L'image doit être une chaîne de caractères.");
+    if (image !== undefined && image !== null && typeof image !== "string") {
+      errors.push("L'image doit être une chaîne de caractères ou null.");
     }
     if (dayIds !== undefined) {
       if (
@@ -127,8 +127,8 @@ export const validateUpdateConcert = async (
     ) {
       errors.push("Le lieu doit être une chaîne de caractères non vide.");
     }
-    if (image !== undefined && typeof image !== "string") {
-      errors.push("L'image doit être une chaîne de caractères.");
+    if (image !== undefined && image !== null && typeof image !== "string") {
+      errors.push("L'image doit être une chaîne de caractères ou null.");
     }
     if (dayIds !== undefined) {
       if (
