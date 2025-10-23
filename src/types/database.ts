@@ -54,6 +54,18 @@ export interface SecurityInfo {
   updated_at: Date;
 }
 
+export interface Actualite {
+  id: number;
+  title: string;
+  description: string;
+  text?: string | null;
+  image?: string | null;
+  importance: "Très important" | "Important" | "Modéré" | "Peu important";
+  actif: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
 // Table de jointure pour la relation Many-to-Many entre Concert et Day
 export interface ConcertDay {
   concertId: number;

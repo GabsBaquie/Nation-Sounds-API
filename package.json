@@ -10,6 +10,7 @@
     "build": "tsc -p config/tsconfig.json",
     "seed:prod": "NODE_ENV=production node dist/utils/seed.js",
     "seed:dev": "NODE_ENV=development ts-node src/utils/seed.ts",
+    "seed:global": "node scripts/seed-global-data.js",
     "test": "NODE_ENV=test jest --detectOpenHandles --setupFiles=dotenv/config",
     "test:railway": "node scripts/test-railway-db.js",
     "setup:test": "./scripts/setup-test-env.sh",

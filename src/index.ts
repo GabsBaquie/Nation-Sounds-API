@@ -14,6 +14,8 @@ const allowedOrigins = [
   "https://nation-sound-front.vercel.app",
   "http://localhost:3000",
   "http://localhost:3001",
+  "http://localhost:3002",
+  "http://localhost:3003",
   "http://localhost:8080",
   "http://51.15.241.119:8080",
 ];

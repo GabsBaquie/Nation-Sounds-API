@@ -5,6 +5,7 @@ import { ConcertService } from "../services/ConcertService";
 import { DayService } from "../services/DayService";
 import { PoiService } from "../services/PoiService";
 import { SecurityInfoService } from "../services/SecurityInfoService";
+import actualiteRoutes from "./actualiteRoutes";
 import adminRoutes from "./adminRoutes";
 import authRoutes from "./authRoutes";
 import concertRoutes from "./concertRoutes";
@@ -23,6 +24,7 @@ router.use("/concerts", concertRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/admin", adminRoutes, authMiddleware, adminMiddleware);
 router.use("/securityInfos", securityInfoRoutes);
+router.use("/actualites", actualiteRoutes);
 router.use("/stats", statsRoutes);
 
 // Route pour récupérer toutes les données
