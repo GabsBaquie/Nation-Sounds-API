@@ -40,6 +40,13 @@ switch (command) {
     execSync("node scripts/verify-security.js", { stdio: "inherit" });
     break;
 
+  case "fix-supabase-security":
+    console.log("🔒 Correction SECURITY DEFINER pour Supabase...");
+    execSync("node scripts/fix-supabase-security-definer.js", {
+      stdio: "inherit",
+    });
+    break;
+
   case "seed":
     console.log("🌱 Ajout de données de test...");
     execSync("node scripts/seed-test-data.js", { stdio: "inherit" });
@@ -78,6 +85,9 @@ switch (command) {
     console.log("  fix-admin      - Corriger le mot de passe admin");
     console.log("  security       - Appliquer les corrections de sécurité");
     console.log("  verify-security - Vérifier la sécurité");
+    console.log(
+      "  fix-supabase-security - Corriger SECURITY DEFINER pour Supabase"
+    );
     console.log("  seed           - Ajouter des données de test");
     console.log("  clean          - Nettoyer et ajouter des données");
     console.log("  all            - Configuration complète");
