@@ -1,12 +1,8 @@
-// Export all request DTOs
-export { ChangePasswordDto } from "./change-password.dto";
-export { CreateConcertDto } from "./create-concert.dto";
-export { CreateDayDto } from "./create-day.dto";
-export { CreatePoiDto } from "./create-poi.dto";
-export { CreateSecurityInfoDto } from "./create-security-info.dto";
-export { CreateUserDto, UserRole } from "./create-user.dto";
-export { LoginDto } from "./login.dto";
-export {
-  RequestPasswordResetDto,
-  ResetPasswordDto,
-} from "./reset-password.dto";
+// Export all consolidated DTOs
+export * from "./actualite.dto";
+export * from "./concert.dto";
+export * from "./day.dto";
+export * from "./partenaire.dto";
+export * from "./poi.dto";
+export * from "./security-info.dto";
+export * from "./user.dto";

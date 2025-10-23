@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateActualiteDto } from "../dto/requests/create-actualite.dto";
-import { UpdateActualiteDto } from "../dto/requests/update-actualite.dto";
+import {
+  CreateActualiteDto,
+  UpdateActualiteDto,
+} from "../dto/requests/actualite.dto";
 
 export const validateCreateActualite = async (
   req: Request,

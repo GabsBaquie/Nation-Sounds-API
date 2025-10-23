@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-import { CreateActualiteDto } from "../dto/requests/create-actualite.dto";
-import { UpdateActualiteDto } from "../dto/requests/update-actualite.dto";
+import {
+  CreateActualiteDto,
+  UpdateActualiteDto,
+} from "../dto/requests/actualite.dto";
 import { ActualiteService } from "../services/ActualiteService";
 
 export class ActualiteController {

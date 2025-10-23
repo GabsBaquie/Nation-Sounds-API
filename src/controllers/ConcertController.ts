@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CreateConcertDto } from "../dto/requests/create-concert.dto";
+import { CreateConcertDto } from "../dto/requests/concert.dto";
 import { ConcertService } from "../services/ConcertService";
 
 const normalizeConcertImage = (concert: any) => {

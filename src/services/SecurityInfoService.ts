@@ -1,5 +1,5 @@
 import { query } from "../../database/scripts/connection";
-import { CreateSecurityInfoDto } from "../dto/requests/create-security-info.dto";
+import { CreateSecurityInfoDto } from "../dto/requests/security-info.dto";
 import { SecurityInfo } from "../types/database";
 
 export class SecurityInfoService {

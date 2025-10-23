@@ -1,5 +1,5 @@
 import { query, transaction } from "../../database/scripts/connection";
-import { CreateDayDto } from "../dto/requests/create-day.dto";
+import { CreateDayDto } from "../dto/requests/day.dto";
 import { DayWithConcerts } from "../types/database";
 
 export class DayService {

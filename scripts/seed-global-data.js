@@ -20,6 +20,9 @@ async function seedGlobalData() {
     await pool.query("DELETE FROM actualite");
     console.log("✅ Actualités supprimées");
 
+    await pool.query("DELETE FROM partenaire");
+    console.log("✅ Partenaires supprimés");
+
     try {
       await pool.query("DELETE FROM securityinfo");
       console.log("✅ Informations de sécurité supprimées");
@@ -289,7 +292,92 @@ async function seedGlobalData() {
       `✅ Actualités créées - IDs: ${actualite1.rows[0].id}, ${actualite2.rows[0].id}, ${actualite3.rows[0].id}, ${actualite4.rows[0].id}, ${actualite5.rows[0].id}, ${actualite6.rows[0].id}`
     );
 
-    // 6. Informations de sécurité (table non disponible)
+    // 6. Créer des partenaires
+    console.log("🤝 Création des partenaires...");
+    const partenaire1 = await pool.query(
+      `INSERT INTO partenaire (name, type, link, logo_url, logo_alt, actif) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       RETURNING id`,
+      [
+        "Radio France",
+        "Media",
+        "https://www.radiofrance.fr/",
+        "/images/partenaires/radiofrance.webp",
+        "Logo Radio France",
+        true,
+      ]
+    );
+    const partenaire2 = await pool.query(
+      `INSERT INTO partenaire (name, type, link, logo_url, logo_alt, actif) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       RETURNING id`,
+      [
+        "Ville de Paris",
+        "Institution",
+        "https://www.paris.fr/",
+        "/images/partenaires/paris.webp",
+        "Logo Ville de Paris",
+        true,
+      ]
+    );
+    const partenaire3 = await pool.query(
+      `INSERT INTO partenaire (name, type, link, logo_url, logo_alt, actif) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       RETURNING id`,
+      [
+        "Spotify",
+        "Tech",
+        "https://www.spotify.com/",
+        "/images/partenaires/spotify.webp",
+        "Logo Spotify",
+        true,
+      ]
+    );
+    const partenaire4 = await pool.query(
+      `INSERT INTO partenaire (name, type, link, logo_url, logo_alt, actif) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       RETURNING id`,
+      [
+        "France Inter",
+        "Media",
+        "https://www.franceinter.fr/",
+        "/images/partenaires/france-inter.webp",
+        "Logo France Inter",
+        true,
+      ]
+    );
+    const partenaire5 = await pool.query(
+      `INSERT INTO partenaire (name, type, link, logo_url, logo_alt, actif) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       RETURNING id`,
+      [
+        "Région Île-de-France",
+        "Institution",
+        "https://www.iledefrance.fr/",
+        "/images/partenaires/ile-de-france.webp",
+        "Logo Région Île-de-France",
+        true,
+      ]
+    );
+    const partenaire6 = await pool.query(
+      `INSERT INTO partenaire (name, type, link, logo_url, logo_alt, actif) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       RETURNING id`,
+      [
+        "Deezer",
+        "Tech",
+        "https://www.deezer.com/",
+        "/images/partenaires/deezer.webp",
+        "Logo Deezer",
+        true,
+      ]
+    );
+
+    console.log(
+      `✅ Partenaires créés - IDs: ${partenaire1.rows[0].id}, ${partenaire2.rows[0].id}, ${partenaire3.rows[0].id}, ${partenaire4.rows[0].id}, ${partenaire5.rows[0].id}, ${partenaire6.rows[0].id}`
+    );
+
+    // 7. Informations de sécurité (table non disponible)
     console.log("🛡️ Table securityinfo non disponible, ignorée");
 
     console.log(
@@ -307,6 +395,9 @@ async function seedGlobalData() {
     );
     console.log(
       `📰 Actualités: ${actualite1.rows[0].id}, ${actualite2.rows[0].id}, ${actualite3.rows[0].id}, ${actualite4.rows[0].id}, ${actualite5.rows[0].id}, ${actualite6.rows[0].id}`
+    );
+    console.log(
+      `🤝 Partenaires: ${partenaire1.rows[0].id}, ${partenaire2.rows[0].id}, ${partenaire3.rows[0].id}, ${partenaire4.rows[0].id}, ${partenaire5.rows[0].id}, ${partenaire6.rows[0].id}`
     );
     console.log("🛡️ Sécurité: Table non disponible");
   } catch (error) {

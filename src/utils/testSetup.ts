@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import request from "supertest";
 import { query, testConnection } from "../../database/scripts/connection";
-import { UserRole } from "../dto/requests/create-user.dto";
+import { UserRole } from "../dto/requests/user.dto";
 import app from "../index";
 import { UserService } from "../services/UserService";
 
@@ -200,7 +200,7 @@ export const createAdminUser = async (): Promise<string> => {
         username: "adminuser",
         email: "admin@example.com",
         password: hashedPassword,
-        role: UserRole.ADMIN,
+        role: "admin" as UserRole,
       });
     }
 

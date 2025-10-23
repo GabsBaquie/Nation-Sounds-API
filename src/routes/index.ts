@@ -10,6 +10,7 @@ import adminRoutes from "./adminRoutes";
 import authRoutes from "./authRoutes";
 import concertRoutes from "./concertRoutes";
 import dayRoutes from "./dayRoutes";
+import partenaireRoutes from "./partenaireRoutes";
 import poiRoutes from "./poiRoutes";
 import securityInfoRoutes from "./securityInfoRoutes";
 import statsRoutes from "./statsRoutes";
@@ -25,6 +26,7 @@ router.use("/upload", uploadRoutes);
 router.use("/admin", adminRoutes, authMiddleware, adminMiddleware);
 router.use("/securityInfos", securityInfoRoutes);
 router.use("/actualites", actualiteRoutes);
+router.use("/partenaires", partenaireRoutes);
 router.use("/stats", statsRoutes);
 
 // Route pour récupérer toutes les données

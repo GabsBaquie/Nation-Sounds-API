@@ -72,6 +72,19 @@ export interface ConcertDay {
   dayId: number;
 }
 
+// Interface pour les partenaires
+export interface Partenaire {
+  id: number;
+  name: string;
+  type: string;
+  link?: string;
+  logo_url?: string;
+  logo_alt?: string;
+  actif: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
 // Types pour les requêtes avec relations
 export interface ConcertWithDays extends Concert {
   days?: Day[];

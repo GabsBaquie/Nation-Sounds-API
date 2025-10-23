@@ -1,5 +1,5 @@
 import { query } from "../../database/scripts/connection";
-import { CreatePoiDto } from "../dto/requests/create-poi.dto";
+import { CreatePoiDto } from "../dto/requests/poi.dto";
 import { POI } from "../types/database";
 
 export class PoiService {

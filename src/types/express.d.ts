@@ -1,22 +1,12 @@
-// src/types/express.d.ts
-
-declare global {
-  namespace Express {
-    interface Request {
-      file?: Express.Multer.File;
-      files?:
-        | { [fieldname: string]: Express.Multer.File[] }
-        | Express.Multer.File[]
-        | undefined;
-      user: {
-        id: number;
-        role: "admin" | "user";
-        username: string;
-        email: string;
-      };
-      dto?: any;
-    }
+// Extension de l'interface Request d'Express pour inclure les propriétés personnalisées
+declare namespace Express {
+  interface Request {
+    dto?: any;
+    user?: {
+      id: number;
+      username: string;
+      email: string;
+      role: "admin" | "user";
+    };
   }
 }
-
-export {};

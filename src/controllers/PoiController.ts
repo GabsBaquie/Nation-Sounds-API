@@ -1,6 +1,6 @@
 // src/controllers/PoiController.ts
 import { Request, Response } from "express";
-import { CreatePoiDto } from "../dto/requests/create-poi.dto";
+import { CreatePoiDto } from "../dto/requests/poi.dto";
 import { PoiService } from "../services/PoiService";
 
 class PoiController {

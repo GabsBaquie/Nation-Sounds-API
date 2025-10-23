@@ -1,6 +1,8 @@
 import { query } from "../../database/scripts/connection";
-import { CreateActualiteDto } from "../dto/requests/create-actualite.dto";
-import { UpdateActualiteDto } from "../dto/requests/update-actualite.dto";
+import {
+  CreateActualiteDto,
+  UpdateActualiteDto,
+} from "../dto/requests/actualite.dto";
 import { Actualite } from "../types/database";
 
 export class ActualiteService {
