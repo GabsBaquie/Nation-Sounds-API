@@ -15,6 +15,7 @@ export interface Day {
   id: number;
   title: string;
   date: Date;
+  image?: string;
   created_at: Date;
   updated_at: Date;
 }

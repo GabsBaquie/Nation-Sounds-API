@@ -44,22 +44,22 @@ async function seedGlobalData() {
     // 1. Créer des jours avec images
     console.log("📅 Création des jours avec images...");
     const day1 = await pool.query(
-      `INSERT INTO day (title, date, created_at) 
-       VALUES ($1, $2, NOW()) 
+      `INSERT INTO day (title, date, image, created_at) 
+       VALUES ($1, $2, $3, NOW()) 
        RETURNING id`,
-      ["Jour 1 - Vendredi", "2024-07-05"]
+      ["Jour 1 - Vendredi", "2024-07-05", "/images/days/vendredi.jpg"]
     );
     const day2 = await pool.query(
-      `INSERT INTO day (title, date, created_at) 
-       VALUES ($1, $2, NOW()) 
+      `INSERT INTO day (title, date, image, created_at) 
+       VALUES ($1, $2, $3, NOW()) 
        RETURNING id`,
-      ["Jour 2 - Samedi", "2024-07-06"]
+      ["Jour 2 - Samedi", "2024-07-06", "/images/days/samedi.jpg"]
     );
     const day3 = await pool.query(
-      `INSERT INTO day (title, date, created_at) 
-       VALUES ($1, $2, NOW()) 
+      `INSERT INTO day (title, date, image, created_at) 
+       VALUES ($1, $2, $3, NOW()) 
        RETURNING id`,
-      ["Jour 3 - Dimanche", "2024-07-07"]
+      ["Jour 3 - Dimanche", "2024-07-07", "/images/days/dimanche.jpg"]
     );
 
     console.log(

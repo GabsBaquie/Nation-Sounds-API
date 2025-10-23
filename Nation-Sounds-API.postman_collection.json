@@ -7,7 +7,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8081",
+      "value": "http://localhost:8080",
       "type": "string"
     },
     {
@@ -490,6 +490,280 @@
               "raw": "{{apiUrl}}/pois/1",
               "host": ["{{apiUrl}}"],
               "path": ["pois", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📰 Actualités",
+      "item": [
+        {
+          "name": "Get All Actualités",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/actualites",
+              "host": ["{{apiUrl}}"],
+              "path": ["actualites"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Actualité by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/actualites/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["actualites", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Actualités (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/actualites/admin/all",
+              "host": ["{{apiUrl}}"],
+              "path": ["actualites", "admin", "all"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Actualité",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nouvelle actualité\",\n  \"description\": \"Description de l'actualité\",\n  \"text\": \"Contenu détaillé de l'actualité\",\n  \"image\": \"/images/actualites/nouvelle.jpg\",\n  \"importance\": \"Important\",\n  \"actif\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/actualites",
+              "host": ["{{apiUrl}}"],
+              "path": ["actualites"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Actualité",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Actualité mise à jour\",\n  \"description\": \"Description mise à jour\",\n  \"importance\": \"Très important\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/actualites/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["actualites", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Actualité",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/actualites/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["actualites", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Actualité Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/actualites/1/toggle",
+              "host": ["{{apiUrl}}"],
+              "path": ["actualites", "1", "toggle"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🤝 Partenaires",
+      "item": [
+        {
+          "name": "Get All Partenaires",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/partenaires",
+              "host": ["{{apiUrl}}"],
+              "path": ["partenaires"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Partenaire by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/partenaires/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["partenaires", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Partenaires (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/partenaires/admin/all",
+              "host": ["{{apiUrl}}"],
+              "path": ["partenaires", "admin", "all"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Partenaire",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nouveau Partenaire\",\n  \"type\": \"Media\",\n  \"link\": \"https://www.example.com\",\n  \"logo_url\": \"/images/partenaires/logo.jpg\",\n  \"logo_alt\": \"Logo du partenaire\",\n  \"actif\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/partenaires",
+              "host": ["{{apiUrl}}"],
+              "path": ["partenaires"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Partenaire",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Partenaire mis à jour\",\n  \"type\": \"Tech\",\n  \"link\": \"https://www.updated.com\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/partenaires/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["partenaires", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Partenaire",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/partenaires/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["partenaires", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Partenaire Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/partenaires/1/toggle",
+              "host": ["{{apiUrl}}"],
+              "path": ["partenaires", "1", "toggle"]
             }
           },
           "response": []

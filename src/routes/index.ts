@@ -1,8 +1,10 @@
 // src/routes/index.ts
 import { Router } from "express";
 import { adminMiddleware, authMiddleware } from "../middleware";
+import { ActualiteService } from "../services/ActualiteService";
 import { ConcertService } from "../services/ConcertService";
 import { DayService } from "../services/DayService";
+import { PartenaireService } from "../services/PartenaireService";
 import { PoiService } from "../services/PoiService";
 import { SecurityInfoService } from "../services/SecurityInfoService";
 import actualiteRoutes from "./actualiteRoutes";
@@ -37,6 +39,8 @@ router.get("/", async (req, res) => {
       concerts: await ConcertService.findAll(),
       pois: await PoiService.findAll(),
       securityInfos: await SecurityInfoService.findAll(),
+      actualites: await ActualiteService.findAll(),
+      partenaires: await PartenaireService.findAll(),
     };
     res.status(200).json(data);
   } catch (error) {
