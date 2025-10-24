@@ -2,8 +2,8 @@ import * as dotenv from "dotenv";
 import { Pool, PoolClient } from "pg";
 
 if (process.env.NODE_ENV === "production") {
-  dotenv.config({ path: ".env.docker" });
-  console.log("Chargement de .env.docker");
+  // En production (Vercel), utiliser les variables d'environnement directement
+  console.log("Mode production - utilisation des variables d'environnement Vercel");
 } else {
   dotenv.config();
   console.log("Chargement de .env");
