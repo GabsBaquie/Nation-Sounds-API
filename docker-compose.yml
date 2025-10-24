@@ -1,0 +1,21 @@
+services:
+  # API Nation Sounds avec Supabase
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nation-sounds-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      # Configuration Supabase
+      SUPABASE_URL: https://dtvryosgiqnwcfceazcj.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production}
+    ports:
+      - "80:8080"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./.env.docker:/app/.env
