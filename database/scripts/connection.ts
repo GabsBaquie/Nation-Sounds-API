@@ -14,6 +14,17 @@ if (process.env.NODE_ENV === "production") {
 // URL de base de données
 const postgresUrl = process.env.DATABASE_URL;
 
+// Vérification de l'URL
+if (!postgresUrl) {
+  console.error("❌ DATABASE_URL n'est pas définie");
+  process.exit(1);
+}
+
+// Vérification du format de l'URL
+if (!postgresUrl.includes('supabase.co')) {
+  console.warn("⚠️ L'URL de base de données ne semble pas être une URL Supabase valide");
+}
+
 console.log(
   "PostgreSQL URL utilisée :",
   postgresUrl?.replace(/:[^:]*@/, ":****@")
