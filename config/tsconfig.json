@@ -21,5 +21,5 @@
     "noUncheckedIndexedAccess": false
   },
   "exclude": ["../node_modules", "../dist", "../src/tests"],
-  "include": ["../src/**/*", "../database/**/*"]
+  "include": ["../src/**/*", "../database/**/*", "../api/**/*"]
 }
