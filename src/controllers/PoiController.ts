@@ -36,7 +36,7 @@ class PoiController {
 
   static async create(req: Request, res: Response) {
     try {
-      const dto = req.dto as CreatePoiDto;
+      const dto = (req as any).dto as CreatePoiDto;
       const poi = await PoiService.create(dto);
       return res.status(201).json(poi);
     } catch (error) {
@@ -56,7 +56,7 @@ class PoiController {
     }
 
     try {
-      const dto = req.dto as CreatePoiDto;
+      const dto = (req as any).dto as CreatePoiDto;
       const poi = await PoiService.update(id, dto);
       if (!poi) {
         return res.status(404).json({ message: "Point d'intérêt non trouvé" });

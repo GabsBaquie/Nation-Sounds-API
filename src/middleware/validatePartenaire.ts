@@ -10,7 +10,7 @@ export const validateCreatePartenaire = async (
   next: NextFunction
 ) => {
   try {
-    const { name, type, link, logo_url, logo_alt, actif } = req.body;
+    const { name, type, link, image, logo_alt, actif } = req.body;
 
     // Validation basique
     if (!name || typeof name !== "string" || name.trim().length === 0) {
@@ -32,10 +32,10 @@ export const validateCreatePartenaire = async (
       });
     }
 
-    // Validation optionnelle pour l'URL du logo
-    if (logo_url && typeof logo_url !== "string") {
+    // Validation optionnelle pour l'image
+    if (image !== undefined && image !== null && typeof image !== "string") {
       return res.status(400).json({
-        message: "L'URL du logo doit être une chaîne de caractères",
+        message: "L'image doit être une chaîne de caractères ou null",
       });
     }
 
@@ -51,7 +51,7 @@ export const validateCreatePartenaire = async (
       name: name.trim(),
       type: type.trim(),
       link: link?.trim() || undefined,
-      logo_url: logo_url?.trim() || undefined,
+      image: image === null ? null : image?.trim() || undefined,
       logo_alt: logo_alt?.trim() || undefined,
       actif: actif !== undefined ? actif : true,
     };
@@ -73,7 +73,7 @@ export const validateUpdatePartenaire = async (
   next: NextFunction
 ) => {
   try {
-    const { name, type, link, logo_url, logo_alt, actif } = req.body;
+    const { name, type, link, image, logo_alt, actif } = req.body;
 
     // Validation basique pour les champs fournis
     if (
@@ -101,10 +101,10 @@ export const validateUpdatePartenaire = async (
       });
     }
 
-    // Validation optionnelle pour l'URL du logo
-    if (logo_url !== undefined && typeof logo_url !== "string") {
+    // Validation optionnelle pour l'image
+    if (image !== undefined && image !== null && typeof image !== "string") {
       return res.status(400).json({
-        message: "L'URL du logo doit être une chaîne de caractères",
+        message: "L'image doit être une chaîne de caractères ou null",
       });
     }
 
@@ -120,7 +120,7 @@ export const validateUpdatePartenaire = async (
       name: name?.trim(),
       type: type?.trim(),
       link: link?.trim(),
-      logo_url: logo_url?.trim(),
+      image: image === null ? null : image?.trim(),
       logo_alt: logo_alt?.trim(),
       actif,
     };

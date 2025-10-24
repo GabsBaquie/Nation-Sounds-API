@@ -45,7 +45,7 @@ export const validateCreateActualite = async (
       title: title.trim(),
       description: description.trim(),
       text: text?.trim() || undefined,
-      image: image?.trim() || undefined,
+      image: image === null ? null : image?.trim() || undefined,
       importance: importance || "Modéré",
       actif: actif !== undefined ? actif : true,
     };
@@ -104,7 +104,7 @@ export const validateUpdateActualite = async (
       title: title?.trim(),
       description: description?.trim(),
       text: text?.trim(),
-      image: image?.trim(),
+      image: image === null ? null : image?.trim(),
       importance,
       actif,
     };

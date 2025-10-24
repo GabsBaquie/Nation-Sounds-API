@@ -67,11 +67,11 @@ export class AuthController {
   // Récupérer les informations du profil de l'utilisateur connecté
   static async getProfile(req: Request, res: Response) {
     try {
-      if (!req.user?.id) {
+      if (!(req as any).user?.id) {
         return res.status(401).json({ message: "Utilisateur non authentifié" });
       }
 
-      const user = await UserService.findById(req.user.id);
+      const user = await UserService.findById((req as any).user.id);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -93,11 +93,11 @@ export class AuthController {
   static async changePassword(req: Request, res: Response) {
     const { oldPassword, newPassword } = req.body;
 
-    if (!req.user?.id) {
+    if (!(req as any).user?.id) {
       return res.status(401).json({ message: "Utilisateur non authentifié" });
     }
 
-    const userId = req.user.id;
+    const userId = (req as any).user.id;
 
     try {
       const user = await UserService.findByIdWithPassword(userId);

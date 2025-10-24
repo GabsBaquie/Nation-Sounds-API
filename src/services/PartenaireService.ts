@@ -55,14 +55,14 @@ export class PartenaireService {
   static async create(dto: CreatePartenaireDto): Promise<Partenaire> {
     try {
       const result = await pool.query(
-        `INSERT INTO partenaire (name, type, link, logo_url, logo_alt, actif) 
+        `INSERT INTO partenaire (name, type, link, image, logo_alt, actif) 
          VALUES ($1, $2, $3, $4, $5, $6) 
          RETURNING *`,
         [
           dto.name,
           dto.type,
           dto.link || null,
-          dto.logo_url || null,
+          dto.image || null,
           dto.logo_alt || null,
           dto.actif !== undefined ? dto.actif : true,
         ]
@@ -101,9 +101,9 @@ export class PartenaireService {
         paramCount++;
       }
 
-      if (dto.logo_url !== undefined) {
-        fields.push(`logo_url = $${paramCount}`);
-        values.push(dto.logo_url);
+      if (dto.image !== undefined) {
+        fields.push(`image = $${paramCount}`);
+        values.push(dto.image); // null sera traité comme NULL en base
         paramCount++;
       }
 

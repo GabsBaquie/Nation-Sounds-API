@@ -39,7 +39,7 @@ export class DayController {
   // POST /api/days
   static async create(req: Request, res: Response) {
     try {
-      const dto = req.dto as CreateDayDto;
+      const dto = (req as any).dto as CreateDayDto;
       const day = await DayService.create(dto);
       return res.status(201).json(day);
     } catch (error) {
@@ -60,7 +60,7 @@ export class DayController {
     }
 
     try {
-      const dto = (req.dto || req.body) as CreateDayDto;
+      const dto = ((req as any).dto || req.body) as CreateDayDto;
       const day = await DayService.update(id, dto);
 
       if (!day) {

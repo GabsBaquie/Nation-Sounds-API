@@ -49,7 +49,7 @@ class SecurityInfoController {
   // POST /api/securityInfos
   static async create(req: Request, res: Response) {
     try {
-      const dto = req.dto as CreateSecurityInfoDto;
+      const dto = (req as any).dto as CreateSecurityInfoDto;
       const securityInfo = await SecurityInfoService.create(dto);
       return res.status(201).json(securityInfo);
     } catch (error) {
@@ -75,7 +75,7 @@ class SecurityInfoController {
     }
 
     try {
-      const dto = req.dto as CreateSecurityInfoDto;
+      const dto = (req as any).dto as CreateSecurityInfoDto;
       const info = await SecurityInfoService.update(securityInfoId, dto);
       if (!info) {
         return res

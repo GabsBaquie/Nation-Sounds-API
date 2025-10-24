@@ -13,6 +13,6 @@ export const validateDto =
     if (errors.length > 0) {
       return res.status(400).json(errors);
     }
-    req.dto = dto;
+    (req as any).dto = dto;
     next();
   };

@@ -8,7 +8,7 @@ export const adminMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user?.id;
+    const userId = (req as any).user?.id;
 
     if (!userId) {
       return res

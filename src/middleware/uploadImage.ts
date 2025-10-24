@@ -2,8 +2,8 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 
-// Crée le dossier uploads/images s'il n'existe pas
-const uploadDir = path.join(__dirname, "../../uploads/images");
+// Crée le dossier upload/image s'il n'existe pas
+const uploadDir = path.join(__dirname, "../../upload/image");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

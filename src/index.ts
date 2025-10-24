@@ -1,7 +1,6 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import helmet from "helmet";
 import path from "path";
 import { testConnection } from "../database/scripts/connection";
 import routes from "./routes";
@@ -47,21 +46,21 @@ app.use(
   })
 );
 
-// Middlewares de sécurité
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "https:"],
-      },
-    },
-  })
-);
+// Middlewares de sécurité - DÉSACTIVÉ TEMPORAIREMENT
+// app.use(
+//   helmet({
+//     crossOriginResourcePolicy: { policy: "cross-origin" },
+//     crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         styleSrc: ["'self'", "'unsafe-inline'"],
+//         scriptSrc: ["'self'"],
+//         imgSrc: ["'self'", "data:", "https:"],
+//       },
+//     },
+//   })
+// );
 
 // Pré-traitements
 app.use(express.json({ limit: "20mb" }));
@@ -81,6 +80,18 @@ app.use((req, res, next) => {
 
 // Routes principales
 app.use("/api", routes);
+
+// Route pour les images - AVANT /uploads pour priorité
+app.use(
+  "/upload/image",
+  express.static(path.join(__dirname, "../upload/image"), {
+    setHeaders: (res, filePath) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      console.log("✅ Servir l'image:", filePath);
+    },
+  })
+);
+
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Gestion des erreurs CORS
