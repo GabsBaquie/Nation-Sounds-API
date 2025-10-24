@@ -37,7 +37,9 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 // Configuration du pool de connexions
 const poolConfig = {
   connectionString: postgresUrl,
-  ssl: false, // À activer si tu te connectes à une BDD distante sécurisée
+  ssl: process.env.NODE_ENV === "production" 
+    ? { rejectUnauthorized: false } // Nécessaire pour Vercel + Supabase Session Pooler
+    : false, // SSL désactivé en développement local
   max: 20, // Nombre maximum de connexions dans le pool
   idleTimeoutMillis: 30000, // Fermer les connexions inactives après 30s
   connectionTimeoutMillis: 2000, // Timeout de connexion
