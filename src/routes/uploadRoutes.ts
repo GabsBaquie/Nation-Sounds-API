@@ -1,23 +1,47 @@
 import { Router } from "express";
 import { uploadImage } from "../middleware/uploadImage";
 import { ImageService } from "../services/ImageService";
+import { SupabaseStorageService } from "../services/SupabaseStorage";
 
 const router = Router();
 
-router.post("/image", uploadImage.single("image"), (req, res) => {
+router.post("/image", uploadImage.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "Aucun fichier envoyé" });
   }
-  // Retourne l’URL publique (à adapter selon ton domaine)
-  const image = `/upload/image/${req.file.filename}`;
-  console.log("Réponse envoyée au frontend :", { image });
-  res.status(201).json({ image });
+
+  try {
+    const filename = `${Date.now()}-${Math.round(
+      Math.random() * 1e9
+    )}.${req.file.originalname.split(".").pop()}`;
+
+    const result = await SupabaseStorageService.uploadImage(
+      req.file.buffer,
+      filename,
+      req.file.mimetype
+    );
+
+    if (result.success) {
+      console.log("Image uploadée avec succès:", result.url);
+      res.status(201).json({ image: result.url });
+    } else {
+      console.error("Erreur lors de l'upload:", result.error);
+      res.status(500).json({ message: "Erreur lors de l'upload de l'image" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'upload:", error);
+    res.status(500).json({ message: "Erreur lors de l'upload de l'image" });
+  }
 });
 
 router.get("/list", async (req, res) => {
   try {
-    const images = await ImageService.getAllImages();
-    res.json(images);
+    const result = await SupabaseStorageService.listImages();
+    if (result.success) {
+      res.json(result.images);
+    } else {
+      res.status(500).json({ message: result.error });
+    }
   } catch (error) {
     console.error("Erreur lors de la récupération des images:", error);
     res
@@ -30,12 +54,12 @@ router.get("/list", async (req, res) => {
 router.delete("/image/:filename", async (req, res) => {
   try {
     const { filename } = req.params;
-    const result = await ImageService.deleteImage(filename);
+    const result = await SupabaseStorageService.deleteImage(filename);
 
     if (result.success) {
-      res.json({ message: result.message, filename });
+      res.json({ message: "Image supprimée avec succès", filename });
     } else {
-      res.status(404).json({ message: result.message });
+      res.status(500).json({ message: result.error });
     }
   } catch (error) {
     console.error("Erreur lors de la suppression de l'image:", error);
