@@ -2,19 +2,30 @@ import * as dotenv from "dotenv";
 import { Pool, PoolClient } from "pg";
 
 if (process.env.NODE_ENV === "production") {
-  dotenv.config({ path: ".env.docker" });
-  console.log("Chargement de .env.docker");
+  // En production (Vercel), utiliser les variables d'environnement directement
+  console.log(
+    "Mode production - utilisation des variables d'environnement Vercel"
+  );
 } else {
   dotenv.config();
   console.log("Chargement de .env");
 }
 
-const isDocker = process.env.IS_DOCKER === "true";
+// URL de base de données
+const postgresUrl = process.env.DATABASE_URL;
 
-// Détection intelligente de l'URL de base de données
-const postgresUrl = isDocker
-  ? process.env.POSTGRES_URL_DOCKER
-  : process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
+// Vérification de l'URL
+if (!postgresUrl) {
+  console.error("❌ DATABASE_URL n'est pas définie");
+  process.exit(1);
+}
+
+// Vérification du format de l'URL
+if (!postgresUrl.includes("supabase.co")) {
+  console.warn(
+    "⚠️ L'URL de base de données ne semble pas être une URL Supabase valide"
+  );
+}
 
 console.log(
   "PostgreSQL URL utilisée :",
