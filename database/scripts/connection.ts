@@ -3,18 +3,16 @@ import { Pool, PoolClient } from "pg";
 
 if (process.env.NODE_ENV === "production") {
   // En production (Vercel), utiliser les variables d'environnement directement
-  console.log("Mode production - utilisation des variables d'environnement Vercel");
+  console.log(
+    "Mode production - utilisation des variables d'environnement Vercel"
+  );
 } else {
   dotenv.config();
   console.log("Chargement de .env");
 }
 
-const isDocker = process.env.IS_DOCKER === "true";
-
-// Détection intelligente de l'URL de base de données
-const postgresUrl = isDocker
-  ? process.env.POSTGRES_URL_DOCKER
-  : process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
+// URL de base de données
+const postgresUrl = process.env.DATABASE_URL;
 
 console.log(
   "PostgreSQL URL utilisée :",
