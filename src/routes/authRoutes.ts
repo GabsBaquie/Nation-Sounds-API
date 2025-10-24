@@ -8,11 +8,11 @@ const router = Router();
 /**
  * @swagger
  * /api/auth/login:
- * 
+ *
  * parameters:
  *  email: ""
  *  password: ""
- * 
+ *
  *   post:
  *     summary: Connecter un utilisateur
  */
@@ -20,9 +20,19 @@ router.post("/login", AuthController.login);
 
 /**
  * @swagger
- * /api/auth/me:
+ * /api/auth/profile:
  *   get:
  *     summary: Récupérer les informations du profil de l'utilisateur connecté
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/profile", authMiddleware, AuthController.getProfile);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Récupérer les informations du profil de l'utilisateur connecté (alias)
  *     security:
  *       - bearerAuth: []
  */
@@ -30,19 +40,27 @@ router.get("/me", authMiddleware, AuthController.getProfile);
 
 /**
  * @swagger
- * /api/auth/reset-password-request:
+ * /api/auth/request-password-reset:
  *   post:
  *     summary: Demander la réinitialisation du mot de passe
+ */
+router.post("/request-password-reset", AuthController.requestPasswordReset);
+
+/**
+ * @swagger
+ * /api/auth/reset-password-request:
+ *   post:
+ *     summary: Demander la réinitialisation du mot de passe (alias)
  */
 router.post("/reset-password-request", AuthController.requestPasswordReset);
 
 /**
  * @swagger
  * /api/auth/reset-password:
- *   put:
+ *   post:
  *     summary: Réinitialiser le mot de passe
  */
-router.put("/reset-password", AuthController.resetPassword);
+router.post("/reset-password", AuthController.resetPassword);
 
 /**
  * Route pour changer le mot de passe (authentification requise)

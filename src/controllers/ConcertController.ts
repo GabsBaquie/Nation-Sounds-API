@@ -1,25 +1,20 @@
-// src/controllers/ConcertController.ts
-
 import { Request, Response } from "express";
-import { In } from "typeorm";
-import { AppDataSource } from "../data-source";
-import { CreateConcertDto } from "../dto/create-concert.dto";
-import { Concert } from "../entity/Concert";
-import { Day } from "../entity/Day";
+import { CreateConcertDto } from "../dto/requests/concert.dto";
+import { ConcertService } from "../services/ConcertService";
 
-const normalizeConcertImage = (concert: Concert | null) => {
+const normalizeConcertImage = (concert: any) => {
   if (!concert) return null;
-  // Clone l'objet pour ne pas modifier l'instance TypeORM
-  const obj = { ...concert, image: concert.image ?? null };
-  return obj;
+  return {
+    ...concert,
+    image: concert.image ?? null,
+  };
 };
 
-class ConcertController {
+export class ConcertController {
   // GET /api/concerts
   static async getAll(req: Request, res: Response) {
     try {
-      const concertRepository = AppDataSource.getRepository(Concert);
-      const concerts = await concertRepository.find({ relations: ["days"] });
+      const concerts = await ConcertService.findAll();
       return res.status(200).json(concerts.map(normalizeConcertImage));
     } catch (error) {
       console.error("Erreur lors de la récupération des concerts:", error);
@@ -31,12 +26,12 @@ class ConcertController {
   static async getById(req: Request, res: Response) {
     const concertId = parseInt(req.params.id);
 
+    if (isNaN(concertId)) {
+      return res.status(400).json({ message: "ID de concert invalide" });
+    }
+
     try {
-      const concertRepository = AppDataSource.getRepository(Concert);
-      const concert = await concertRepository.findOne({
-        where: { id: concertId },
-        relations: ["days"],
-      });
+      const concert = await ConcertService.findById(concertId);
 
       if (!concert) {
         return res.status(404).json({ message: "Concert non trouvé" });
@@ -52,33 +47,11 @@ class ConcertController {
   // POST /api/concerts
   static async create(req: Request, res: Response) {
     try {
-      const dto = req.dto as CreateConcertDto;
-      const concertRepository = AppDataSource.getRepository(Concert);
-      const dayRepository = AppDataSource.getRepository(Day);
-      const concert = concertRepository.create({
-        title: String(dto.title),
-        description: String(dto.description),
-        performer: String(dto.performer),
-        time: String(dto.time),
-        location: String(dto.location),
-        image: dto.image ?? undefined,
-      });
-      if (dto.dayIds && dto.dayIds.length > 0) {
-        const days = await dayRepository.findBy({ id: In(dto.dayIds) });
-        if (days.length !== dto.dayIds.length) {
-          return res
-            .status(404)
-            .json({ message: "Un ou plusieurs days n'ont pas été trouvés." });
-        }
-        concert.days = days;
-      }
-      const saved = await concertRepository.save(concert);
-      const concertWithDays = await concertRepository.findOne({
-        where: { id: saved.id },
-        relations: ["days"],
-      });
-      return res.status(201).json(normalizeConcertImage(concertWithDays));
+      const dto = (req as any).dto as CreateConcertDto;
+      const concert = await ConcertService.create(dto);
+      return res.status(201).json(normalizeConcertImage(concert));
     } catch (error) {
+      console.error("Erreur lors de la création du concert:", error);
       return res.status(500).json({
         message: "Erreur serveur",
         error: error instanceof Error ? error.message : "Erreur inconnue",
@@ -88,47 +61,23 @@ class ConcertController {
 
   // PUT /api/concerts/:id
   static async update(req: Request, res: Response) {
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID de concert invalide" });
+    }
+
     try {
-      const id = Number(req.params.id);
-      const dto = req.dto as CreateConcertDto;
-      const concertRepository = AppDataSource.getRepository(Concert);
-      const dayRepository = AppDataSource.getRepository(Day);
-      const concert = await concertRepository.findOne({
-        where: { id },
-        relations: ["days"],
-      });
+      const dto = (req as any).dto as Partial<CreateConcertDto>;
+      const concert = await ConcertService.update(id, dto);
+
       if (!concert) {
         return res.status(404).json({ message: "Concert non trouvé" });
       }
-      concert.title = String(dto.title);
-      concert.description = String(dto.description);
-      concert.performer = String(dto.performer);
-      concert.time = String(dto.time);
-      concert.location = String(dto.location);
-      // Gestion correcte de la suppression d'image
-      if ("image" in dto) {
-        if (dto.image === null || dto.image === "") {
-          concert.image = undefined;
-        } else {
-          concert.image = dto.image;
-        }
-      }
-      if (dto.dayIds && dto.dayIds.length > 0) {
-        const days = await dayRepository.findBy({ id: In(dto.dayIds) });
-        if (days.length !== dto.dayIds.length) {
-          return res
-            .status(404)
-            .json({ message: "Un ou plusieurs days n'ont pas été trouvés." });
-        }
-        concert.days = days;
-      }
-      const saved = await concertRepository.save(concert);
-      const concertWithDays = await concertRepository.findOne({
-        where: { id: saved.id },
-        relations: ["days"],
-      });
-      return res.status(200).json(normalizeConcertImage(concertWithDays));
+
+      return res.status(200).json(normalizeConcertImage(concert));
     } catch (error) {
+      console.error("Erreur lors de la mise à jour du concert:", error);
       return res.status(500).json({
         message: "Erreur serveur",
         error: error instanceof Error ? error.message : "Erreur inconnue",
@@ -140,11 +89,14 @@ class ConcertController {
   static async delete(req: Request, res: Response) {
     const concertId = parseInt(req.params.id);
 
-    try {
-      const concertRepository = AppDataSource.getRepository(Concert);
-      const result = await concertRepository.delete(concertId);
+    if (isNaN(concertId)) {
+      return res.status(400).json({ message: "ID de concert invalide" });
+    }
 
-      if (result.affected === 1) {
+    try {
+      const deleted = await ConcertService.delete(concertId);
+
+      if (deleted) {
         return res
           .status(200)
           .json({ message: "Concert supprimé avec succès" });
@@ -153,6 +105,23 @@ class ConcertController {
       }
     } catch (error) {
       console.error("Erreur lors de la suppression du concert:", error);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
+
+  // GET /api/concerts/search?q=term
+  static async search(req: Request, res: Response) {
+    const searchTerm = req.query.q as string;
+
+    if (!searchTerm) {
+      return res.status(400).json({ message: "Terme de recherche requis" });
+    }
+
+    try {
+      const concerts = await ConcertService.search(searchTerm);
+      return res.status(200).json(concerts.map(normalizeConcertImage));
+    } catch (error) {
+      console.error("Erreur lors de la recherche de concerts:", error);
       return res.status(500).json({ message: "Erreur serveur" });
     }
   }

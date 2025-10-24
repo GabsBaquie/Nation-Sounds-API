@@ -1,224 +1,183 @@
-# Nation Sounds API
+# 🎵 Nation Sounds API
 
-Backend robust pour l'application Nation Sounds, offrant une API RESTful en TypeScript et Express pour gérer utilisateurs, jours, concerts, points d'intérêt et informations de sécurité.
+API backend pour l'application Nation Sounds - Gestion des concerts, jours, POIs et informations de sécurité.
 
-## Table des matières
+## 📁 Structure du projet
 
-- [Fonctionnalités](#fonctionnalités)
-- [Technologies](#technologies)
-- [Prérequis](#prérequis)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Démarrage](#démarrage)
-- [Base de données](#base-de-données)
-- [Tests](#tests)
-- [Architecture du projet](#architecture-du-projet)
-- [Endpoints principaux](#endpoints-principaux)
-- [Déploiement](#déploiement)
-- [Contribution](#contribution)
-- [Licence](#licence)
+```
+nation-sounds-api/
+├── 📁 src/                          # Code source TypeScript
+│   ├── controllers/                  # Contrôleurs API
+│   ├── database/                    # Gestion de la base de données
+│   ├── dto/                         # Data Transfer Objects
+│   ├── middleware/                  # Middlewares Express
+│   ├── routes/                      # Routes API
+│   ├── services/                    # Services métier
+│   ├── types/                       # Types TypeScript
+│   └── utils/                       # Utilitaires
+├── 📁 database/                     # Scripts et vues SQL
+│   ├── migrations/                  # Migrations SQL
+│   └── views/                       # Vues SQL
+├── 📁 scripts/                      # Scripts utilitaires
+│   ├── database/                    # Scripts de gestion DB
+│   ├── testing/                     # Scripts de test
+│   ├── run-tests.js                 # Gestionnaire de tests
+│   └── setup-env.js                 # Configuration environnement
+├── 📁 tests/                        # Tests d'intégration
+│   └── start-and-test.sh            # Script de test complet
+├── 📁 docs/                         # Documentation
+│   ├── API_GUIDE.md                 # Guide de l'API
+│   └── SUPABASE_SETUP.md            # Configuration Supabase
+├── 📁 config/                       # Configuration
+│   ├── tsconfig.json                # Configuration TypeScript
+│   └── jest.config.js               # Configuration Jest
+├── db.js                            # Gestionnaire de base de données
+└── package.json                     # Dépendances
+```
 
-## Fonctionnalités
+## 🚀 Démarrage rapide
 
-- Authentification JWT (inscription, connexion, rafraîchissement de token)
-- Gestion des utilisateurs (CRUD avec rôles `admin` et `user`)
-- Gestion des journées (`Day`) et des concerts (`Concert`), relation Many-to-Many
-- Gestion des Points d'Intérêt (`POI`)
-- Gestion des informations de sécurité (`SecurityInfo`)
-- Endpoint global pour récupérer l'ensemble des données de l'application
-
-## Technologies
-
-- Node.js (≥18)
-- TypeScript
-- Express.js
-- TypeORM (MySQL / MariaDB via JawsDB)
-- class-validator, bcrypt, jsonwebtoken, helmet, cors
-
-## Prérequis
-
-- [Node.js](https://nodejs.org/) ≥18 et npm
-- Base de données MySQL / MariaDB (ex. JawsDB ou service local)
-- Compte [Heroku](https://heroku.com) pour le déploiement
-- Fichier `.env` à la racine du projet
-
-## Installation
+### 1. Installation
 
 ```bash
-# Cloner le repo
-git clone https://github.com/GabsBaquie/Nation-Sounds-API.git
-cd nation-sounds-api
-
-# Installer les dépendances
 npm install
 ```
 
-## Configuration
-
-Créer un fichier `.env` à la racine et définir les variables suivantes :
-
-```dotenv
-# URL de connexion MySQL / MariaDB (production)
-JAWSDB_MARIA_URL=mysql://<user>:<pass>@<host>:<port>/<database>
-
-# URL de connexion MySQL / MariaDB (tests)
-TEST_JAWSDB_MARIA_URL=mysql://<user>:<pass>@<host>:<port>/<test_database>
-
-# Port d'écoute du serveur (facultatif)
-PORT=4000
-
-# Secret pour les tokens JWT
-JWT_SECRET=une_phrase_secrete
-
-# Environnement (development | test | production)
-NODE_ENV=development
-```
-
-## Démarrage
-
-### Mode développement
+### 2. Configuration
 
 ```bash
+# Configurer l'environnement de test
+node scripts/setup-env.js
+
+# Initialiser la base de données
+node db.js init
+
+# Créer les vues
+node db.js views
+```
+
+### 3. Démarrage
+
+```bash
+# Mode développement
 npm run dev
-```
-Le serveur démarre en `http://localhost:4000/api` avec rechargement à chaud en TypeScript.
 
-### Build et production
-
-```bash
-npm run build
-npm start
+# Mode test
+NODE_ENV=test node dist/index.js --start-server
 ```
 
-## Base de données
+## 🧪 Tests
 
-L'application utilise JawsDB Maria (MySQL) via TypeORM :
-
-- **Production** : Base de données principale
-  - `synchronize: false` (pas de modifications automatiques)
-  - `dropSchema: false` (protection des données)
-  - Migrations requises pour les changements de schéma
-
-- **Tests** : Base de données de test
-  - `synchronize: true` (création automatique des tables)
-  - `dropSchema: true` (réinitialisation à chaque test)
-  - Pas besoin de migrations
-
-### Migrations
+### Tests unitaires
 
 ```bash
-# Générer une migration
-npm run migration:generate -- -n NomMigration
-
-# Appliquer les migrations
-npm run migration:run
-```
-
-## Tests
-
-Les tests utilisent une base JawsDB dédiée :
-
-```bash
-# Configuration de l'environnement de test
-npm run setup:test
-
-# Exécuter tous les tests
 npm test
-
-# Tests avec couverture
-npm test -- --coverage
 ```
 
-### Configuration de la base de données de test
-
-Pour que les tests fonctionnent correctement, vous devez configurer correctement la variable d'environnement `TEST_JAWSDB_MARIA_URL` :
-
-1. Créez un fichier `.env.test` à la racine du projet avec :
-   ```
-   NODE_ENV=test
-   TEST_JAWSDB_MARIA_URL=mysql://username:password@your-database-host:3306/test_database
-   ```
-
-2. Options disponibles pour la base de données de test :
-   
-   - **Option 1: Base JawsDB Maria dédiée sur Heroku**
-     - Créez une seconde instance JawsDB : `heroku addons:create jawsdb-maria:kitefin -a your-app-name --name test-db`
-     - Récupérez l'URL : `heroku config:get JAWSDB_MARIA_URL -a your-app-name`
-   
-   - **Option 2: MySQL local avec Docker**
-     ```bash
-     docker run --name test-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test -p 3306:3306 -d mysql:8.0
-     ```
-     - Utilisez l'URL : `mysql://root:password@localhost:3306/test`
-
-3. Exécutez `npm run setup:test` pour configurer automatiquement votre environnement de test.
-
-### Erreurs courantes
-
-- **ECONNREFUSED 127.0.0.1:3306** : Cette erreur indique que l'application essaie de se connecter à MySQL sur localhost, qui n'existe pas dans l'environnement de test. Assurez-vous que `TEST_JAWSDB_MARIA_URL` pointe vers une base de données accessible.
-
-## Architecture du projet
+### Tests d'intégration
 
 ```bash
-src/
-├── controllers/        # Logique métier et gestion des requêtes
-├── entity/            # Entités TypeORM (User, Day, Concert, POI, SecurityInfo)
-├── middleware/        # Middlewares (authentification, rôles, erreurs)
-├── routes/           # Définition des routes Express
-├── migration/        # Fichiers de migration TypeORM
-├── utils/           # Fonctions utilitaires (seed, helpers)
-├── data-source.ts   # Configuration TypeORM
-└── index.ts         # Point d'entrée de l'application
+node scripts/run-tests.js integration
 ```
 
-## Endpoints principaux
-
-- **Auth**
-  - `POST /api/auth/register` : Inscription
-  - `POST /api/auth/login`    : Connexion
-
-- **Users (admin)**
-  - `GET /api/admin/users`     : Liste des utilisateurs
-  - `PUT /api/admin/users/:id` : Mise à jour d'un utilisateur
-  - `DELETE /api/admin/users/:id` : Suppression d'un utilisateur
-
-- **Programme & données**
-  - `GET /api/`              : Récupération globale (jours, concerts, POIs, securityInfos)
-  - `GET /api/days`          : Liste des journées
-  - `GET /api/concerts`      : Liste des concerts
-  - `GET /api/pois`         : Liste des points d'intérêt
-  - `GET /api/securityInfos` : Liste des informations de sécurité
-
-## Déploiement
-
-L'application est déployée sur Heroku :
+### Test de l'API
 
 ```bash
-# Premier déploiement
-heroku create nation-sounds-api
-heroku addons:create jawsdb-maria:kitefin
-git push heroku main
-
-# Déploiements suivants
-git push heroku main
+node scripts/run-tests.js api
 ```
 
-Variables d'environnement Heroku requises :
-- `JAWSDB_MARIA_URL` (ajouté automatiquement par l'addon)
-- `TEST_JAWSDB_MARIA_URL` (pour les tests CI)
-- `JWT_SECRET`
-- `NODE_ENV=production`
+### Tous les tests
 
-## Contribution
+```bash
+node scripts/run-tests.js all
+```
 
-Les contributions sont les bienvenues ! Merci de :
+## 🗄️ Base de données
 
-1. Forker le dépôt
-2. Créer une branche (`git checkout -b feature/ma-fonctionnalite`)
-3. Committer vos modifications (`git commit -m "Ajout d'une fonctionnalité"`)
-4. Pusher sur votre branche (`git push origin feature/ma-fonctionnalite`)
-5. Ouvrir une Pull Request
+### Gestion de la base
 
-## Licence
+```bash
+node db.js init          # Initialiser
+node db.js views         # Créer les vues
+node db.js test          # Tester les vues
+node db.js all           # Tout faire
+```
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+### Vues disponibles
+
+- `full_db` - Toutes les données
+- `public_data` - Données publiques
+- `db_stats` - Statistiques par table
+- `poi_stats_by_type` - Statistiques POIs
+- `concerts_by_month` - Concerts par mois
+- `recent_activity` - Activité récente
+
+## 📊 Endpoints API
+
+### Données publiques
+
+- `GET /api/stats/public-data` - Données publiques
+- `GET /api/stats/stats` - Statistiques générales
+- `GET /api/stats/poi-stats` - Statistiques POIs
+- `GET /api/stats/concerts-by-month` - Concerts par mois
+
+### Données protégées (authentification requise)
+
+- `GET /api/stats/all-data` - Toutes les données
+- `GET /api/admin/users` - Gestion des utilisateurs
+- `POST /api/admin/users` - Créer un utilisateur
+
+### CRUD standard
+
+- `GET/POST/PUT/DELETE /api/concerts` - Concerts
+- `GET/POST/PUT/DELETE /api/days` - Jours
+- `GET/POST/PUT/DELETE /api/pois` - POIs
+- `GET/POST/PUT/DELETE /api/securityInfos` - Infos sécurité
+
+## 🔧 Scripts utiles
+
+### Configuration
+
+```bash
+node scripts/setup-env.js      # Configurer .env.test
+node scripts/test-connection.js # Tester la connexion DB
+```
+
+### Tests
+
+```bash
+node scripts/test-api.js        # Test complet de l'API
+node scripts/run-tests.js all   # Tous les tests
+```
+
+### Base de données
+
+```bash
+node db.js help                 # Aide
+node db.js all                  # Configuration complète
+```
+
+## 📚 Documentation
+
+- [Guide de l'API](docs/API_GUIDE.md)
+- [Configuration Supabase](docs/SUPABASE_SETUP.md)
+- [Base de données](src/database/README.md)
+
+## 🌐 Environnements
+
+- **Développement** : `npm run dev`
+- **Test** : `NODE_ENV=test node dist/index.js --start-server`
+- **Production** : `npm start`
+
+## 🔐 Authentification
+
+L'API utilise JWT pour l'authentification. Les routes protégées nécessitent un token valide dans l'en-tête `Authorization: Bearer <token>`.
+
+## 📝 Logs
+
+Les logs sont affichés dans la console avec des couleurs pour faciliter le débogage :
+
+- 🟢 Succès
+- 🔴 Erreur
+- 🟡 Avertissement
+- 🔵 Information

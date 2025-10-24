@@ -1,10 +1,8 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import helmet from "helmet";
 import path from "path";
-import "reflect-metadata";
-import { AppDataSource } from "./data-source";
+import { testConnection } from "../database/scripts/connection";
 import routes from "./routes";
 
 const app = express();
@@ -15,6 +13,8 @@ const allowedOrigins = [
   "https://nation-sound-front.vercel.app",
   "http://localhost:3000",
   "http://localhost:3001",
+  "http://localhost:3002",
+  "http://localhost:3003",
   "http://localhost:8080",
   "http://51.15.241.119:8080",
 ];
@@ -46,21 +46,21 @@ app.use(
   })
 );
 
-// Middlewares de sécurité
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "https:"],
-      },
-    },
-  })
-);
+// Middlewares de sécurité - DÉSACTIVÉ TEMPORAIREMENT
+// app.use(
+//   helmet({
+//     crossOriginResourcePolicy: { policy: "cross-origin" },
+//     crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         styleSrc: ["'self'", "'unsafe-inline'"],
+//         scriptSrc: ["'self'"],
+//         imgSrc: ["'self'", "data:", "https:"],
+//       },
+//     },
+//   })
+// );
 
 // Pré-traitements
 app.use(express.json({ limit: "20mb" }));
@@ -80,6 +80,18 @@ app.use((req, res, next) => {
 
 // Routes principales
 app.use("/api", routes);
+
+// Route pour les images - AVANT /uploads pour priorité
+app.use(
+  "/upload/image",
+  express.static(path.join(__dirname, "../upload/image"), {
+    setHeaders: (res, filePath) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      console.log("✅ Servir l'image:", filePath);
+    },
+  })
+);
+
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Gestion des erreurs CORS
@@ -102,19 +114,38 @@ app.use(
 );
 
 // Démarrage du serveur
-if (process.env.NODE_ENV !== "test") {
-  AppDataSource.initialize()
-    .then(() => {
-      console.log("✅ Connexion à la base de données réussie !");
+const startServer = async () => {
+  try {
+    const isConnected = await testConnection();
+    if (isConnected) {
       const PORT = parseInt(process.env.PORT ?? "8080", 10);
       app.listen(PORT, "0.0.0.0", () => {
         console.log(`🚀 Serveur démarré sur http://0.0.0.0:${PORT}`);
         console.log("🌐 CORS autorisé pour :", allowedOrigins);
       });
-    })
-    .catch((error: Error) => {
-      console.error("❌ Erreur DB :", error);
-    });
+    } else {
+      console.error(
+        "❌ Impossible de démarrer le serveur sans connexion à la base de données"
+      );
+      process.exit(1);
+    }
+  } catch (error: any) {
+    console.error("❌ Erreur DB :", error);
+    process.exit(1);
+  }
+};
+
+// Démarrer le serveur sauf si c'est un test unitaire
+if (
+  process.env.NODE_ENV !== "test" ||
+  process.argv.includes("--start-server")
+) {
+  startServer();
+} else {
+  // En mode test, initialiser la connexion DB sans démarrer le serveur
+  testConnection().catch(console.error);
 }
 
+// Export de l'application pour les tests
+export { app };
 export default app;

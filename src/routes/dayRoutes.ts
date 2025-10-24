@@ -1,9 +1,11 @@
 // src/routes/dayRoutes.ts
 import { Router } from "express";
 import DayController from "../controllers/DayController";
-import { CreateDayDto } from "../dto/create-day.dto";
 import { checkJwt } from "../middleware/checkJwt";
-import { validateDto } from "../middleware/validateDto";
+import {
+  validateCreateDay,
+  validateUpdateDay,
+} from "../middleware/validateDay";
 
 const router = Router();
 
@@ -14,6 +16,14 @@ const router = Router();
  *     summary: Obtenir tous les jours
  */
 router.get("/", DayController.getAll);
+
+/**
+ * @swagger
+ * /api/days/date-range:
+ *   get:
+ *     summary: Obtenir les jours par plage de dates
+ */
+router.get("/date-range", DayController.getByDateRange);
 
 /**
  * @swagger
@@ -29,7 +39,15 @@ router.get("/:id", DayController.getById);
  *   post:
  *     summary: Créer un nouveau jour
  */
-router.post("/", [checkJwt, validateDto(CreateDayDto)], DayController.create);
+router.post("/", [checkJwt, validateCreateDay], DayController.create);
+
+/**
+ * @swagger
+ * /api/days/{id}/concerts:
+ *   put:
+ *     summary: Ajouter des concerts à un jour
+ */
+router.put("/:id/concerts", DayController.addConcerts);
 
 /**
  * @swagger
@@ -37,7 +55,7 @@ router.post("/", [checkJwt, validateDto(CreateDayDto)], DayController.create);
  *   put:
  *     summary: Mettre à jour un jour
  */
-router.put("/:id", [checkJwt, validateDto(CreateDayDto)], DayController.update);
+router.put("/:id", [checkJwt, validateUpdateDay], DayController.update);
 
 /**
  * @swagger

@@ -28,7 +28,7 @@ export const authMiddleware = (
     ) as DecodedToken;
 
     // Ajouter les informations décodées du token à la requête
-    req.user = {
+    (req as any).user = {
       id: decoded.userId,
       role: decoded.role,
       username: decoded.username,

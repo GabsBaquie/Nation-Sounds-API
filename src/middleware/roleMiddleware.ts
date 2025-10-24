@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 
 export const roleMiddleware = (roles: Array<"admin" | "user">) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const user = req.user;
+    const user = (req as any).user;
 
     if (!user) {
       return res

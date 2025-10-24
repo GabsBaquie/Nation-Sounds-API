@@ -1,12 +1,9 @@
-// src/controllers/AdminController.ts
 import * as bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
+import { UserService } from "../services/UserService";
 
-class AdminController {
+export class AdminController {
   static async createUser(req: Request, res: Response) {
-    const userRepository = AppDataSource.getRepository(User);
     const { username, email, password, role } = req.body;
 
     // Validation des données
@@ -21,40 +18,37 @@ class AdminController {
         .json({ message: "Seules les adresses Gmail sont autorisées." });
     }
 
-    // Vérifier si l'email ou le username existe déjà
-    const userExists = await userRepository.findOne({
-      where: [{ email }, { username }],
-    });
-    if (userExists) {
-      if (userExists.email === email) {
+    try {
+      // Vérifier si l'email ou le username existe déjà
+      const emailExists = await UserService.emailExists(email);
+      if (emailExists) {
         return res.status(409).json({ message: "Email déjà utilisé" });
       }
-      if (userExists.username === username) {
+
+      const usernameExists = await UserService.usernameExists(username);
+      if (usernameExists) {
         return res
           .status(409)
           .json({ message: "Nom d'utilisateur déjà utilisé" });
       }
-    }
 
-    // Hachage du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
+      // Hachage du mot de passe
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Création de l'utilisateur
-    const newUser = userRepository.create({
-      username,
-      email,
-      password: hashedPassword,
-      role,
-    });
+      // Création de l'utilisateur
+      const newUser = await UserService.create({
+        username,
+        email,
+        password: hashedPassword,
+        role,
+      });
 
-    try {
-      await userRepository.save(newUser);
-      return res.status(201).json({ message: "Utilisateur créé avec succès" });
-    } catch (e) {
-      console.error("Erreur lors de la création de l'utilisateur :", e);
+      return res.status(201).json(newUser);
+    } catch (error) {
+      console.error("Erreur lors de la création de l'utilisateur :", error);
       return res
         .status(500)
-        .json({ message: "Erreur lors de la création de l’utilisateur" });
+        .json({ message: "Erreur lors de la création de l'utilisateur" });
     }
   }
 
@@ -62,21 +56,17 @@ class AdminController {
     const { id } = req.params;
     const { username, email, role } = req.body;
 
-    // Vérification de l'ID avant conversion
-    console.log("ID reçu :", id);
-
-    const userRepository = AppDataSource.getRepository(User);
+    const userId = parseInt(id);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "ID d'utilisateur invalide" });
+    }
 
     try {
-      const user = await userRepository.findOneBy({ id: parseInt(id) });
+      const user = await UserService.findById(userId);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
-
-      // Log des données avant modification
-      console.log("Utilisateur avant modification :", user);
-      console.log("Données reçues :", { username, email, role });
 
       // Validation pour s'assurer que l'email est un Gmail (si l'email est fourni pour la mise à jour)
       if (email && !email.endsWith("@gmail.com")) {
@@ -85,20 +75,25 @@ class AdminController {
           .json({ message: "Seules les adresses Gmail sont autorisées." });
       }
 
-      // Mise à jour des champs si présents
-      user.username = username || user.username;
-      user.email = email || user.email;
-      user.role = role || user.role;
+      // Vérifier les doublons
+      if (email && (await UserService.emailExists(email, userId))) {
+        return res.status(409).json({ message: "Email déjà utilisé" });
+      }
 
-      // Log après modification mais avant enregistrement
-      console.log("Utilisateur après modification :", user);
+      if (username && (await UserService.usernameExists(username, userId))) {
+        return res
+          .status(409)
+          .json({ message: "Nom d'utilisateur déjà utilisé" });
+      }
 
-      await userRepository.save(user);
+      // Mise à jour de l'utilisateur
+      const updatedUser = await UserService.update(userId, {
+        username,
+        email,
+        role,
+      });
 
-      // Log après enregistrement
-      console.log("Utilisateur sauvegardé :", user);
-
-      return res.status(200).json(user);
+      return res.status(200).json(updatedUser);
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
       return res.status(500).json({ message: "Erreur serveur" });
@@ -107,28 +102,40 @@ class AdminController {
 
   static async deleteUser(req: Request, res: Response) {
     const { id } = req.params;
-    const userRepository = AppDataSource.getRepository(User);
+    const userId = parseInt(id);
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "ID d'utilisateur invalide" });
+    }
 
     try {
-      const user = await userRepository.findOneBy({ id: parseInt(id) });
+      const user = await UserService.findById(userId);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
 
       // Si l'utilisateur à supprimer est un admin, vérifier qu'il reste au moins un autre admin
-      if (user.role === 'admin') {
-        const adminCount = await userRepository.count({ where: { role: 'admin' } });
+      if (user.role === "admin") {
+        const adminCount = await UserService.countByRole("admin");
         if (adminCount <= 1) {
-          return res.status(400).json({ message: "Impossible de supprimer le dernier administrateur" });
+          return res.status(400).json({
+            message: "Impossible de supprimer le dernier administrateur",
+          });
         }
       }
 
-      await userRepository.remove(user);
+      const deleted = await UserService.delete(userId);
 
-      return res
-        .status(200)
-        .json({ message: "Utilisateur supprimé avec succès" });
+      if (deleted) {
+        return res
+          .status(200)
+          .json({ message: "Utilisateur supprimé avec succès" });
+      } else {
+        return res
+          .status(500)
+          .json({ message: "Erreur lors de la suppression" });
+      }
     } catch (error) {
       console.error("Erreur lors de la suppression de l'utilisateur :", error);
       return res.status(500).json({ message: "Erreur serveur" });
@@ -137,8 +144,7 @@ class AdminController {
 
   static async getUsers(req: Request, res: Response) {
     try {
-      const userRepository = AppDataSource.getRepository(User);
-      const users = await userRepository.find();
+      const users = await UserService.findAll();
       return res.status(200).json(users);
     } catch (error) {
       console.error("Erreur lors de la récupération des utilisateurs:", error);
@@ -149,12 +155,14 @@ class AdminController {
   }
 
   static async getUserById(req: Request, res: Response) {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id);
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "ID d'utilisateur invalide" });
+    }
 
     try {
-      const user = await AppDataSource.getRepository(User).findOne({
-        where: { id: parseInt(userId) },
-      });
+      const user = await UserService.findById(userId);
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé" });
