@@ -5,6 +5,8 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY!;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Force rebuild for Vercel deployment
+
 export class SupabaseStorageService {
   static async uploadImage(
     file: Buffer,
