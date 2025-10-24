@@ -21,8 +21,10 @@ if (!postgresUrl) {
 }
 
 // Vérification du format de l'URL
-if (!postgresUrl.includes('supabase.co')) {
-  console.warn("⚠️ L'URL de base de données ne semble pas être une URL Supabase valide");
+if (!postgresUrl.includes("supabase.co")) {
+  console.warn(
+    "⚠️ L'URL de base de données ne semble pas être une URL Supabase valide"
+  );
 }
 
 console.log(
