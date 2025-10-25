@@ -1,224 +1,90 @@
-# Nation Sounds API
+# 🎵 Nation Sounds API
 
-Backend robust pour l'application Nation Sounds, offrant une API RESTful en TypeScript et Express pour gérer utilisateurs, jours, concerts, points d'intérêt et informations de sécurité.
+API REST pour la gestion du festival Nation Sounds - Backend Node.js/TypeScript avec Supabase.
 
-## Table des matières
+## 🚀 Démarrage Rapide
 
-- [Fonctionnalités](#fonctionnalités)
-- [Technologies](#technologies)
-- [Prérequis](#prérequis)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Démarrage](#démarrage)
-- [Base de données](#base-de-données)
-- [Tests](#tests)
-- [Architecture du projet](#architecture-du-projet)
-- [Endpoints principaux](#endpoints-principaux)
-- [Déploiement](#déploiement)
-- [Contribution](#contribution)
-- [Licence](#licence)
+### Prérequis
 
-## Fonctionnalités
+- Node.js 18+
+- Docker & Docker Compose
+- Compte Supabase
 
-- Authentification JWT (inscription, connexion, rafraîchissement de token)
-- Gestion des utilisateurs (CRUD avec rôles `admin` et `user`)
-- Gestion des journées (`Day`) et des concerts (`Concert`), relation Many-to-Many
-- Gestion des Points d'Intérêt (`POI`)
-- Gestion des informations de sécurité (`SecurityInfo`)
-- Endpoint global pour récupérer l'ensemble des données de l'application
+### Installation
 
-## Technologies
-
-- Node.js (≥18)
-- TypeScript
-- Express.js
-- TypeORM (MySQL / MariaDB via JawsDB)
-- class-validator, bcrypt, jsonwebtoken, helmet, cors
-
-## Prérequis
-
-- [Node.js](https://nodejs.org/) ≥18 et npm
-- Base de données MySQL / MariaDB (ex. JawsDB ou service local)
-- Compte [Heroku](https://heroku.com) pour le déploiement
-- Fichier `.env` à la racine du projet
-
-## Installation
+1. **Cloner le projet**
 
 ```bash
-# Cloner le repo
-git clone https://github.com/GabsBaquie/Nation-Sounds-API.git
+git clone <repository-url>
 cd nation-sounds-api
-
-# Installer les dépendances
-npm install
 ```
 
-## Configuration
-
-Créer un fichier `.env` à la racine et définir les variables suivantes :
-
-```dotenv
-# URL de connexion MySQL / MariaDB (production)
-JAWSDB_MARIA_URL=mysql://<user>:<pass>@<host>:<port>/<database>
-
-# URL de connexion MySQL / MariaDB (tests)
-TEST_JAWSDB_MARIA_URL=mysql://<user>:<pass>@<host>:<port>/<test_database>
-
-# Port d'écoute du serveur (facultatif)
-PORT=4000
-
-# Secret pour les tokens JWT
-JWT_SECRET=une_phrase_secrete
-
-# Environnement (development | test | production)
-NODE_ENV=development
-```
-
-## Démarrage
-
-### Mode développement
+2. **Configuration**
 
 ```bash
-npm run dev
-```
-Le serveur démarre en `http://localhost:4000/api` avec rechargement à chaud en TypeScript.
-
-### Build et production
-
-```bash
-npm run build
-npm start
+cp .env.example .env.docker
+# Éditer .env.docker avec vos clés Supabase
 ```
 
-## Base de données
-
-L'application utilise JawsDB Maria (MySQL) via TypeORM :
-
-- **Production** : Base de données principale
-  - `synchronize: false` (pas de modifications automatiques)
-  - `dropSchema: false` (protection des données)
-  - Migrations requises pour les changements de schéma
-
-- **Tests** : Base de données de test
-  - `synchronize: true` (création automatique des tables)
-  - `dropSchema: true` (réinitialisation à chaque test)
-  - Pas besoin de migrations
-
-### Migrations
+3. **Démarrage avec Docker**
 
 ```bash
-# Générer une migration
-npm run migration:generate -- -n NomMigration
-
-# Appliquer les migrations
-npm run migration:run
+docker compose up -d --build
 ```
 
-## Tests
+L'API sera disponible sur `http://localhost:3000`
 
-Les tests utilisent une base JawsDB dédiée :
+## 📁 Structure du Projet
 
-```bash
-# Configuration de l'environnement de test
-npm run setup:test
-
-# Exécuter tous les tests
-npm test
-
-# Tests avec couverture
-npm test -- --coverage
 ```
-
-### Configuration de la base de données de test
-
-Pour que les tests fonctionnent correctement, vous devez configurer correctement la variable d'environnement `TEST_JAWSDB_MARIA_URL` :
-
-1. Créez un fichier `.env.test` à la racine du projet avec :
-   ```
-   NODE_ENV=test
-   TEST_JAWSDB_MARIA_URL=mysql://username:password@your-database-host:3306/test_database
-   ```
-
-2. Options disponibles pour la base de données de test :
-   
-   - **Option 1: Base JawsDB Maria dédiée sur Heroku**
-     - Créez une seconde instance JawsDB : `heroku addons:create jawsdb-maria:kitefin -a your-app-name --name test-db`
-     - Récupérez l'URL : `heroku config:get JAWSDB_MARIA_URL -a your-app-name`
-   
-   - **Option 2: MySQL local avec Docker**
-     ```bash
-     docker run --name test-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test -p 3306:3306 -d mysql:8.0
-     ```
-     - Utilisez l'URL : `mysql://root:password@localhost:3306/test`
-
-3. Exécutez `npm run setup:test` pour configurer automatiquement votre environnement de test.
-
-### Erreurs courantes
-
-- **ECONNREFUSED 127.0.0.1:3306** : Cette erreur indique que l'application essaie de se connecter à MySQL sur localhost, qui n'existe pas dans l'environnement de test. Assurez-vous que `TEST_JAWSDB_MARIA_URL` pointe vers une base de données accessible.
-
-## Architecture du projet
-
-```bash
 src/
-├── controllers/        # Logique métier et gestion des requêtes
-├── entity/            # Entités TypeORM (User, Day, Concert, POI, SecurityInfo)
-├── middleware/        # Middlewares (authentification, rôles, erreurs)
-├── routes/           # Définition des routes Express
-├── migration/        # Fichiers de migration TypeORM
-├── utils/           # Fonctions utilitaires (seed, helpers)
-├── data-source.ts   # Configuration TypeORM
-└── index.ts         # Point d'entrée de l'application
+├── controllers/     # Contrôleurs API
+├── services/       # Logique métier
+├── middleware/     # Middlewares Express
+├── routes/         # Définition des routes
+├── dto/           # Data Transfer Objects
+└── utils/         # Utilitaires
+
+tests/             # Tests unitaires
+docs/              # Documentation
+database/          # Scripts et migrations DB
 ```
 
-## Endpoints principaux
+## 🔧 Scripts Disponibles
 
-- **Auth**
-  - `POST /api/auth/register` : Inscription
-  - `POST /api/auth/login`    : Connexion
+- `npm run build` - Compilation TypeScript
+- `npm test` - Exécution des tests
+- `npm run dev` - Développement local
 
-- **Users (admin)**
-  - `GET /api/admin/users`     : Liste des utilisateurs
-  - `PUT /api/admin/users/:id` : Mise à jour d'un utilisateur
-  - `DELETE /api/admin/users/:id` : Suppression d'un utilisateur
+## 📚 Documentation
 
-- **Programme & données**
-  - `GET /api/`              : Récupération globale (jours, concerts, POIs, securityInfos)
-  - `GET /api/days`          : Liste des journées
-  - `GET /api/concerts`      : Liste des concerts
-  - `GET /api/pois`         : Liste des points d'intérêt
-  - `GET /api/securityInfos` : Liste des informations de sécurité
+- [Guide API](docs/API_GUIDE.md)
+- [Intégration Supabase](docs/SUPABASE_INTEGRATION.md)
+- [Guides de test](docs/guides/)
 
-## Déploiement
+## 🛠️ Technologies
 
-L'application est déployée sur Heroku :
+- **Backend**: Node.js, Express, TypeScript
+- **Base de données**: PostgreSQL (Supabase)
+- **Stockage**: Supabase Storage
+- **Tests**: Jest, Supertest
+- **Déploiement**: Docker
 
-```bash
-# Premier déploiement
-heroku create nation-sounds-api
-heroku addons:create jawsdb-maria:kitefin
-git push heroku main
+## 📝 Endpoints Principaux
 
-# Déploiements suivants
-git push heroku main
-```
+- `GET /api/concerts` - Liste des concerts
+- `GET /api/days` - Programmation par jour
+- `GET /api/pois` - Points d'intérêt
+- `POST /api/auth/login` - Authentification
+- `POST /api/upload/image` - Upload d'images
 
-Variables d'environnement Heroku requises :
-- `JAWSDB_MARIA_URL` (ajouté automatiquement par l'addon)
-- `TEST_JAWSDB_MARIA_URL` (pour les tests CI)
-- `JWT_SECRET`
-- `NODE_ENV=production`
+## 🔒 Sécurité
 
-## Contribution
+- Authentification JWT
+- Middleware de validation
+- Upload sécurisé d'images
+- Politiques RLS Supabase
 
-Les contributions sont les bienvenues ! Merci de :
+---
 
-1. Forker le dépôt
-2. Créer une branche (`git checkout -b feature/ma-fonctionnalite`)
-3. Committer vos modifications (`git commit -m "Ajout d'une fonctionnalité"`)
-4. Pusher sur votre branche (`git push origin feature/ma-fonctionnalite`)
-5. Ouvrir une Pull Request
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+**Développé pour le festival Nation Sounds** 🎷

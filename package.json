@@ -2,19 +2,14 @@
   "name": "nation-sounds-backend",
   "version": "1.0.0",
   "description": "Backend for Nation Sounds app",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "start:prod": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
-    "seed": "ts-node src/utils/seed.ts",
-    "test": "NODE_ENV=test jest --detectOpenHandles --setupFiles=dotenv/config",
-    "test:railway": "node scripts/test-railway-db.js",
-    "setup:test": "./scripts/setup-test-env.sh",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli",
-    "migration:generate": "npm run typeorm -- migration:generate src/migration/$npm_config_name -d src/data-source.ts",
-    "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts"
+    "build": "tsc -p config/tsconfig.json",
+    "test": "NODE_ENV=test jest --config=config/jest.config.js",
+    "test:coverage": "NODE_ENV=test jest --config=config/jest.config.js --coverage",
+    "seed": "node database/scripts/reset-and-seed.js"
   },
   "keywords": [],
   "author": "",
@@ -22,19 +17,10 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
-  },
+  "jest": "./config/jest.config.js",
   "dependencies": {
+    "@supabase/supabase-js": "^2.76.1",
+    "axios": "^1.12.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
@@ -46,12 +32,9 @@
     "express-formidable": "^1.2.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.11.3",
+    "multer": "^2.0.1",
     "nodemailer": "^6.9.15",
     "pg": "^8.13.1",
-    "reflect-metadata": "^0.2.2",
-    "tsconfig-paths": "^4.2.0",
-    "typeorm": "^0.3.20",
     "typescript": "^5.7.3",
     "uuid": "^10.0.0"
   },
@@ -62,8 +45,10 @@
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^2.0.0",
     "@types/node": "^22.10.7",
     "@types/nodemailer": "^6.4.16",
+    "@types/pg": "^8.15.5",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
     "jest": "^29.7.0",

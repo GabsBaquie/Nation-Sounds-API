@@ -1,9 +1,11 @@
 // src/routes/concertRoutes.ts
 import { Router } from "express";
 import ConcertController from "../controllers/ConcertController";
-import { CreateConcertDto } from "../dto/create-concert.dto";
 import { checkJwt } from "../middleware/checkJwt";
-import { validateDto } from "../middleware/validateDto";
+import {
+  validateCreateConcert,
+  validateUpdateConcert,
+} from "../middleware/validateConcert";
 
 const router = Router();
 
@@ -14,6 +16,14 @@ const router = Router();
  *     summary: Obtenir tous les concerts
  */
 router.get("/", ConcertController.getAll);
+
+/**
+ * @swagger
+ * /api/concerts/search:
+ *   get:
+ *     summary: Rechercher des concerts
+ */
+router.get("/search", ConcertController.search);
 
 /**
  * @swagger
@@ -29,11 +39,7 @@ router.get("/:id", ConcertController.getById);
  *   post:
  *     summary: Créer un nouveau concert
  */
-router.post(
-  "/",
-  [checkJwt, validateDto(CreateConcertDto)],
-  ConcertController.create
-);
+router.post("/", [checkJwt, validateCreateConcert], ConcertController.create);
 
 /**
  * @swagger
@@ -41,7 +47,7 @@ router.post(
  *   put:
  *     summary: Mettre à jour un concert
  */
-router.put("/:id", [checkJwt], ConcertController.update);
+router.put("/:id", [checkJwt, validateUpdateConcert], ConcertController.update);
 
 /**
  * @swagger

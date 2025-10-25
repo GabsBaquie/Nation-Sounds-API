@@ -1,18 +1,26 @@
-FROM node:18
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Copie les fichiers package.json et package-lock.json
+# Copier les fichiers de configuration
 COPY package*.json ./
+COPY config/ ./config/
 
-# Installation des dépendances
-RUN npm install
+# Installer les dépendances
+RUN npm ci
 
-# Copie le reste du code
-COPY . .
+# Copier le code source
+COPY src/ ./src/
+COPY database/ ./database/
 
-# Compilation TypeScript → JavaScript
+# Compiler TypeScript
 RUN npm run build
 
-# Lancement de l'app en production
-CMD ["npm", "run", "start:prod"]
+# Créer le dossier uploads
+RUN mkdir -p uploads/images
+
+# Exposer le port
+EXPOSE 3000
+
+# Démarrer l'application
+CMD ["node", "dist/src/index.js"]

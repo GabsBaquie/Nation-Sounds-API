@@ -1,6 +1,6 @@
 import { Router } from "express";
 import SecurityInfoController from "../controllers/SecurityInfoController";
-import { CreateSecurityInfoDto } from "../dto/create-security-info.dto";
+import { CreateSecurityInfoDto } from "../dto/requests/security-info.dto";
 import { validateDto } from "../middleware/validateDto";
 
 const router = Router();
@@ -12,7 +12,11 @@ router.post(
   validateDto(CreateSecurityInfoDto),
   SecurityInfoController.create
 );
-router.put("/:id", SecurityInfoController.update);
+router.put(
+  "/:id",
+  validateDto(CreateSecurityInfoDto),
+  SecurityInfoController.update
+);
 router.delete("/:id", SecurityInfoController.delete);
 
 export default router;
