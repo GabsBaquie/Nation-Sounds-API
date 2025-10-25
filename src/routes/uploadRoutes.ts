@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { uploadImage } from "../middleware/uploadImage";
-import { ImageService } from "../services/ImageService";
 import { SupabaseStorageService } from "../services/SupabaseStorage";
 
 const router = Router();
@@ -85,39 +84,24 @@ router.delete("/image/:filename", authMiddleware, async (req, res) => {
   }
 });
 
-// Renommer une image
-router.put("/image/:filename", async (req, res) => {
-  try {
-    const { filename } = req.params;
-    const { newName } = req.body;
-
-    if (!newName) {
-      return res.status(400).json({ message: "Nouveau nom requis" });
-    }
-
-    const result = await ImageService.renameImage(filename, newName);
-
-    if (result.success) {
-      res.json({
-        message: result.message,
-        oldName: filename,
-        newName: newName,
-        newPath: result.newPath,
-      });
-    } else {
-      res.status(404).json({ message: result.message });
-    }
-  } catch (error) {
-    console.error("Erreur lors du renommage de l'image:", error);
-    res.status(500).json({ message: "Erreur lors du renommage de l'image" });
-  }
-});
-
-// Statistiques des images
+// Statistiques des images (version Supabase)
 router.get("/stats", async (req, res) => {
   try {
-    const stats = await ImageService.getImageStats();
-    res.json(stats);
+    const result = await SupabaseStorageService.listImages();
+    if (result.success) {
+      const stats = {
+        totalImages: result.images.length,
+        images: result.images.map((img) => ({
+          name: img.name,
+          size: img.size,
+          lastModified: img.lastModified,
+          url: img.url,
+        })),
+      };
+      res.json(stats);
+    } else {
+      res.status(500).json({ message: result.error });
+    }
   } catch (error) {
     console.error("Erreur lors de la récupération des statistiques:", error);
     res
