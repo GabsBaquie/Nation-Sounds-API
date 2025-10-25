@@ -1,45 +1,50 @@
+import dotenv from "dotenv";
 import nodemailer from "nodemailer";
-import dotenv from 'dotenv';
 
-// Charger les variables d'environnement
-dotenv.config();
+// Ne pas recharger dotenv si on est dans Docker (variables déjà injectées)
+if (!process.env.IS_DOCKER) {
+  dotenv.config();
+  console.log("📧 Email service - .env local chargé");
+} else {
+  console.log("📧 Email service - Variables Docker utilisées");
+}
 
 export const sendResetEmail = async (email: string, resetLink: string) => {
   try {
     const emailUser = process.env.EMAIL_USER;
     if (!emailUser) {
-      throw new Error('EMAIL_USER environment variable is not set');
+      throw new Error("EMAIL_USER environment variable is not set");
     }
 
     const emailPass = process.env.EMAIL_PASS;
     if (!emailPass) {
-      throw new Error('EMAIL_PASS environment variable is not set');
+      throw new Error("EMAIL_PASS environment variable is not set");
     }
-    
+
     const transportConfig = {
       host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || '465'),
-      secure: process.env.EMAIL_SECURE === 'true',
+      port: parseInt(process.env.EMAIL_PORT || "465"),
+      secure: process.env.EMAIL_SECURE === "true",
       auth: {
         user: emailUser,
-        pass: emailPass
-      }
+        pass: emailPass,
+      },
     };
 
     const transporter = nodemailer.createTransport(transportConfig);
 
     try {
       await transporter.verify();
-      console.log('✓ Service email configuré avec succès');
+      console.log("✓ Service email configuré avec succès");
     } catch (verifyError) {
-      console.error('✗ Erreur de configuration email:', verifyError);
+      console.error("✗ Erreur de configuration email:", verifyError);
       throw verifyError;
     }
 
     const mailOptions = {
       from: {
-        name: process.env.EMAIL_FROM_NAME || 'Nation Sounds',
-        address: emailUser
+        name: process.env.EMAIL_FROM_NAME || "Nation Sounds",
+        address: emailUser,
       },
       to: email,
       subject: "Réinitialisation du mot de passe - Nation Sounds",
@@ -77,11 +82,11 @@ export const sendResetEmail = async (email: string, resetLink: string) => {
         
         Cordialement,
         L'équipe Nation Sounds
-      `
+      `,
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('✓ Email de réinitialisation envoyé');
+    console.log("✓ Email de réinitialisation envoyé");
     return info;
   } catch (err) {
     const error = err as nodemailer.SentMessageInfo & {
@@ -91,7 +96,7 @@ export const sendResetEmail = async (email: string, resetLink: string) => {
       response?: string;
     };
 
-    console.error('✗ Erreur d\'envoi:', error.message || 'Erreur inconnue');
-    throw new Error('Erreur lors de l\'envoi de l\'email de réinitialisation');
+    console.error("✗ Erreur d'envoi:", error.message || "Erreur inconnue");
+    throw new Error("Erreur lors de l'envoi de l'email de réinitialisation");
   }
 };

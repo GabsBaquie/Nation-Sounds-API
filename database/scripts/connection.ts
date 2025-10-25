@@ -1,14 +1,21 @@
 import * as dotenv from "dotenv";
 import { Pool, PoolClient } from "pg";
 
-if (process.env.NODE_ENV === "production") {
-  // En production (Vercel), utiliser les variables d'environnement directement
-  console.log(
-    "Mode production - utilisation des variables d'environnement Vercel"
-  );
+// Ne pas recharger dotenv si on est dans Docker (variables déjà injectées)
+if (!process.env.IS_DOCKER) {
+  if (process.env.NODE_ENV === "production") {
+    // En production (Vercel), utiliser les variables d'environnement directement
+    console.log(
+      "Mode production - utilisation des variables d'environnement Vercel"
+    );
+  } else {
+    dotenv.config();
+    console.log("Chargement de .env");
+  }
 } else {
-  dotenv.config();
-  console.log("Chargement de .env");
+  console.log(
+    "🔒 Docker détecté - utilisation des variables d'environnement injectées"
+  );
 }
 
 // URL de base de données
@@ -41,6 +48,9 @@ const poolConfig = {
   max: 20, // Nombre maximum de connexions dans le pool
   idleTimeoutMillis: 30000, // Fermer les connexions inactives après 30s
   connectionTimeoutMillis: 2000, // Timeout de connexion
+  // Forcer IPv4 pour éviter les problèmes de connectivité IPv6
+  host: "aws-1-eu-west-3.pooler.supabase.com",
+  port: 6543,
 };
 
 export const pool = new Pool(poolConfig);

@@ -1,27 +1,13 @@
 version: "3.8"
 
 services:
-  # API Nation Sounds (avec Supabase uniquement)
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: nation-sounds-api
     restart: unless-stopped
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
-      PORT: ${PORT:-3000}
-      # Configuration Supabase
-      SUPABASE_URL: ${SUPABASE_URL}
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      # Base de données Supabase
-      DATABASE_URL: ${DATABASE_URL}
-      # JWT Secret
-      JWT_SECRET: ${JWT_SECRET}
     ports:
       - "3000:3000"
-    volumes:
-      - ./uploads:/app/uploads
     env_file:
       - .env.docker
+    volumes:
+      - ./uploads:/app/uploads
