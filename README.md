@@ -1,183 +1,90 @@
 # 🎵 Nation Sounds API
 
-API backend pour l'application Nation Sounds - Gestion des concerts, jours, POIs et informations de sécurité.
+API REST pour la gestion du festival Nation Sounds - Backend Node.js/TypeScript avec Supabase.
 
-## 📁 Structure du projet
+## 🚀 Démarrage Rapide
 
-```
-nation-sounds-api/
-├── 📁 src/                          # Code source TypeScript
-│   ├── controllers/                  # Contrôleurs API
-│   ├── database/                    # Gestion de la base de données
-│   ├── dto/                         # Data Transfer Objects
-│   ├── middleware/                  # Middlewares Express
-│   ├── routes/                      # Routes API
-│   ├── services/                    # Services métier
-│   ├── types/                       # Types TypeScript
-│   └── utils/                       # Utilitaires
-├── 📁 database/                     # Scripts et vues SQL
-│   ├── migrations/                  # Migrations SQL
-│   └── views/                       # Vues SQL
-├── 📁 scripts/                      # Scripts utilitaires
-│   ├── database/                    # Scripts de gestion DB
-│   ├── testing/                     # Scripts de test
-│   ├── run-tests.js                 # Gestionnaire de tests
-│   └── setup-env.js                 # Configuration environnement
-├── 📁 tests/                        # Tests d'intégration
-│   └── start-and-test.sh            # Script de test complet
-├── 📁 docs/                         # Documentation
-│   ├── API_GUIDE.md                 # Guide de l'API
-│   └── SUPABASE_SETUP.md            # Configuration Supabase
-├── 📁 config/                       # Configuration
-│   ├── tsconfig.json                # Configuration TypeScript
-│   └── jest.config.js               # Configuration Jest
-├── db.js                            # Gestionnaire de base de données
-└── package.json                     # Dépendances
-```
+### Prérequis
 
-## 🚀 Démarrage rapide
+- Node.js 18+
+- Docker & Docker Compose
+- Compte Supabase
 
-### 1. Installation
+### Installation
+
+1. **Cloner le projet**
 
 ```bash
-npm install
+git clone <repository-url>
+cd nation-sounds-api
 ```
 
-### 2. Configuration
+2. **Configuration**
 
 ```bash
-# Configurer l'environnement de test
-node scripts/setup-env.js
-
-# Initialiser la base de données
-node db.js init
-
-# Créer les vues
-node db.js views
+cp .env.example .env.docker
+# Éditer .env.docker avec vos clés Supabase
 ```
 
-### 3. Démarrage
+3. **Démarrage avec Docker**
 
 ```bash
-# Mode développement
-npm run dev
-
-# Mode test
-NODE_ENV=test node dist/index.js --start-server
+docker compose up -d --build
 ```
 
-## 🧪 Tests
+L'API sera disponible sur `http://localhost:3000`
 
-### Tests unitaires
+## 📁 Structure du Projet
 
-```bash
-npm test
+```
+src/
+├── controllers/     # Contrôleurs API
+├── services/       # Logique métier
+├── middleware/     # Middlewares Express
+├── routes/         # Définition des routes
+├── dto/           # Data Transfer Objects
+└── utils/         # Utilitaires
+
+tests/             # Tests unitaires
+docs/              # Documentation
+database/          # Scripts et migrations DB
 ```
 
-### Tests d'intégration
+## 🔧 Scripts Disponibles
 
-```bash
-node scripts/run-tests.js integration
-```
-
-### Test de l'API
-
-```bash
-node scripts/run-tests.js api
-```
-
-### Tous les tests
-
-```bash
-node scripts/run-tests.js all
-```
-
-## 🗄️ Base de données
-
-### Gestion de la base
-
-```bash
-node db.js init          # Initialiser
-node db.js views         # Créer les vues
-node db.js test          # Tester les vues
-node db.js all           # Tout faire
-```
-
-### Vues disponibles
-
-- `full_db` - Toutes les données
-- `public_data` - Données publiques
-- `db_stats` - Statistiques par table
-- `poi_stats_by_type` - Statistiques POIs
-- `concerts_by_month` - Concerts par mois
-- `recent_activity` - Activité récente
-
-## 📊 Endpoints API
-
-### Données publiques
-
-- `GET /api/stats/public-data` - Données publiques
-- `GET /api/stats/stats` - Statistiques générales
-- `GET /api/stats/poi-stats` - Statistiques POIs
-- `GET /api/stats/concerts-by-month` - Concerts par mois
-
-### Données protégées (authentification requise)
-
-- `GET /api/stats/all-data` - Toutes les données
-- `GET /api/admin/users` - Gestion des utilisateurs
-- `POST /api/admin/users` - Créer un utilisateur
-
-### CRUD standard
-
-- `GET/POST/PUT/DELETE /api/concerts` - Concerts
-- `GET/POST/PUT/DELETE /api/days` - Jours
-- `GET/POST/PUT/DELETE /api/pois` - POIs
-- `GET/POST/PUT/DELETE /api/securityInfos` - Infos sécurité
-
-## 🔧 Scripts utiles
-
-### Configuration
-
-```bash
-node scripts/setup-env.js      # Configurer .env.test
-node scripts/test-connection.js # Tester la connexion DB
-```
-
-### Tests
-
-```bash
-node scripts/test-api.js        # Test complet de l'API
-node scripts/run-tests.js all   # Tous les tests
-```
-
-### Base de données
-
-```bash
-node db.js help                 # Aide
-node db.js all                  # Configuration complète
-```
+- `npm run build` - Compilation TypeScript
+- `npm test` - Exécution des tests
+- `npm run dev` - Développement local
 
 ## 📚 Documentation
 
-- [Guide de l'API](docs/API_GUIDE.md)
-- [Configuration Supabase](docs/SUPABASE_SETUP.md)
-- [Base de données](src/database/README.md)
+- [Guide API](docs/API_GUIDE.md)
+- [Intégration Supabase](docs/SUPABASE_INTEGRATION.md)
+- [Guides de test](docs/guides/)
 
-## 🌐 Environnements
+## 🛠️ Technologies
 
-- **Développement** : `npm run dev`
-- **Test** : `NODE_ENV=test node dist/index.js --start-server`
-- **Production** : `npm start`
+- **Backend**: Node.js, Express, TypeScript
+- **Base de données**: PostgreSQL (Supabase)
+- **Stockage**: Supabase Storage
+- **Tests**: Jest, Supertest
+- **Déploiement**: Docker
 
-## 🔐 Authentification
+## 📝 Endpoints Principaux
 
-L'API utilise JWT pour l'authentification. Les routes protégées nécessitent un token valide dans l'en-tête `Authorization: Bearer <token>`.
+- `GET /api/concerts` - Liste des concerts
+- `GET /api/days` - Programmation par jour
+- `GET /api/pois` - Points d'intérêt
+- `POST /api/auth/login` - Authentification
+- `POST /api/upload/image` - Upload d'images
 
-## 📝 Logs
+## 🔒 Sécurité
 
-Les logs sont affichés dans la console avec des couleurs pour faciliter le débogage :
+- Authentification JWT
+- Middleware de validation
+- Upload sécurisé d'images
+- Politiques RLS Supabase
 
-- 🟢 Succès
-- 🔴 Erreur
-- 🟡 Avertissement
-- 🔵 Information
+---
+
+**Développé pour le festival Nation Sounds** 🎷

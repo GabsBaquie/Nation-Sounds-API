@@ -19,7 +19,7 @@ Votre API Nation Sounds est **déjà parfaitement connectée** à Supabase ! �
 # SUPABASE CONFIGURATION
 SUPABASE_URL=https://dtvryosgiqnwcfceazcj.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-DATABASE_URL=postgresql://postgres:oSDtMiPZ3ij7RVnC@db.dtvryosgiqnwcfceazcj.supabase.co:5432/postgres
+DATABASE_URL=postgresql://postgres:****@db.dtvryosgiqnwcfceazcj.supabase.co:5432/postgres
 ```
 
 ### Tables Supabase utilisées

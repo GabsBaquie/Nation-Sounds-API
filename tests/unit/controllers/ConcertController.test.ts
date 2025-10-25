@@ -1,5 +1,5 @@
 import request from "supertest";
-import { CreateConcertDto } from "../../../src/dto/requests/create-concert.dto";
+import { CreateConcertDto } from "../../../src/dto/requests/concert.dto";
 import app from "../../../src/index";
 import { ConcertService } from "../../../src/services/ConcertService";
 import {

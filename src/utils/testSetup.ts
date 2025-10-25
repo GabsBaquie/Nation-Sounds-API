@@ -77,6 +77,15 @@ const cleanTestDatabase = async () => {
   try {
     // Nettoyer les tables dans l'ordre pour respecter les contraintes FK
     // Ignorer les erreurs si les tables n'existent pas
+
+    // 1. Supprimer d'abord la table de liaison (clés étrangères)
+    try {
+      await query('DELETE FROM "concert_days_day"');
+    } catch (error) {
+      console.log('Table "concert_days_day" n\'existe pas ou est vide');
+    }
+
+    // 2. Puis supprimer les tables principales
     try {
       await query('DELETE FROM "day"');
     } catch (error) {

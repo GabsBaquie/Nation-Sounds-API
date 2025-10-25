@@ -6,9 +6,7 @@ const path = require("path");
 
 // Configuration de la base de données
 const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    "postgresql://postgres:oSDtMiPZ3ij7RVnC@db.dtvryosgiqnwcfceazcj.supabase.co:5432/postgres",
+  connectionString: process.env.DATABASE_URL,
 });
 
 async function runSeed() {

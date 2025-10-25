@@ -44,13 +44,10 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 // Configuration du pool de connexions
 const poolConfig = {
   connectionString: postgresUrl,
-  ssl: false, // À activer si tu te connectes à une BDD distante sécurisée
+  ssl: false,
   max: 20, // Nombre maximum de connexions dans le pool
   idleTimeoutMillis: 30000, // Fermer les connexions inactives après 30s
   connectionTimeoutMillis: 2000, // Timeout de connexion
-  // Forcer IPv4 pour éviter les problèmes de connectivité IPv6
-  host: "aws-1-eu-west-3.pooler.supabase.com",
-  port: 6543,
 };
 
 export const pool = new Pool(poolConfig);

@@ -5,7 +5,7 @@
 ```
 src/dto/
 ├── 📁 requests/              # DTOs pour les requêtes entrantes
-│   ├── create-concert.dto.ts
+│   ├── concert.dto.ts
 │   ├── create-day.dto.ts
 │   ├── create-poi.dto.ts
 │   ├── create-security-info.dto.ts
@@ -48,7 +48,7 @@ src/dto/
 
 ```typescript
 // Import spécifique
-import { CreateConcertDto } from "../dto/requests/create-concert.dto";
+import { CreateConcertDto } from "../dto/requests/concert.dto";
 
 // Import groupé
 import { CreateConcertDto, CreateDayDto } from "../dto/requests";
@@ -61,7 +61,7 @@ import { CreateConcertDto, ConcertResponseDto, ApiResponseDto } from "../dto";
 
 ```typescript
 import { validateDto } from "../middleware/validateDto";
-import { CreateConcertDto } from "../dto/requests/create-concert.dto";
+import { CreateConcertDto } from "../dto/requests/concert.dto";
 
 router.post("/", validateDto(CreateConcertDto), ConcertController.create);
 ```
@@ -69,7 +69,7 @@ router.post("/", validateDto(CreateConcertDto), ConcertController.create);
 ### Utilisation dans les contrôleurs
 
 ```typescript
-import { CreateConcertDto } from "../dto/requests/create-concert.dto";
+import { CreateConcertDto } from "../dto/requests/concert.dto";
 
 export class ConcertController {
   static async create(req: Request, res: Response) {
@@ -149,5 +149,5 @@ Les anciens imports ont été mis à jour automatiquement :
 import { CreateConcertDto } from "../types/database";
 
 // Nouveau
-import { CreateConcertDto } from "../dto/requests/create-concert.dto";
+import { CreateConcertDto } from "../dto/requests/concert.dto";
 ```

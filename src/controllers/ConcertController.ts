@@ -114,7 +114,7 @@ export class ConcertController {
     const searchTerm = req.query.q as string;
 
     if (!searchTerm) {
-      return res.status(400).json({ message: "Terme de recherche requis" });
+      return res.status(400).json({ message: "Paramètre de recherche requis" });
     }
 
     try {

@@ -1,38 +1,48 @@
 import { Router } from "express";
+import { authMiddleware } from "../middleware/authMiddleware";
 import { uploadImage } from "../middleware/uploadImage";
 import { ImageService } from "../services/ImageService";
 import { SupabaseStorageService } from "../services/SupabaseStorage";
 
 const router = Router();
 
-router.post("/image", uploadImage.single("image"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "Aucun fichier envoyé" });
-  }
+router.post(
+  "/image",
+  authMiddleware,
+  uploadImage.single("image"),
+  async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ message: "Aucun fichier envoyé" });
+    }
 
-  try {
-    const filename = `${Date.now()}-${Math.round(
-      Math.random() * 1e9
-    )}.${req.file.originalname.split(".").pop()}`;
+    try {
+      const filename = `${Date.now()}-${Math.round(
+        Math.random() * 1e9
+      )}.${req.file.originalname.split(".").pop()}`;
 
-    const result = await SupabaseStorageService.uploadImage(
-      req.file.buffer,
-      filename,
-      req.file.mimetype
-    );
+      // Extraire le token d'authentification depuis les headers
+      const authToken = req.headers.authorization?.replace("Bearer ", "");
 
-    if (result.success) {
-      console.log("Image uploadée avec succès:", result.url);
-      res.status(201).json({ image: result.url });
-    } else {
-      console.error("Erreur lors de l'upload:", result.error);
+      const result = await SupabaseStorageService.uploadImage(
+        req.file.buffer,
+        filename,
+        req.file.mimetype,
+        authToken
+      );
+
+      if (result.success) {
+        console.log("Image uploadée avec succès:", result.url);
+        res.status(201).json({ image: result.url });
+      } else {
+        console.error("Erreur lors de l'upload:", result.error);
+        res.status(500).json({ message: "Erreur lors de l'upload de l'image" });
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'upload:", error);
       res.status(500).json({ message: "Erreur lors de l'upload de l'image" });
     }
-  } catch (error) {
-    console.error("Erreur lors de l'upload:", error);
-    res.status(500).json({ message: "Erreur lors de l'upload de l'image" });
   }
-});
+);
 
 router.get("/list", async (req, res) => {
   try {
@@ -51,10 +61,16 @@ router.get("/list", async (req, res) => {
 });
 
 // Supprimer une image
-router.delete("/image/:filename", async (req, res) => {
+router.delete("/image/:filename", authMiddleware, async (req, res) => {
   try {
     const { filename } = req.params;
-    const result = await SupabaseStorageService.deleteImage(filename);
+    // Extraire le token d'authentification depuis les headers
+    const authToken = req.headers.authorization?.replace("Bearer ", "");
+
+    const result = await SupabaseStorageService.deleteImage(
+      filename,
+      authToken
+    );
 
     if (result.success) {
       res.json({ message: "Image supprimée avec succès", filename });

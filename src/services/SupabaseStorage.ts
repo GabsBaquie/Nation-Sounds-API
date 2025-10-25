@@ -1,20 +1,37 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey =
-  process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY!;
+// Utiliser la Service Role Key pour l'API (contourne RLS)
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Force rebuild for Vercel deployment
 
 export class SupabaseStorageService {
+  // Méthode pour vérifier l'authentification personnalisée
+  static async verifyCustomAuth(authToken: string) {
+    // Ici vous pouvez ajouter votre logique d'authentification personnalisée
+    // Pour l'instant, on accepte tous les tokens (à adapter selon votre système)
+    if (!authToken) {
+      throw new Error("Token d'authentification requis");
+    }
+    // TODO: Ajouter la vérification de votre JWT personnalisé
+    return { authenticated: true };
+  }
+
   static async uploadImage(
     file: Buffer,
     filename: string,
-    contentType: string
+    contentType: string,
+    authToken?: string
   ) {
     try {
+      // Vérifier l'authentification personnalisée si un token est fourni
+      if (authToken) {
+        await this.verifyCustomAuth(authToken);
+      }
+
       const { data, error } = await supabase.storage
         .from("images")
         .upload(filename, file, {
@@ -46,8 +63,13 @@ export class SupabaseStorageService {
     }
   }
 
-  static async deleteImage(filename: string) {
+  static async deleteImage(filename: string, authToken?: string) {
     try {
+      // Vérifier l'authentification personnalisée si un token est fourni
+      if (authToken) {
+        await this.verifyCustomAuth(authToken);
+      }
+
       const { error } = await supabase.storage
         .from("images")
         .remove([filename]);

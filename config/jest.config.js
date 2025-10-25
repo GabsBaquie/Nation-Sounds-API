@@ -1,23 +1,22 @@
 module.exports = {
+  preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/dist/tests/unit/**/*.test.js"],
-  testPathIgnorePatterns: [
-    "/node_modules/",
-    "/tests/", // Ignorer complètement le dossier tests/
-    ".*\\.ts$", // Ignorer tous les fichiers .ts
-  ],
+  roots: ["<rootDir>/../src", "<rootDir>/../tests"],
+  testMatch: ["**/tests/**/*.test.ts"],
+  transform: {
+    "^.+\\.ts$": "ts-jest",
+  },
   collectCoverageFrom: [
-    "dist/**/*.js",
-    "!dist/**/*.d.ts",
-    "!dist/**/__tests__/**",
-    "!dist/tests/**",
+    "../src/**/*.ts",
+    "!../src/**/*.d.ts",
+    "!../src/**/__tests__/**",
+    "!../src/tests/**",
   ],
-  setupFilesAfterEnv: ["<rootDir>/dist/src/utils/testSetup.js"],
   moduleNameMapping: {
-    "^@/(.*)$": "<rootDir>/dist/src/$1",
+    "^@/(.*)$": "<rootDir>/../src/$1",
   },
   clearMocks: true,
   restoreMocks: true,
-  // Forcer Jest à ignorer les fichiers TypeScript
-  transformIgnorePatterns: ["node_modules/(?!(.*\\.ts$))", ".*\\.ts$"],
+  testTimeout: 10000,
+  verbose: true,
 };

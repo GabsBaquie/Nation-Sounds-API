@@ -1,5 +1,5 @@
 import request from "supertest";
-import { CreateUserDto } from "../../../src/dto/requests/create-user.dto";
+import { CreateUserDto } from "../../../src/dto/requests/user.dto";
 import app from "../../../src/index";
 import { UserService } from "../../../src/services/UserService";
 import {
